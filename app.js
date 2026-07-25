@@ -1,5 +1,4 @@
-const API = "http://localhost:3000";
-
+const API = "https://mizan-production-32bb.up.railway.app";
 // ==========================
 // تسجيل الدخول
 // ==========================
