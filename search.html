@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ميزان | البحث</title>
+
+<link rel="stylesheet" href="search.css">
+
+</head>
+
+
+<body>
+
+
+<header class="top">
+
+<h1>🔍 البحث الشامل</h1>
+
+<p>
+البحث في ملفات القضايا والتوكيلات
+</p>
+
+</header>
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>ابحث</h2>
+
+
+<input
+
+id="searchInput"
+
+oninput="delaySearch()"
+
+placeholder="ابحث برقم الملف أو الاسم أو رقم التوكيل">
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>📁 نتائج القضايا</h2>
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>رقم الملف</th>
+
+<th>اسم الموكل</th>
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody id="casesResults">
+
+
+</tbody>
+
+
+</table>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>📄 نتائج التوكيلات</h2>
+
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+
+<th>رقم الملف</th>
+
+
+<th>رقم التوكيل</th>
+
+
+<th>اسم الموكل</th>
+
+
+<th>جهة التوثيق</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="powersResults">
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+
+العودة للرئيسية
+
+
+</button>
+
+
+</a>
+
+
+
+
+
+
+
+
+
+<script src="search.js"></script>
+
+
+</body>
+
+</html>

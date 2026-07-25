@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ميزان | ملفات التوكيلات</title>
+
+<link rel="stylesheet" href="powers.css">
+
+</head>
+
+
+<body>
+
+
+<header class="top">
+
+<h1>📄 ملفات التوكيلات</h1>
+
+<p>
+إدارة بيانات التوكيلات
+</p>
+
+</header>
+
+
+
+
+
+<section class="box">
+
+<h2>إضافة توكيل جديد</h2>
+
+
+<div class="form">
+
+
+<input
+id="documentation"
+placeholder="جهة التوثيق">
+
+
+
+<input
+id="clientName"
+placeholder="اسم الموكل">
+
+
+
+<input
+id="powerNumber"
+placeholder="رقم التوكيل">
+
+
+
+<input
+id="fileNumber"
+placeholder="رقم الملف">
+
+
+
+
+
+<button onclick="showLastFileNumber()">
+
+آخر رقم ملف
+
+</button>
+
+
+
+
+
+<button onclick="addPower()">
+
+إضافة التوكيل
+
+</button>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>
+البحث
+</h2>
+
+
+<input
+
+id="search"
+
+oninput="delaySearch()"
+
+placeholder="ابحث في التوكيلات"
+
+>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>
+قائمة التوكيلات
+</h2>
+
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+
+<th>
+جهة التوثيق
+</th>
+
+
+<th>
+اسم الموكل
+</th>
+
+
+<th>
+رقم التوكيل
+</th>
+
+
+<th>
+رقم الملف
+</th>
+
+
+<th>
+تعديل
+</th>
+
+
+<th>
+حذف
+</th>
+
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="powersTable">
+
+
+</tbody>
+
+
+</table>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<div id="pagination"></div>
+
+
+
+
+
+
+
+<button 
+class="empty-btn"
+onclick="showEmptyPowers()"
+>
+
+عرض البيانات الناقصة
+
+</button>
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+العودة للرئيسية
+
+</button>
+
+
+</a>
+
+
+
+
+
+
+
+<script src="powers.js"></script>
+
+
+</body>
+
+
+</html>

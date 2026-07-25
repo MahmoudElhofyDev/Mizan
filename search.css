@@ -1,0 +1,266 @@
+*{
+
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:"Cairo",sans-serif;
+
+}
+
+
+
+body{
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+
+    color:white;
+
+    padding:30px;
+
+}
+
+
+
+
+.top{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+
+
+.top h1{
+
+    font-size:55px;
+
+    color:#D4AF37;
+
+    margin-bottom:10px;
+
+}
+
+
+
+.top p{
+
+    font-size:20px;
+
+}
+
+
+
+
+
+.box{
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(15px);
+
+    padding:30px;
+
+    border-radius:20px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 20px 40px #0005;
+
+    overflow-x:auto;
+
+}
+
+
+
+
+
+.box h2{
+
+    color:#D4AF37;
+
+    margin-bottom:20px;
+
+    text-align:center;
+
+}
+
+
+
+
+
+/* البحث */
+
+#searchInput{
+
+    display:block;
+
+    width:70%;
+
+    max-width:600px;
+
+    height:60px;
+
+    margin:20px auto;
+
+    padding:0 25px;
+
+    font-size:20px;
+
+    border-radius:15px;
+
+    border:none;
+
+    outline:none;
+
+}
+
+
+
+
+
+
+
+/* الجداول */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+
+
+
+
+th{
+
+    background:#D4AF37;
+
+    color:#000;
+
+    padding:15px;
+
+    font-size:18px;
+
+}
+
+
+
+
+
+td{
+
+    padding:15px;
+
+    text-align:center;
+
+    border-bottom:1px solid rgba(255,255,255,.2);
+
+    font-size:17px;
+
+}
+
+
+
+
+
+tr:hover{
+
+    background:rgba(255,255,255,.08);
+
+}
+
+
+
+
+
+/* زر الرجوع */
+
+.back{
+
+
+    display:block;
+
+    margin:30px auto;
+
+    width:220px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#D4AF37;
+
+    color:#000;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+
+
+.back:hover{
+
+    background:white;
+
+    transform:translateY(-5px);
+
+}
+
+
+
+
+
+
+
+@media(max-width:700px){
+
+
+    body{
+
+        padding:15px;
+
+    }
+
+
+    .top h1{
+
+        font-size:40px;
+
+    }
+
+
+    #searchInput{
+
+        width:100%;
+
+    }
+
+
+    th,td{
+
+        padding:10px;
+
+        font-size:14px;
+
+    }
+
+
+}

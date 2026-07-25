@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ميزان | ملفات الحفظ</title>
+
+<link rel="stylesheet" href="cases.css">
+
+</head>
+
+
+<body>
+
+
+<header class="top">
+
+<h1>📁 ملفات الحفظ</h1>
+
+<p>
+إدارة ملفات الحفظ
+</p>
+
+</header>
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>إضافة ملف جديد</h2>
+
+
+<div class="form">
+
+
+
+<input
+id="fileNumber"
+placeholder="رقم الملف">
+
+
+
+
+
+<input
+id="clientName"
+placeholder="اسم الموكل">
+
+
+
+
+
+
+<button
+type="button"
+onclick="showLastFileNumber()">
+
+آخر رقم ملف
+
+</button>
+
+
+
+
+
+
+<button 
+type="button"
+onclick="addCase()">
+
+إضافة الملف
+
+</button>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>البحث</h2>
+
+
+
+<input
+
+id="search"
+
+onkeyup="searchCases()"
+
+placeholder="ابحث برقم الملف أو اسم الموكل">
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>قائمة الملفات</h2>
+
+
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+
+<th>رقم الملف</th>
+
+<th>اسم الموكل</th>
+
+<th>تعديل</th>
+
+<th>حذف</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+<tbody id="casesTable">
+
+
+</tbody>
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<div id="pagination"></div>
+
+
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+
+العودة للرئيسية
+
+
+</button>
+
+
+</a>
+
+
+
+
+
+
+
+
+
+<script src="cases.js"></script>
+
+
+</body>
+
+</html>
