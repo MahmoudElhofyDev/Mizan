@@ -5,25 +5,11 @@ const jwt = require("jsonwebtoken");
 
 const db = require("./database");
 
-setTimeout(()=>{
-
-    db.all("SELECT * FROM cases", [], (err, rows)=>{
-
-        console.log("CASES COUNT:", rows ? rows.length : err);
-
-    });
-
-},2000);
-
 
 const app = express();
 
 
-app.use(cors({
-    origin: "*",
-    methods: ["GET","POST","PUT","DELETE"],
-    allowedHeaders: ["Content-Type","Authorization"]
-}));
+app.use(cors());
 
 app.use(express.json());
 
