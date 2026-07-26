@@ -14,7 +14,6 @@ JSON.parse(localStorage.getItem("powers")) || [];
 
 powers = powers.map(p=>{
 
-
     return {
 
         id: p.id || Date.now(),
@@ -29,9 +28,7 @@ powers = powers.map(p=>{
 
     };
 
-
 });
-
 
 
 localStorage.setItem(
@@ -43,18 +40,15 @@ localStorage.setItem(
 
 
 
-
 let currentPage = 1;
 
 let rowsPerPage = 50;
 
 let currentData = [];
 
-let searchTimer;
-
 let showingEmpty = false;
 
-
+let searchTimer;
 
 
 
@@ -112,7 +106,6 @@ function getNextFileNumber(){
 function addPower(){
 
 
-
     let fileNumber =
     document.getElementById("fileNumber").value.trim();
 
@@ -134,9 +127,7 @@ function addPower(){
 
 
 
-
-
-    if(clientName === ""){
+    if(clientName===""){
 
 
         alert("أدخل اسم الموكل");
@@ -144,6 +135,16 @@ function addPower(){
 
         return;
 
+    }
+
+
+
+
+    if(fileNumber===""){
+
+
+        fileNumber=getNextFileNumber();
+
 
     }
 
@@ -152,58 +153,25 @@ function addPower(){
 
 
 
-    if(fileNumber === ""){
-
-
-        fileNumber = getNextFileNumber();
-
-
-    }
-
-
-
-
-
-
-    let newPower = {
-
+    powers.push({
 
         id:Date.now(),
 
+        fileNumber,
 
-        fileNumber:fileNumber,
+        powerNumber,
 
+        clientName,
 
-        powerNumber:powerNumber,
+        documentation
 
-
-        clientName:clientName,
-
-
-        documentation:documentation
-
-
-    };
+    });
 
 
 
 
 
-
-
-    powers.push(newPower);
-
-
-
-    localStorage.setItem(
-
-        "powers",
-
-        JSON.stringify(powers)
-
-    );
-
-
+    savePowers();
 
 
 
@@ -212,6 +180,187 @@ function addPower(){
 
 
     clearInputs();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// حفظ البيانات
+// =====================
+
+function savePowers(){
+
+    localStorage.setItem(
+        "powers",
+        JSON.stringify(powers)
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// استيراد Excel
+// =====================
+
+function importExcel(){
+
+
+
+    let file =
+    document.getElementById("excelFile").files[0];
+
+
+
+    if(!file){
+
+
+        alert("اختر ملف Excel أولاً");
+
+
+        return;
+
+    }
+
+
+
+
+    let reader = new FileReader();
+
+
+
+    reader.onload=function(e){
+
+
+
+        let data =
+        new Uint8Array(e.target.result);
+
+
+
+        let workbook =
+        XLSX.read(data,{type:"array"});
+
+
+
+        let sheet =
+        workbook.Sheets[
+            workbook.SheetNames[0]
+        ];
+
+
+
+        let rows =
+        XLSX.utils.sheet_to_json(
+            sheet,
+            {header:1}
+        );
+
+
+
+        let count=0;
+
+
+
+        rows.forEach((row,index)=>{
+
+
+
+            if(index===0)
+            return;
+
+
+
+            if(
+                !row[0] &&
+                !row[1] &&
+                !row[2] &&
+                !row[3]
+            )
+            return;
+
+
+
+
+            let newPower={
+
+
+                id:Date.now()+index,
+
+
+                documentation:
+                row[0] || "",
+
+
+                clientName:
+                row[1] || "",
+
+
+                powerNumber:
+                row[2] || "",
+
+
+                fileNumber:
+                row[3] || getNextFileNumber()
+
+
+            };
+
+
+
+            powers.push(newPower);
+
+
+
+            count++;
+
+
+
+        });
+
+
+
+
+
+        savePowers();
+
+
+
+        currentData=[];
+
+
+        displayPowers();
+
+
+
+        alert(
+            "تم استيراد " + count + " توكيل بنجاح"
+        );
+
+
+
+    };
+
+
+
+    reader.readAsArrayBuffer(file);
+
 
 
 }
@@ -248,23 +397,16 @@ function displayPowers(){
 
 
 
-
     let start =
-    (currentPage - 1) * rowsPerPage;
+    (currentPage-1)*rowsPerPage;
 
 
 
     let data =
     currentData.slice(
-
         start,
-
-        start + rowsPerPage
-
+        start+rowsPerPage
     );
-
-
-
 
 
 
@@ -276,30 +418,13 @@ function displayPowers(){
 
 <tr>
 
+<td>${power.documentation}</td>
 
-<td>
-${power.fileNumber}
-</td>
+<td>${power.clientName}</td>
 
+<td>${power.powerNumber}</td>
 
-
-<td>
-${power.powerNumber}
-</td>
-
-
-
-<td>
-${power.clientName}
-</td>
-
-
-
-<td>
-${power.documentation}
-</td>
-
-
+<td>${power.fileNumber}</td>
 
 
 <td>
@@ -311,11 +436,7 @@ onclick="goEditPower(${power.id})">
 
 </button>
 
-
 </td>
-
-
-
 
 
 <td>
@@ -327,9 +448,7 @@ onclick="deletePower(${power.id})">
 
 </button>
 
-
 </td>
-
 
 
 </tr>
@@ -339,7 +458,6 @@ onclick="deletePower(${power.id})">
 
 
     });
-
 
 
 
@@ -357,8 +475,6 @@ onclick="deletePower(${power.id})">
 
 
 
-
-
 // =====================
 // البحث
 // =====================
@@ -366,100 +482,84 @@ onclick="deletePower(${power.id})">
 function delaySearch(){
 
 
-
-    let value =
-
-    document.getElementById("search")
-    .value
-    .toLowerCase()
-    .trim();
+    clearTimeout(searchTimer);
 
 
 
+    searchTimer=setTimeout(()=>{
+
+
+        let value =
+        document.getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
 
 
 
-    if(value === ""){
+        if(value===""){
 
 
-        currentData = [];
+            currentData=[];
 
 
-
-    }
-
-    else{
+        }else{
 
 
-        currentData = powers.filter(p=>{
+            currentData =
+            powers.filter(p=>{
 
 
-
-            return (
-
+                return (
 
                 String(p.fileNumber)
                 .toLowerCase()
                 .includes(value)
 
 
-
                 ||
-
-
 
                 String(p.powerNumber)
                 .toLowerCase()
                 .includes(value)
 
 
-
                 ||
-
-
 
                 String(p.clientName)
                 .toLowerCase()
                 .includes(value)
 
 
-
                 ||
-
-
 
                 String(p.documentation)
                 .toLowerCase()
                 .includes(value)
 
 
-
-            );
-
+                );
 
 
-        });
+            });
 
 
-
-    }
+        }
 
 
 
+        currentPage=1;
+
+
+        displayPowers();
 
 
 
-    currentPage = 1;
-
-
-
-    displayPowers();
+    },300);
 
 
 
 }
-
-
 
 
 
@@ -511,8 +611,6 @@ ${i}
 
 `;
 
-
-
     }
 
 
@@ -522,21 +620,13 @@ ${i}
 
 
 
-
-
-
 function changePage(page){
 
-
-    currentPage = page;
-
+    currentPage=page;
 
     displayPowers();
 
-
 }
-
-
 
 
 
@@ -557,26 +647,17 @@ function deletePower(id){
     if(confirm("هل تريد حذف التوكيل؟")){
 
 
-        powers = powers.filter(
-
-            p=>p.id != id
-
+        powers =
+        powers.filter(
+            p=>p.id!=id
         );
 
 
 
-        localStorage.setItem(
-
-            "powers",
-
-            JSON.stringify(powers)
-
-        );
-
+        savePowers();
 
 
         currentData=[];
-
 
 
         displayPowers();
@@ -586,9 +667,8 @@ function deletePower(id){
     }
 
 
+
 }
-
-
 
 
 
@@ -605,24 +685,17 @@ function deletePower(id){
 function goEditPower(id){
 
 
-
     localStorage.setItem(
-
         "editPowerId",
-
         id
-
     );
 
 
-
-    window.location.href =
+    window.location.href=
     "powers-edit.html";
 
 
 }
-
-
 
 
 
@@ -648,13 +721,11 @@ function clearInputs(){
     document.getElementById("documentation").value="";
 
 
-    document.getElementById("fileNumber").value =
+    document.getElementById("fileNumber").value=
     getNextFileNumber();
 
 
 }
-
-
 
 
 
@@ -671,22 +742,21 @@ function clearInputs(){
 function showLastFileNumber(){
 
 
-    let last = 2432;
+    let last=2432;
 
 
 
     powers.forEach(p=>{
 
 
-        let num = Number(p.fileNumber);
+        let num=Number(p.fileNumber);
 
 
 
-        if(!isNaN(num) && num > last){
+        if(!isNaN(num)&&num>last){
 
 
             last=num;
-
 
         }
 
@@ -696,7 +766,7 @@ function showLastFileNumber(){
 
 
     alert(
-        "آخر رقم ملف هو: " + last
+        "آخر رقم ملف هو: "+last
     );
 
 
@@ -727,9 +797,8 @@ function showEmptyPowers(){
         showingEmpty=false;
 
 
-    }
 
-    else{
+    }else{
 
 
         currentData =
@@ -766,7 +835,6 @@ function showEmptyPowers(){
     displayPowers();
 
 
-
 }
 
 
@@ -793,7 +861,6 @@ document.getElementById("powersTable")
 
 
 }
-
 
 
 

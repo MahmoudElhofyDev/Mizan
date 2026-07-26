@@ -19,6 +19,25 @@ let searchTimer;
 
 
 // =====================
+// حفظ البيانات
+// =====================
+
+function saveCases(){
+
+    localStorage.setItem(
+        "cases",
+        JSON.stringify(cases)
+    );
+
+}
+
+
+
+
+
+
+
+// =====================
 // إضافة ملف
 // =====================
 
@@ -39,6 +58,7 @@ function addCase(){
 
 
 
+
     if(
         fileNumber === "" ||
         clientName === ""
@@ -49,6 +69,7 @@ function addCase(){
         return;
 
     }
+
 
 
 
@@ -75,14 +96,7 @@ function addCase(){
 
 
 
-    localStorage.setItem(
-
-        "cases",
-
-        JSON.stringify(cases)
-
-    );
-
+    saveCases();
 
 
 
@@ -93,6 +107,179 @@ function addCase(){
 
 
     clearInputs();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// استيراد Excel
+// =====================
+
+function importExcel(){
+
+
+
+    let file =
+    document.getElementById("excelFile")
+    .files[0];
+
+
+
+    if(!file){
+
+
+        alert("اختر ملف Excel أولاً");
+
+
+        return;
+
+
+    }
+
+
+
+
+
+
+    let reader = new FileReader();
+
+
+
+    reader.onload=function(e){
+
+
+
+        let data =
+        new Uint8Array(
+            e.target.result
+        );
+
+
+
+        let workbook =
+        XLSX.read(
+            data,
+            {type:"array"}
+        );
+
+
+
+        let sheet =
+        workbook.Sheets[
+            workbook.SheetNames[0]
+        ];
+
+
+
+        let rows =
+        XLSX.utils.sheet_to_json(
+            sheet,
+            {header:1}
+        );
+
+
+
+        let count=0;
+
+
+
+        rows.forEach((row,index)=>{
+
+
+
+            // تخطي العنوان
+
+            if(index===0)
+            return;
+
+
+
+            if(
+                !row[0] &&
+                !row[1]
+            )
+            return;
+
+
+
+
+
+            let newCase={
+
+
+                id:
+                Date.now()+index,
+
+
+
+                fileNumber:
+                row[0] || "",
+
+
+
+                clientName:
+                row[1] || ""
+
+
+
+            };
+
+
+
+
+
+            cases.push(newCase);
+
+
+
+            count++;
+
+
+
+        });
+
+
+
+
+
+
+        saveCases();
+
+
+
+        currentData=[];
+
+
+
+        displayCases();
+
+
+
+
+
+        alert(
+            "تم استيراد " +
+            count +
+            " ملف بنجاح"
+        );
+
+
+
+    };
+
+
+
+
+    reader.readAsArrayBuffer(file);
 
 
 
@@ -129,8 +316,10 @@ function displayCases(){
 
 
 
+
     let start =
     (currentPage - 1) * rowsPerPage;
+
 
 
 
@@ -143,6 +332,7 @@ function displayCases(){
         start + rowsPerPage
 
     );
+
 
 
 
@@ -173,6 +363,7 @@ ${item.clientName || ""}
 
 
 
+
 <td>
 
 <button class="edit"
@@ -185,6 +376,7 @@ onclick="editCase(${item.id})">
 
 
 </td>
+
 
 
 
@@ -216,6 +408,7 @@ onclick="deleteCase(${item.id})">
 
 
 
+
     createPagination();
 
 
@@ -236,34 +429,6 @@ onclick="deleteCase(${item.id})">
 // البحث
 // =====================
 
-function delaySearch(){
-
-
-
-    clearTimeout(searchTimer);
-
-
-
-    searchTimer = setTimeout(()=>{
-
-
-        searchCases();
-
-
-
-    },300);
-
-
-
-}
-
-
-
-
-
-
-
-
 function searchCases(){
 
 
@@ -280,10 +445,11 @@ function searchCases(){
 
 
 
+
     if(value === ""){
 
 
-        currentData = [];
+        currentData=[];
 
 
 
@@ -292,10 +458,14 @@ function searchCases(){
     else{
 
 
-        currentData = cases.filter(item=>{
+
+        currentData =
+        cases.filter(item=>{
+
 
 
             return (
+
 
 
                 String(item.fileNumber || "")
@@ -307,7 +477,9 @@ function searchCases(){
 
 
 
+
                 ||
+
 
 
 
@@ -324,6 +496,7 @@ function searchCases(){
             );
 
 
+
         });
 
 
@@ -335,7 +508,7 @@ function searchCases(){
 
 
 
-    currentPage = 1;
+    currentPage=1;
 
 
 
@@ -355,11 +528,13 @@ function searchCases(){
 
 
 
+
 // =====================
 // الصفحات
 // =====================
 
 function createPagination(){
+
 
 
     let pagination =
@@ -386,6 +561,8 @@ function createPagination(){
         rowsPerPage
 
     );
+
+
 
 
 
@@ -419,10 +596,11 @@ ${i}
 
 
 
+
 function changePage(page){
 
 
-    currentPage = page;
+    currentPage=page;
 
 
     displayCases();
@@ -430,6 +608,8 @@ function changePage(page){
 
 
 }
+
+
 
 
 
@@ -450,7 +630,8 @@ function deleteCase(id){
     if(confirm("هل تريد حذف الملف؟")){
 
 
-        cases = cases.filter(
+        cases =
+        cases.filter(
 
             c=>c.id != id
 
@@ -458,13 +639,7 @@ function deleteCase(id){
 
 
 
-        localStorage.setItem(
-
-            "cases",
-
-            JSON.stringify(cases)
-
-        );
+        saveCases();
 
 
 
@@ -572,13 +747,14 @@ function showLastFileNumber(){
 
 
 
-    let nums = cases.map(c=>
 
+    let nums =
+    cases.map(c=>
 
         Number(c.fileNumber)||0
 
-
     );
+
 
 
 
