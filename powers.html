@@ -19,15 +19,9 @@
 
 <header class="top">
 
-<h1>
-📄 ملفات التوكيلات
-</h1>
+<h1>📄 ملفات التوكيلات</h1>
 
-
-<p>
-إدارة بيانات التوكيلات
-</p>
-
+<p>إدارة بيانات التوكيلات</p>
 
 </header>
 
@@ -35,9 +29,10 @@
 
 
 
+<section class="container">
 
 
-<section class="box">
+<div class="form-box">
 
 
 <h2>
@@ -46,34 +41,50 @@
 
 
 
-<div class="form">
+<div class="inputs">
 
 
-<input
+<input 
 id="fileNumber"
-placeholder="رقم الملف"
-readonly>
+type="text"
+placeholder="رقم الملف">
 
 
 
-<input
+<input 
 id="powerNumber"
+type="text"
 placeholder="رقم التوكيل">
 
 
 
-<input
+<input 
 id="clientName"
+type="text"
 placeholder="اسم الموكل">
 
 
 
-<input
+<input 
 id="documentation"
-placeholder="جهة التوثيق">
+type="text"
+placeholder="التوثيق">
 
 
 
+</div>
+
+
+
+
+<div class="buttons">
+
+
+<button onclick="addPower()">
+
+إضافة
+
+</button>
 
 
 
@@ -84,64 +95,40 @@ placeholder="جهة التوثيق">
 </button>
 
 
-
-
-
-<button onclick="addPower()">
-
-إضافة التوكيل
-
-</button>
-
+</div>
 
 
 </div>
 
 
-</section>
 
 
 
 
 
-
-
-
-
-<section class="box">
-
-
-<h2>
-البحث
-</h2>
-
+<div class="search-box">
 
 
 <input
 
 id="search"
 
+type="text"
+
+placeholder="بحث..."
+
 oninput="delaySearch()"
 
-placeholder="ابحث في التوكيلات">
+
+>
 
 
-</section>
-
-
-
-
+</div>
 
 
 
 
 
-<section class="box">
-
-
-<h2>
-قائمة التوكيلات
-</h2>
 
 
 
@@ -159,11 +146,9 @@ placeholder="ابحث في التوكيلات">
 </th>
 
 
-
 <th>
 رقم التوكيل
 </th>
-
 
 
 <th>
@@ -171,17 +156,14 @@ placeholder="ابحث في التوكيلات">
 </th>
 
 
-
 <th>
-جهة التوثيق
+التوثيق
 </th>
-
 
 
 <th>
 تعديل
 </th>
-
 
 
 <th>
@@ -197,7 +179,6 @@ placeholder="ابحث في التوكيلات">
 
 
 
-
 <tbody id="powersTable">
 
 
@@ -209,51 +190,18 @@ placeholder="ابحث في التوكيلات">
 
 
 
+
+
+
+<div id="pagination">
+
+</div>
+
+
+
+
+
 </section>
-
-
-
-
-
-
-
-
-
-<div id="pagination"></div>
-
-
-
-
-
-
-
-<button class="empty-btn" onclick="showEmptyPowers()">
-
-عرض البيانات الناقصة
-
-</button>
-
-
-
-
-
-
-
-
-<a href="dashboard.html">
-
-
-<button class="back">
-
-العودة للرئيسية
-
-</button>
-
-
-</a>
-
-
-
 
 
 
@@ -263,6 +211,5 @@ placeholder="ابحث في التوكيلات">
 
 
 </body>
-
 
 </html>
