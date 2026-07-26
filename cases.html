@@ -51,6 +51,36 @@ placeholder="اسم الموكل">
 
 
 
+<input
+id="opponent"
+placeholder="الخصم">
+
+
+
+<input
+id="court"
+placeholder="المحكمة">
+
+
+
+<input
+id="caseType"
+placeholder="نوع القضية">
+
+
+
+<input
+id="birthDate"
+type="date">
+
+
+
+<input
+id="documentation"
+placeholder="التوثيق">
+
+
+
 
 
 <button
@@ -90,60 +120,6 @@ onclick="addCase()">
 <section class="box">
 
 
-<h2>
-استيراد ملفات الحفظ من Excel
-</h2>
-
-
-<div class="form">
-
-
-<input
-
-type="file"
-
-id="excelFile"
-
-accept=".xlsx,.xls"
-
->
-
-
-<button
-
-type="button"
-
-onclick="importCasesExcel()">
-
-📥 استيراد Excel
-
-</button>
-
-
-</div>
-
-
-<p style="text-align:center">
-
-ترتيب الأعمدة:
-رقم الملف | اسم الموكل
-
-</p>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<section class="box">
-
-
 <h2>البحث</h2>
 
 
@@ -154,7 +130,7 @@ id="search"
 
 onkeyup="searchCases()"
 
-placeholder="ابحث برقم الملف أو اسم الموكل"
+placeholder="ابحث برقم الملف أو اسم الموكل أو الخصم"
 
 >
 
@@ -172,7 +148,9 @@ placeholder="ابحث برقم الملف أو اسم الموكل"
 <section class="box">
 
 
-<h2>قائمة الملفات</h2>
+<h2>
+قائمة الملفات
+</h2>
 
 
 
@@ -193,6 +171,31 @@ placeholder="ابحث برقم الملف أو اسم الموكل"
 
 <th>
 اسم الموكل
+</th>
+
+
+<th>
+الخصم
+</th>
+
+
+<th>
+المحكمة
+</th>
+
+
+<th>
+نوع القضية
+</th>
+
+
+<th>
+تاريخ الميلاد
+</th>
+
+
+<th>
+التوثيق
 </th>
 
 
@@ -233,10 +236,7 @@ placeholder="ابحث برقم الملف أو اسم الموكل"
 
 
 
-
 <div id="pagination"></div>
-
-
 
 
 
@@ -260,9 +260,6 @@ placeholder="ابحث برقم الملف أو اسم الموكل"
 
 
 
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
 <script src="cases.js"></script>
