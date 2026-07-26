@@ -95,6 +95,43 @@ placeholder="رقم الملف">
 
 
 
+<section class="box">
+
+<h2>
+📥 استيراد بيانات من Excel
+</h2>
+
+
+<p>
+ترتيب الأعمدة في ملف Excel:
+<br>
+جهة التوثيق | اسم الموكل | رقم التوكيل | رقم الملف
+</p>
+
+
+<input
+type="file"
+id="excelFile"
+accept=".xlsx,.xls">
+
+
+
+<button onclick="importExcel()">
+
+📥 استيراد Excel
+
+</button>
+
+
+</section>
+
+
+
+
+
+
+
+
 
 <section class="box">
 
@@ -199,8 +236,6 @@ placeholder="ابحث في التوكيلات"
 
 
 
-
-
 <div id="pagination"></div>
 
 
@@ -240,12 +275,15 @@ onclick="showEmptyPowers()"
 
 
 
+<!-- مكتبة Excel -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 
 
 <script src="powers.js"></script>
 
 
 </body>
-
 
 </html>
