@@ -1,8 +1,10 @@
 // =====================
-// جلب رقم التعديل
+// تحميل رقم التعديل
 // =====================
 
-let id = localStorage.getItem("editCaseId");
+let id =
+localStorage.getItem("editCaseId");
+
 
 
 let cases =
@@ -12,9 +14,13 @@ JSON.parse(
 
 
 
+
 let currentCase =
+
 cases.find(
-    c => c.id == id
+
+    item => item.id == id
+
 );
 
 
@@ -22,20 +28,26 @@ cases.find(
 
 
 
+
 // =====================
-// تحميل بيانات الملف
+// تحميل البيانات
 // =====================
 
 if(currentCase){
 
 
+
     document.getElementById("fileNumber").value =
+
     currentCase.fileNumber || "";
 
 
 
+
     document.getElementById("clientName").value =
+
     currentCase.clientName || "";
+
 
 
 }
@@ -59,9 +71,7 @@ function saveCaseEdit(){
     if(!currentCase){
 
 
-        alert(
-            "لم يتم العثور على الملف"
-        );
+        alert("لم يتم العثور على الملف");
 
 
         return;
@@ -73,7 +83,9 @@ function saveCaseEdit(){
 
 
 
+
     let fileNumber =
+
     document.getElementById("fileNumber")
     .value
     .trim();
@@ -82,6 +94,7 @@ function saveCaseEdit(){
 
 
     let clientName =
+
     document.getElementById("clientName")
     .value
     .trim();
@@ -92,15 +105,10 @@ function saveCaseEdit(){
 
 
 
-    if(
-        fileNumber === "" ||
-        clientName === ""
-    ){
+    if(fileNumber === "" || clientName === ""){
 
 
-        alert(
-            "من فضلك املأ البيانات"
-        );
+        alert("من فضلك املأ البيانات");
 
 
         return;
@@ -115,12 +123,16 @@ function saveCaseEdit(){
 
 
     currentCase.fileNumber =
+
     fileNumber;
 
 
 
+
     currentCase.clientName =
+
     clientName;
+
 
 
 
@@ -141,8 +153,11 @@ function saveCaseEdit(){
 
 
     localStorage.removeItem(
+
         "editCaseId"
+
     );
+
 
 
 
@@ -150,7 +165,9 @@ function saveCaseEdit(){
 
 
     alert(
-        "تم حفظ تعديل الملف بنجاح"
+
+        "تم تعديل الملف بنجاح"
+
     );
 
 
@@ -158,7 +175,9 @@ function saveCaseEdit(){
 
 
 
+
     window.location.href =
+
     "cases.html";
 
 

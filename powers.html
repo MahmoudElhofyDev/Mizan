@@ -7,23 +7,37 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ميزان | ملفات التوكيلات</title>
+
+<title>
+ميزان | ملفات التوكيلات
+</title>
+
 
 <link rel="stylesheet" href="powers.css">
 
+
 </head>
+
 
 
 <body>
 
 
+
+
+
 <header class="top">
 
-<h1>📄 ملفات التوكيلات</h1>
+
+<h1>
+📄 ملفات التوكيلات
+</h1>
+
 
 <p>
 إدارة بيانات التوكيلات
 </p>
+
 
 </header>
 
@@ -34,67 +48,73 @@
 
 
 
+
 <section class="box">
 
-<h2>إضافة توكيل جديد</h2>
+
+<h2>
+إضافة توكيل جديد
+</h2>
+
+
+
+
 
 
 <div class="form">
 
 
 
+
+
 <input
+
 id="documentation"
+
 placeholder="جهة التوثيق">
 
 
 
 
 
+
 <input
+
 id="clientName"
+
 placeholder="اسم الموكل">
 
 
 
 
 
+
+
 <input
+
 id="powerNumber"
+
 placeholder="رقم التوكيل">
 
 
 
 
 
+
+
 <input
+
 id="fileNumber"
+
 placeholder="رقم الملف">
 
 
 
 
 
-<input
-id="type"
-placeholder="نوع التوكيل">
 
 
-
-
-
-<input
-id="birthDate"
-type="date">
-
-
-
-
-
-
-
-<button 
-onclick="showLastFileNumber()">
+<button onclick="showLastFileNumber()">
 
 آخر رقم ملف
 
@@ -105,8 +125,9 @@ onclick="showLastFileNumber()">
 
 
 
-<button 
-onclick="addPower()">
+
+
+<button onclick="addPower()">
 
 إضافة التوكيل
 
@@ -114,7 +135,10 @@ onclick="addPower()">
 
 
 
+
+
 </div>
+
 
 
 </section>
@@ -136,15 +160,17 @@ onclick="addPower()">
 
 
 
+
+
 <input
 
 id="search"
 
 oninput="delaySearch()"
 
-placeholder="ابحث في التوكيلات"
+placeholder="ابحث في التوكيلات">
 
->
+
 
 
 
@@ -161,9 +187,14 @@ placeholder="ابحث في التوكيلات"
 <section class="box">
 
 
+
 <h2>
 قائمة التوكيلات
 </h2>
+
+
+
+
 
 
 
@@ -176,14 +207,12 @@ placeholder="ابحث في التوكيلات"
 <tr>
 
 
+
 <th>
-جهة التوثيق
+رقم الملف
 </th>
 
 
-<th>
-اسم الموكل
-</th>
 
 
 <th>
@@ -191,19 +220,20 @@ placeholder="ابحث في التوكيلات"
 </th>
 
 
-<th>
-رقم الملف
-</th>
 
 
 <th>
-نوع التوكيل
+اسم الموكل
 </th>
+
+
 
 
 <th>
-تاريخ الميلاد
+جهة التوثيق
 </th>
+
+
 
 
 <th>
@@ -211,9 +241,12 @@ placeholder="ابحث في التوكيلات"
 </th>
 
 
+
+
 <th>
 حذف
 </th>
+
 
 
 
@@ -226,13 +259,19 @@ placeholder="ابحث في التوكيلات"
 
 
 
+
 <tbody id="powersTable">
 
 
 </tbody>
 
 
+
+
 </table>
+
+
+
 
 
 </section>
@@ -254,15 +293,16 @@ placeholder="ابحث في التوكيلات"
 
 
 
+
 <button
 
 class="empty-btn"
 
-onclick="showEmptyPowers()"
+onclick="showEmptyPowers()">
 
->
 
 عرض البيانات الناقصة
+
 
 </button>
 
@@ -297,6 +337,8 @@ onclick="showEmptyPowers()"
 <script src="powers.js"></script>
 
 
+
 </body>
+
 
 </html>
