@@ -1,16 +1,27 @@
 // =====================
-// تحميل رقم التعديل
+// رقم الملف المراد تعديله
 // =====================
 
 let id =
-localStorage.getItem("editCaseId");
+
+localStorage.getItem(
+    "editCaseId"
+);
+
+
 
 
 
 let cases =
+
 JSON.parse(
-    localStorage.getItem("cases")
+
+localStorage.getItem("cases")
+
 ) || [];
+
+
+
 
 
 
@@ -19,7 +30,7 @@ let currentCase =
 
 cases.find(
 
-    item => item.id == id
+item => item.id == id
 
 );
 
@@ -37,14 +48,18 @@ if(currentCase){
 
 
 
-    document.getElementById("fileNumber").value =
+    document.getElementById(
+        "fileNumber"
+    ).value =
 
     currentCase.fileNumber || "";
 
 
 
 
-    document.getElementById("clientName").value =
+    document.getElementById(
+        "clientName"
+    ).value =
 
     currentCase.clientName || "";
 
@@ -71,7 +86,9 @@ function saveCaseEdit(){
     if(!currentCase){
 
 
-        alert("لم يتم العثور على الملف");
+        alert(
+            "لم يتم العثور على الملف"
+        );
 
 
         return;
@@ -80,23 +97,18 @@ function saveCaseEdit(){
     }
 
 
-
-
-
-
-    let fileNumber =
-
-    document.getElementById("fileNumber")
-    .value
-    .trim();
 
 
 
 
     let clientName =
 
-    document.getElementById("clientName")
+    document.getElementById(
+        "clientName"
+    )
+
     .value
+
     .trim();
 
 
@@ -104,11 +116,12 @@ function saveCaseEdit(){
 
 
 
+    if(clientName === ""){
 
-    if(fileNumber === "" || clientName === ""){
 
-
-        alert("من فضلك املأ البيانات");
+        alert(
+            "أدخل اسم الموكل"
+        );
 
 
         return;
@@ -118,13 +131,6 @@ function saveCaseEdit(){
 
 
 
-
-
-
-
-    currentCase.fileNumber =
-
-    fileNumber;
 
 
 
@@ -152,6 +158,7 @@ function saveCaseEdit(){
 
 
 
+
     localStorage.removeItem(
 
         "editCaseId"
@@ -163,13 +170,11 @@ function saveCaseEdit(){
 
 
 
-
     alert(
 
         "تم تعديل الملف بنجاح"
 
     );
-
 
 
 

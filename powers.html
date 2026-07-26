@@ -19,11 +19,15 @@
 
 <header class="top">
 
-<h1>📄 ملفات التوكيلات</h1>
+<h1>
+📄 ملفات التوكيلات
+</h1>
+
 
 <p>
 إدارة بيانات التوكيلات
 </p>
+
 
 </header>
 
@@ -31,36 +35,76 @@
 
 
 
+
+
+
 <section class="box">
 
-<h2>إضافة توكيل جديد</h2>
+
+<h2>
+إضافة توكيل جديد
+</h2>
+
 
 
 <div class="form">
 
 
 
+
+
 <input
+
 id="documentation"
+
 placeholder="جهة التوثيق">
 
 
 
+
+
+
 <input
+
 id="clientName"
+
 placeholder="اسم الموكل">
 
 
 
+
+
+
 <input
+
 id="powerNumber"
+
 placeholder="رقم التوكيل">
 
 
 
+
+
+
 <input
+
 id="fileNumber"
+
 placeholder="رقم الملف">
+
+
+
+
+
+
+
+<button onclick="showLastFileNumber()">
+
+آخر رقم ملف
+
+</button>
+
+
 
 
 
@@ -71,6 +115,8 @@ placeholder="رقم الملف">
 إضافة التوكيل
 
 </button>
+
+
 
 
 
@@ -85,9 +131,16 @@ placeholder="رقم الملف">
 
 
 
+
+
 <section class="box">
 
-<h2>البحث</h2>
+
+<h2>
+البحث
+</h2>
+
+
 
 
 <input
@@ -99,7 +152,9 @@ oninput="delaySearch()"
 placeholder="ابحث في التوكيلات">
 
 
+
 </section>
+
 
 
 
@@ -111,7 +166,11 @@ placeholder="ابحث في التوكيلات">
 <section class="box">
 
 
-<h2>قائمة التوكيلات</h2>
+<h2>
+قائمة التوكيلات
+</h2>
+
+
 
 
 
@@ -124,22 +183,39 @@ placeholder="ابحث في التوكيلات">
 <tr>
 
 
-<th>جهة التوثيق</th>
+<th>
+جهة التوثيق
+</th>
 
 
-<th>اسم الموكل</th>
+
+<th>
+رقم التوكيل
+</th>
 
 
-<th>رقم التوكيل</th>
+
+<th>
+اسم الموكل
+</th>
 
 
-<th>رقم الملف</th>
+
+<th>
+رقم الملف
+</th>
 
 
-<th>تعديل</th>
+
+<th>
+تعديل
+</th>
 
 
-<th>حذف</th>
+
+<th>
+حذف
+</th>
 
 
 
@@ -151,10 +227,14 @@ placeholder="ابحث في التوكيلات">
 
 
 
+
+
+
 <tbody id="powersTable">
 
 
 </tbody>
+
 
 
 
@@ -169,9 +249,24 @@ placeholder="ابحث في التوكيلات">
 
 
 
-<!-- صفحات التنقل -->
+
+
 
 <div id="pagination"></div>
+
+
+
+
+
+
+
+
+<button class="empty-btn" onclick="showEmptyPowers()">
+
+عرض البيانات الناقصة
+
+</button>
+
 
 
 
@@ -184,14 +279,14 @@ placeholder="ابحث في التوكيلات">
 
 <button class="back">
 
-
 العودة للرئيسية
-
 
 </button>
 
 
 </a>
+
+
 
 
 

@@ -1,10 +1,15 @@
 // =====================
-// تحميل رقم التعديل
+// تحميل البيانات
 // =====================
+
 
 let id =
 
-localStorage.getItem("editPowerId");
+localStorage.getItem(
+    "editPowerId"
+);
+
+
 
 
 
@@ -12,9 +17,10 @@ let powers =
 
 JSON.parse(
 
-    localStorage.getItem("powers")
+localStorage.getItem("powers")
 
 ) || [];
+
 
 
 
@@ -25,7 +31,7 @@ let currentPower =
 
 powers.find(
 
-    item => item.id == id
+item => item.id == id
 
 );
 
@@ -35,40 +41,50 @@ powers.find(
 
 
 
-
-
 // =====================
-// تحميل البيانات
+// عرض البيانات
 // =====================
+
 
 if(currentPower){
 
 
 
-    document.getElementById("fileNumber").value =
+    document.getElementById(
+        "documentation"
+    ).value =
 
-    currentPower.fileNumber || "";
-
-
-
-
-    document.getElementById("powerNumber").value =
-
-    currentPower.powerNumber || "";
+    currentPower.documentation || "";
 
 
 
 
-    document.getElementById("clientName").value =
+
+    document.getElementById(
+        "clientName"
+    ).value =
 
     currentPower.clientName || "";
 
 
 
 
-    document.getElementById("documentation").value =
 
-    currentPower.documentation || "";
+    document.getElementById(
+        "powerNumber"
+    ).value =
+
+    currentPower.powerNumber || "";
+
+
+
+
+
+    document.getElementById(
+        "fileNumber"
+    ).value =
+
+    currentPower.fileNumber || "";
 
 
 
@@ -82,12 +98,10 @@ if(currentPower){
 
 
 
-
-
-
 // =====================
 // حفظ التعديل
 // =====================
+
 
 function savePowerEdit(){
 
@@ -96,8 +110,10 @@ function savePowerEdit(){
     if(!currentPower){
 
 
+        alert(
+            "لم يتم العثور على التوكيل"
+        );
 
-        alert("لم يتم العثور على التوكيل");
 
         return;
 
@@ -105,103 +121,6 @@ function savePowerEdit(){
     }
 
 
-
-
-
-
-
-
-    let fileNumber =
-
-    document.getElementById("fileNumber")
-
-    .value
-
-    .trim();
-
-
-
-
-
-
-    let powerNumber =
-
-    document.getElementById("powerNumber")
-
-    .value
-
-    .trim();
-
-
-
-
-
-
-    let clientName =
-
-    document.getElementById("clientName")
-
-    .value
-
-    .trim();
-
-
-
-
-
-
-    let documentation =
-
-    document.getElementById("documentation")
-
-    .value
-
-    .trim();
-
-
-
-
-
-
-
-
-    if(clientName === ""){
-
-
-
-        alert("أدخل اسم الموكل");
-
-        return;
-
-
-    }
-
-
-
-
-
-
-
-
-    currentPower.fileNumber =
-
-    fileNumber;
-
-
-
-
-
-    currentPower.powerNumber =
-
-    powerNumber;
-
-
-
-
-
-    currentPower.clientName =
-
-    clientName;
 
 
 
@@ -209,8 +128,47 @@ function savePowerEdit(){
 
     currentPower.documentation =
 
-    documentation;
+    document.getElementById(
+        "documentation"
+    )
 
+    .value
+
+    .trim();
+
+
+
+
+
+
+
+
+    currentPower.clientName =
+
+    document.getElementById(
+        "clientName"
+    )
+
+    .value
+
+    .trim();
+
+
+
+
+
+
+
+
+    currentPower.powerNumber =
+
+    document.getElementById(
+        "powerNumber"
+    )
+
+    .value
+
+    .trim();
 
 
 
