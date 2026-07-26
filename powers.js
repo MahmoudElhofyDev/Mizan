@@ -6,6 +6,101 @@ let powers =
 JSON.parse(localStorage.getItem("powers")) || [];
 
 
+
+
+// =====================
+// تصحيح البيانات القديمة
+// =====================
+//
+// قبل التصحيح:
+// fileNumber = جهة التوثيق
+// documentation = رقم الملف
+//
+// بعد التصحيح:
+// fileNumber = رقم الملف
+// documentation = جهة التوثيق
+//
+
+powers = powers.map(item => {
+
+
+
+    if(
+
+        isNaN(Number(item.fileNumber))
+
+        &&
+
+        !isNaN(Number(item.documentation))
+
+    ){
+
+
+
+        return {
+
+
+            id:item.id,
+
+
+            fileNumber:
+            item.documentation,
+
+
+
+            powerNumber:
+            item.powerNumber || "",
+
+
+
+            clientName:
+            item.clientName || "",
+
+
+
+            documentation:
+            item.fileNumber || ""
+
+
+
+        };
+
+
+
+    }
+
+
+
+
+
+    return item;
+
+
+
+});
+
+
+
+
+
+
+
+localStorage.setItem(
+
+    "powers",
+
+    JSON.stringify(powers)
+
+);
+
+
+
+
+
+
+
+
+
 let currentPage = 1;
 
 let rowsPerPage = 50;
@@ -23,75 +118,11 @@ let showingEmpty = false;
 
 
 // =====================
-// تصحيح البيانات القديمة مرة واحدة
-// =====================
-
-function fixOldPowers(){
-
-
-    let fixed = powers.map(item=>{
-
-
-        return {
-
-            id:item.id || Date.now(),
-
-
-            fileNumber:
-            item.fileNumber || "",
-
-
-            powerNumber:
-            item.powerNumber || "",
-
-
-            clientName:
-            item.clientName || "",
-
-
-            documentation:
-            item.documentation || ""
-
-
-        };
-
-
-    });
-
-
-
-    powers = fixed;
-
-
-
-    localStorage.setItem(
-
-        "powers",
-
-        JSON.stringify(powers)
-
-    );
-
-
-}
-
-
-
-fixOldPowers();
-
-
-
-
-
-
-
-
-
-// =====================
 // رقم الملف القادم
 // =====================
 
 function getNextFileNumber(){
+
 
 
     let last = 2432;
@@ -114,22 +145,18 @@ function getNextFileNumber(){
         }
 
 
+
     });
+
+
 
 
 
     return String(last + 1);
 
 
+
 }
-
-
-
-
-
-
-
-
 
 // =====================
 // إضافة توكيل
@@ -138,45 +165,27 @@ function getNextFileNumber(){
 function addPower(){
 
 
-
     let fileNumber =
-
     document.getElementById("fileNumber")
-
     .value.trim();
-
-
 
 
 
     let powerNumber =
-
     document.getElementById("powerNumber")
-
     .value.trim();
-
-
 
 
 
     let clientName =
-
     document.getElementById("clientName")
-
     .value.trim();
-
-
 
 
 
     let documentation =
-
     document.getElementById("documentation")
-
     .value.trim();
-
-
-
 
 
 
@@ -184,9 +193,7 @@ function addPower(){
 
     if(fileNumber === ""){
 
-
         fileNumber = getNextFileNumber();
-
 
     }
 
@@ -200,7 +207,6 @@ function addPower(){
 
         alert("أدخل اسم الموكل");
 
-
         return;
 
 
@@ -213,7 +219,6 @@ function addPower(){
 
 
     let newPower = {
-
 
 
         id:Date.now(),
@@ -231,7 +236,6 @@ function addPower(){
         documentation:documentation
 
 
-
     };
 
 
@@ -240,10 +244,7 @@ function addPower(){
 
 
 
-
     powers.push(newPower);
-
-
 
 
 
@@ -261,13 +262,7 @@ function addPower(){
 
 
 
-
-    alert(
-
-        "تم إضافة التوكيل بنجاح"
-
-    );
-
+    alert("تم إضافة التوكيل بنجاح");
 
 
 
@@ -306,9 +301,7 @@ function displayPowers(){
     let table =
 
     document.getElementById(
-
         "powersTable"
-
     );
 
 
@@ -369,40 +362,44 @@ function displayPowers(){
 <tr>
 
 
+
 <td>
 
-${power.fileNumber}
+${power.fileNumber || ""}
 
 </td>
 
 
 
+
 <td>
 
-${power.powerNumber}
+${power.powerNumber || ""}
 
 </td>
 
 
 
+
 <td>
 
-${power.clientName}
+${power.clientName || ""}
 
 </td>
 
 
 
+
 <td>
 
-${power.documentation}
+${power.documentation || ""}
 
 </td>
 
 
 
-<td>
 
+<td>
 
 <button class="edit"
 
@@ -412,14 +409,13 @@ onclick="editPower(${power.id})">
 
 </button>
 
-
 </td>
 
 
 
 
-<td>
 
+<td>
 
 <button class="delete"
 
@@ -429,8 +425,8 @@ onclick="deletePower(${power.id})">
 
 </button>
 
-
 </td>
+
 
 
 
@@ -448,27 +444,17 @@ onclick="deletePower(${power.id})">
 
 
 
-
     createPagination();
 
 
 
 }
 
-
-
-
-
-
-
-
-
 // =====================
 // البحث
 // =====================
 
 function searchPowers(){
-
 
 
     let value =
@@ -480,7 +466,6 @@ function searchPowers(){
     .toLowerCase()
 
     .trim();
-
 
 
 
@@ -500,23 +485,10 @@ function searchPowers(){
         currentData = powers.filter(item=>{
 
 
-
             return (
 
 
-                String(item.fileNumber)
-
-                .includes(value)
-
-
-
-
-                ||
-
-
-
-
-                item.powerNumber
+                String(item.fileNumber || "")
 
                 .toLowerCase()
 
@@ -524,13 +496,11 @@ function searchPowers(){
 
 
 
-
                 ||
 
 
 
-
-                item.clientName
+                String(item.powerNumber || "")
 
                 .toLowerCase()
 
@@ -538,13 +508,23 @@ function searchPowers(){
 
 
 
+                ||
+
+
+
+                String(item.clientName || "")
+
+                .toLowerCase()
+
+                .includes(value)
+
+
 
                 ||
 
 
 
-
-                item.documentation
+                String(item.documentation || "")
 
                 .toLowerCase()
 
@@ -582,8 +562,9 @@ function searchPowers(){
 
 
 
-function delaySearch(){
 
+
+function delaySearch(){
 
 
     clearTimeout(searchTimer);
@@ -631,7 +612,6 @@ function deletePower(id){
 
 
 
-
         localStorage.setItem(
 
             "powers",
@@ -643,10 +623,7 @@ function deletePower(id){
 
 
 
-
-
         currentData=[];
-
 
 
         displayPowers();
@@ -709,7 +686,8 @@ function clearInputs(){
 
     document.getElementById("fileNumber")
 
-    .value=getNextFileNumber();
+    .value = getNextFileNumber();
+
 
 
 
@@ -721,9 +699,11 @@ function clearInputs(){
 
 
 
+
     document.getElementById("clientName")
 
     .value="";
+
 
 
 
@@ -752,18 +732,18 @@ function showLastFileNumber(){
 
 
 
-    let last=2432;
+    let last = 0;
 
 
 
     powers.forEach(item=>{
 
 
-        let num=Number(item.fileNumber);
+        let num = Number(item.fileNumber);
 
 
 
-        if(!isNaN(num) && num>last){
+        if(!isNaN(num) && num > last){
 
 
             last=num;
@@ -785,15 +765,8 @@ function showLastFileNumber(){
     );
 
 
+
 }
-
-
-
-
-
-
-
-
 
 // =====================
 // البيانات الناقصة
@@ -823,13 +796,18 @@ function showEmptyPowers(){
 
             return (
 
+
                 !item.fileNumber ||
+
 
                 !item.powerNumber ||
 
+
                 !item.clientName ||
 
+
                 !item.documentation
+
 
 
             );
@@ -851,7 +829,6 @@ function showEmptyPowers(){
 
 
     currentPage=1;
-
 
 
     displayPowers();
@@ -879,9 +856,7 @@ function createPagination(){
     let pagination =
 
     document.getElementById(
-
         "pagination"
-
     );
 
 
@@ -915,6 +890,7 @@ function createPagination(){
 
 
 
+
     for(let i=1;i<=pages;i++){
 
 
@@ -938,6 +914,8 @@ ${i}
 
 
 }
+
+
 
 
 
@@ -984,6 +962,10 @@ if(document.getElementById("powersTable")){
 
 
 
+
+
+
+// وضع رقم الملف القادم تلقائيًا
 
 if(document.getElementById("fileNumber")){
 
