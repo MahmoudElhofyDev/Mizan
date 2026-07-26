@@ -8,23 +8,18 @@ const API =
 
 
 // =====================
-// متغيرات
+// بيانات
 // =====================
 
 let powers = [];
+
+let currentData = [];
 
 let currentPage = 1;
 
 let rowsPerPage = 50;
 
-let currentData = [];
-
 let searchTimer;
-
-let showingEmpty = false;
-
-
-
 
 
 
@@ -38,88 +33,40 @@ let showingEmpty = false;
 async function loadPowers(){
 
 
-    try{
+try{
 
 
-        let response = await fetch(
-
-            `${API}/powers`
-
-        );
-
-
-
-        powers = await response.json();
+let res =
+await fetch(
+`${API}/powers`
+);
 
 
 
-        currentData=[];
+powers =
+await res.json();
 
 
 
-        displayPowers();
+currentData=[];
 
 
+displayPowers();
 
-    }
-
-
-    catch(error){
-
-
-        alert(
-
-            "تعذر الاتصال بالسيرفر"
-
-        );
-
-
-    }
 
 
 }
 
 
+catch(error){
 
 
+alert(
+"تعذر الاتصال بالسيرفر"
+);
 
 
-
-
-
-// =====================
-// رقم الملف القادم
-// =====================
-
-function getNextFileNumber(){
-
-
-
-    let last = 2432;
-
-
-
-    powers.forEach(item=>{
-
-
-        let num = Number(item.fileNumber);
-
-
-
-        if(!isNaN(num) && num > last){
-
-
-            last=num;
-
-
-        }
-
-
-    });
-
-
-
-    return String(last+1);
+}
 
 
 
@@ -141,158 +88,103 @@ async function addPower(){
 
 
 
-    let fileNumber =
+let fileNumber =
+document.getElementById(
+"fileNumber"
+).value.trim();
 
-    document.getElementById(
-        "fileNumber"
-    ).value.trim();
 
 
+let powerNumber =
+document.getElementById(
+"powerNumber"
+).value.trim();
 
 
 
-    let powerNumber =
+let clientName =
+document.getElementById(
+"clientName"
+).value.trim();
 
-    document.getElementById(
-        "powerNumber"
-    ).value.trim();
 
 
+let documentation =
+document.getElementById(
+"documentation"
+).value.trim();
 
 
 
-    let clientName =
 
-    document.getElementById(
-        "clientName"
-    ).value.trim();
 
 
+if(clientName===""){
 
 
+alert(
+"ادخل اسم الموكل"
+);
 
-    let documentation =
 
-    document.getElementById(
-        "documentation"
-    ).value.trim();
+return;
 
 
+}
 
 
 
 
 
-    if(fileNumber===""){
 
+await fetch(
 
-        fileNumber=getNextFileNumber();
+`${API}/powers`,
 
+{
 
-    }
+method:"POST",
 
+headers:{
 
+"Content-Type":
+"application/json"
 
+},
 
 
+body:JSON.stringify({
 
-    if(clientName===""){
+fileNumber,
 
+powerNumber,
 
-        alert(
-            "أدخل اسم الموكل"
-        );
+clientName,
 
+documentation
 
-        return;
+})
 
 
-    }
+}
 
+);
 
 
 
 
 
-    try{
+alert(
+"تم إضافة التوكيل"
+);
 
 
-        await fetch(
 
-            `${API}/powers`,
 
-            {
+clearInputs();
 
-                method:"POST",
 
-
-                headers:{
-
-
-                    "Content-Type":
-                    "application/json"
-
-
-                },
-
-
-                body:JSON.stringify({
-
-
-                    fileNumber:fileNumber,
-
-
-                    powerNumber:powerNumber,
-
-
-                    clientName:clientName,
-
-
-                    documentation:documentation
-
-
-
-                })
-
-
-            }
-
-
-        );
-
-
-
-
-
-
-
-        alert(
-            "تم إضافة التوكيل"
-        );
-
-
-
-
-        clearInputs();
-
-
-
-        loadPowers();
-
-
-
-    }
-
-
-    catch(error){
-
-
-        alert(
-            "تعذر الاتصال بالسيرفر"
-        );
-
-
-    }
+loadPowers();
 
 
 
@@ -314,76 +206,55 @@ function displayPowers(){
 
 
 
-    let table =
-
-    document.getElementById(
-        "powersTable"
-    );
-
-
-
-    if(!table)
-
-    return;
+let table =
+document.getElementById(
+"powersTable"
+);
 
 
 
-
-
-    table.innerHTML="";
-
-
+if(!table)
+return;
 
 
 
+table.innerHTML="";
 
-    let data =
 
-    currentData.length
 
-    ?
-
-    currentData
-
-    :
-
-    powers;
+let data =
+currentData.length
+?
+currentData
+:
+powers;
 
 
 
 
 
-
-
-    let start =
-
-    (currentPage-1)
-
-    *
-
-    rowsPerPage;
+let start =
+(currentPage-1)
+*
+rowsPerPage;
 
 
 
 
 
+data.slice(
 
+start,
 
-    data.slice(
+start+rowsPerPage
 
-        start,
+)
 
-        start+rowsPerPage
-
-    )
-
-    .forEach(power=>{
-
+.forEach(power=>{
 
 
 
-
-        table.innerHTML += `
+table.innerHTML += `
 
 
 <tr>
@@ -391,25 +262,28 @@ function displayPowers(){
 
 <td>
 
-${power.fileNumber || ""}
+${power.file_number || ""}
 
 </td>
+
 
 
 
 <td>
 
-${power.powerNumber || ""}
+${power.power_number || ""}
 
 </td>
+
 
 
 
 <td>
 
-${power.clientName || ""}
+${power.client_name || ""}
 
 </td>
+
 
 
 
@@ -421,12 +295,10 @@ ${power.documentation || ""}
 
 
 
+
 <td>
 
-
-<button class="edit"
-
-onclick="editPower(${power.id})">
+<button onclick="editPower(${power.id})">
 
 تعديل
 
@@ -437,12 +309,10 @@ onclick="editPower(${power.id})">
 
 
 
+
 <td>
 
-
-<button class="delete"
-
-onclick="deletePower(${power.id})">
+<button onclick="deletePower(${power.id})">
 
 حذف
 
@@ -456,17 +326,12 @@ onclick="deletePower(${power.id})">
 </tr>
 
 
+
 `;
 
 
 
-    });
-
-
-
-
-
-    createPagination();
+});
 
 
 
@@ -481,102 +346,105 @@ onclick="deletePower(${power.id})">
 
 
 // =====================
-// البحث
+// بحث
 // =====================
 
 function searchPowers(){
 
 
 
-    let value =
+let value =
 
-    document.getElementById(
-        "search"
-    )
+document.getElementById(
+"search"
+)
 
-    .value
+.value
 
-    .toLowerCase()
+.toLowerCase()
 
-    .trim();
-
-
+.trim();
 
 
 
 
 
-    if(value===""){
+
+if(value===""){
 
 
-        currentData=[];
+currentData=[];
 
 
-    }
+}
 
-    else{
-
-
-        currentData = powers.filter(item=>{
+else{
 
 
-            return (
+currentData =
+powers.filter(item=>{
 
 
-                String(item.fileNumber)
-
-                .includes(value)
+return (
 
 
 
-                ||
+String(item.file_number)
 
-                String(item.powerNumber)
-
-                .toLowerCase()
-
-                .includes(value)
+.includes(value)
 
 
 
-                ||
-
-                String(item.clientName)
-
-                .toLowerCase()
-
-                .includes(value)
+||
 
 
 
-                ||
+String(item.power_number)
 
-                String(item.documentation)
-
-                .toLowerCase()
-
-                .includes(value)
+.includes(value)
 
 
 
-            );
+||
 
 
 
-        });
+String(item.client_name)
+
+.toLowerCase()
+
+.includes(value)
 
 
 
-    }
+||
+
+
+
+String(item.documentation)
+
+.toLowerCase()
+
+.includes(value)
+
+
+
+);
+
+
+});
+
+
+}
 
 
 
 
 
-    currentPage=1;
+currentPage=1;
 
 
-    displayPowers();
+displayPowers();
 
 
 
@@ -591,17 +459,19 @@ function searchPowers(){
 function delaySearch(){
 
 
-    clearTimeout(searchTimer);
+clearTimeout(searchTimer);
 
 
 
-    searchTimer=setTimeout(()=>{
+searchTimer =
+
+setTimeout(()=>{
 
 
-        searchPowers();
+searchPowers();
 
 
-    },500);
+},500);
 
 
 
@@ -623,34 +493,33 @@ async function deletePower(id){
 
 
 
-    if(!confirm(
-        "هل تريد حذف التوكيل؟"
-    ))
+if(!confirm(
+"هل تريد حذف التوكيل؟"
+))
 
-    return;
-
-
-
-
-
-
-    await fetch(
-
-        `${API}/powers/${id}`,
-
-        {
-
-            method:"DELETE"
-
-        }
-
-    );
+return;
 
 
 
 
 
-    loadPowers();
+
+await fetch(
+
+`${API}/powers/${id}`,
+
+{
+
+method:"DELETE"
+
+}
+
+);
+
+
+
+
+loadPowers();
 
 
 
@@ -672,18 +541,19 @@ function editPower(id){
 
 
 
-    localStorage.setItem(
+localStorage.setItem(
 
-        "editPowerId",
+"editPowerId",
 
-        id
+id
 
-    );
+);
 
 
 
-    window.location.href =
-    "powers-edit.html";
+window.location.href =
+"powers-edit.html";
+
 
 
 }
@@ -697,86 +567,34 @@ function editPower(id){
 
 
 // =====================
-// تنظيف الخانات
+// تنظيف
 // =====================
 
 function clearInputs(){
 
 
 
-    document.getElementById(
-        "fileNumber"
-    ).value=getNextFileNumber();
+document.getElementById(
+"fileNumber"
+).value="";
 
 
 
-
-    document.getElementById(
-        "powerNumber"
-    ).value="";
-
+document.getElementById(
+"powerNumber"
+).value="";
 
 
 
-    document.getElementById(
-        "clientName"
-    ).value="";
+document.getElementById(
+"clientName"
+).value="";
 
 
 
-
-    document.getElementById(
-        "documentation"
-    ).value="";
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// آخر رقم ملف
-// =====================
-
-function showLastFileNumber(){
-
-
-
-    let last=2432;
-
-
-
-    powers.forEach(item=>{
-
-
-        let num=Number(item.fileNumber);
-
-
-
-        if(!isNaN(num)&&num>last){
-
-
-            last=num;
-
-
-        }
-
-
-    });
-
-
-
-
-    alert(
-        "آخر رقم ملف هو: "+last
-    );
+document.getElementById(
+"documentation"
+).value="";
 
 
 
@@ -791,33 +609,243 @@ function showLastFileNumber(){
 
 
 // =====================
-// الصفحات
+// استيراد Excel
 // =====================
 
-function createPagination(){
+async function importPowersExcel(){
 
 
 
-    let pagination =
+let file =
 
-    document.getElementById(
-        "pagination"
-    );
+document.getElementById(
+"excelFile"
+)
 
-
-
-    if(!pagination)
-
-    return;
+.files[0];
 
 
 
 
-    pagination.innerHTML="";
+
+
+if(!file){
+
+
+alert(
+"اختر ملف Excel"
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+let reader =
+new FileReader();
+
+
+
+
+
+
+reader.onload = async function(e){
+
+
+
+let data =
+
+new Uint8Array(
+
+e.target.result
+
+);
+
+
+
+
+
+let workbook =
+
+XLSX.read(
+
+data,
+
+{
+
+type:"array"
+
+}
+
+);
+
+
+
+
+
+let sheet =
+
+workbook.Sheets[
+
+workbook.SheetNames[0]
+
+];
+
+
+
+
+
+let rows =
+
+XLSX.utils.sheet_to_json(
+
+sheet,
+
+{
+
+header:1
+
+}
+
+);
+
+
+
+
+
+
+
+let sendData=[];
+
+
+
+
+
+rows.forEach(row=>{
+
+
+
+if(row[0] && row[1]){
+
+
+sendData.push({
+
+
+fileNumber:String(row[0]),
+
+
+powerNumber:String(row[1]),
+
+
+clientName:String(row[2] || ""),
+
+
+documentation:String(row[3] || "")
+
+
+
+});
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+
+let res =
+
+await fetch(
+
+`${API}/powers/import`,
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+
+body:JSON.stringify({
+
+data:sendData
+
+})
+
+
+}
+
+);
+
+
+
+
+
+
+
+let result =
+
+await res.json();
+
+
+
+
+
+alert(
+
+"تم استيراد "
+
++
+
+result.count
+
++
+
+" توكيل"
+
+);
+
+
+
+
+
+
+loadPowers();
+
+
+
+};
+
+
+
+
+
+
+
+reader.readAsArrayBuffer(file);
 
 
 
 }
+
+
+
 
 
 
@@ -828,14 +856,17 @@ function createPagination(){
 // تشغيل
 // =====================
 
+
 if(
 
-document.getElementById("powersTable")
+document.getElementById(
+"powersTable"
+)
 
 ){
 
 
-    loadPowers();
+loadPowers();
 
 
 }

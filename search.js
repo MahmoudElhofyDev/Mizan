@@ -1,6 +1,6 @@
 let cases =
 JSON.parse(
-    localStorage.getItem("cases")
+    fetch("https://mizan-production-32bb.up.railway.app/cases")
 ) || [];
 
 

@@ -7,11 +7,15 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ميزان | ملفات حفظ القضايا</title>
+
+<title>ميزان | القضايا</title>
+
 
 <link rel="stylesheet" href="cases.css">
 
+
 </head>
+
 
 
 <body>
@@ -19,10 +23,12 @@
 
 <header class="top">
 
-<h1>📁 ملفات حفظ القضايا</h1>
+<h1>
+⚖️ ملفات القضايا
+</h1>
 
 <p>
-إدارة وحفظ بيانات القضايا
+إدارة بيانات القضايا
 </p>
 
 </header>
@@ -31,55 +37,72 @@
 
 
 
-
-
-<section class="box">
-
-
-<h2>
-إضافة ملف جديد
-</h2>
+<div class="container">
 
 
 
-<div class="form">
+<div class="actions">
+
+
+
+<input 
+type="text"
+id="search"
+placeholder="بحث..."
+oninput="delaySearch()"
+>
 
 
 
 <input
-
+type="text"
 id="fileNumber"
-
 placeholder="رقم الملف"
-
-readonly>
+>
 
 
 
 <input
-
+type="text"
 id="clientName"
-
-placeholder="اسم الموكل">
-
-
+placeholder="اسم الموكل"
+>
 
 
 
-<button onclick="showLastFileNumber()">
+<button onclick="addCase()">
 
-آخر رقم ملف
+إضافة قضية
 
 </button>
 
 
 
 
+</div>
 
 
-<button onclick="addCase()">
 
-إضافة الملف
+
+
+
+<!-- استيراد Excel -->
+
+
+<div class="import-box">
+
+
+<input
+type="file"
+id="excelFile"
+accept=".xlsx,.xls"
+>
+
+
+
+<button onclick="importCasesExcel()">
+
+📥 استيراد Excel
 
 </button>
 
@@ -88,51 +111,8 @@ placeholder="اسم الموكل">
 </div>
 
 
-</section>
 
 
-
-
-
-
-
-
-
-<section class="box">
-
-
-<h2>
-البحث
-</h2>
-
-
-
-<input
-
-id="search"
-
-oninput="delaySearch()"
-
-placeholder="ابحث برقم الملف أو اسم الموكل">
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<section class="box">
-
-
-<h2>
-قائمة ملفات الحفظ
-</h2>
 
 
 
@@ -140,7 +120,6 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 <thead>
-
 
 <tr>
 
@@ -184,11 +163,21 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
+
 </table>
 
 
 
-</section>
+
+
+<div id="pagination">
+
+</div>
+
+
+
+
+</div>
 
 
 
@@ -197,38 +186,10 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
-
-<div id="pagination"></div>
-
-
-
-
-
-
-
-
-
-<a href="dashboard.html">
-
-
-<button class="back">
-
-العودة للرئيسية
-
-</button>
-
-
-</a>
-
-
-
-
-
-
-
-
+<script src="xlsx.full.min.js"></script>
 
 <script src="cases.js"></script>
+
 
 
 </body>

@@ -7,14 +7,18 @@ const db = require("./database");
 
 
 const app = express();
-console.log("SERVER VERSION POSTGRES 2026");
+
 
 app.use(cors());
 
-app.use(express.json());
+app.use(express.json({
+    limit:"20mb"
+}));
+
 
 
 const SECRET = "MIZAN_SECRET_KEY";
+
 
 
 
@@ -32,6 +36,11 @@ app.get("/",(req,res)=>{
 
 
 
+
+
+
+
+
 // =====================
 // تسجيل مستخدم
 // =====================
@@ -39,59 +48,73 @@ app.get("/",(req,res)=>{
 app.post("/register", async(req,res)=>{
 
 
-try{
-
-
-const {
-username,
-password
-}=req.body;
+    const {
+        username,
+        password
+    } = req.body;
 
 
 
-const hash =
-await bcrypt.hash(password,10);
+    try{
+
+
+        const hash =
+        await bcrypt.hash(
+            password,
+            10
+        );
 
 
 
-await db.query(
+        await db.query(
 
-`
-INSERT INTO users(username,password)
+        `
+        INSERT INTO users
+        (
+            username,
+            password
+        )
 
-VALUES($1,$2)
-`,
+        VALUES($1,$2)
 
-[
-username,
-hash
-]
+        `,
 
-);
+        [
 
+            username,
 
+            hash
 
-res.json({
+        ]
 
-message:"Account created"
-
-});
-
-
-}
-
-catch(error){
+        );
 
 
-res.status(400).json({
 
-message:"User already exists"
+        res.json({
 
-});
+            message:"Account created"
+
+        });
 
 
-}
 
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(400).json({
+
+            message:"User already exists"
+
+        });
+
+
+    }
 
 
 });
@@ -108,127 +131,154 @@ message:"User already exists"
 // تسجيل الدخول
 // =====================
 
-app.post("/login",async(req,res)=>{
+app.post("/login", async(req,res)=>{
 
 
-try{
+    const {
 
+        username,
 
-const {
-username,
-password
-}=req.body;
+        password
 
+    } = req.body;
 
 
-const result =
-await db.query(
 
-"SELECT * FROM users WHERE username=$1",
 
-[
-username
-]
+    try{
 
-);
 
+        let result =
 
+        await db.query(
 
+        `
+        SELECT *
+        FROM users
+        WHERE username=$1
+        `,
 
-if(result.rows.length===0){
+        [
 
+            username
 
-return res.status(401).json({
+        ]
 
-message:"Wrong username or password"
+        );
 
-});
 
 
-}
 
 
+        if(result.rows.length===0){
 
-const user =
-result.rows[0];
 
+            return res.status(401).json({
 
+                message:"Wrong username or password"
 
+            });
 
-const match =
-await bcrypt.compare(
 
-password,
+        }
 
-user.password
 
-);
 
 
 
+        let user =
+        result.rows[0];
 
-if(!match){
 
 
-return res.status(401).json({
 
-message:"Wrong username or password"
 
-});
+        let match =
 
+        await bcrypt.compare(
 
-}
+            password,
 
+            user.password
 
+        );
 
-const token =
-jwt.sign(
 
-{
 
-id:user.id,
 
-username:user.username
 
-},
+        if(!match){
 
-SECRET,
 
-{
+            return res.status(401).json({
 
-expiresIn:"1d"
+                message:"Wrong username or password"
 
-}
+            });
 
-);
 
+        }
 
 
-res.json({
 
-message:"Login success",
 
-token,
 
-username:user.username
+        let token =
 
-});
+        jwt.sign(
 
+        {
 
+            id:user.id,
 
-}
+            username:user.username
 
-catch(error){
+        },
 
+        SECRET,
 
-res.status(500).json({
+        {
 
-message:"Server error"
+            expiresIn:"1d"
 
-});
+        }
 
+        );
 
-}
+
+
+
+
+        res.json({
+
+            message:"Login success",
+
+            token,
+
+            username:user.username
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Server error"
+
+        });
+
+
+    }
 
 
 
@@ -246,283 +296,216 @@ message:"Server error"
 // تغيير كلمة المرور
 // =====================
 
-app.put("/change-password",async(req,res)=>{
+app.put("/change-password", async(req,res)=>{
 
 
-try{
+    const {
 
+        username,
 
-const {
+        oldPassword,
 
-username,
+        newPassword
 
-oldPassword,
-
-newPassword
-
-}=req.body;
+    } = req.body;
 
 
 
-const result =
-await db.query(
 
-"SELECT * FROM users WHERE username=$1",
-
-[
-username
-]
-
-);
+    try{
 
 
+        let result =
 
-if(result.rows.length===0){
+        await db.query(
+
+        `
+        SELECT *
+        FROM users
+        WHERE username=$1
+        `,
+
+        [
+
+            username
+
+        ]
+
+        );
 
 
-return res.status(404).json({
 
-message:"المستخدم غير موجود"
+
+
+        if(result.rows.length===0){
+
+
+            return res.status(404).json({
+
+                message:"المستخدم غير موجود"
+
+            });
+
+
+        }
+
+
+
+
+
+        let user =
+        result.rows[0];
+
+
+
+
+
+        let match =
+
+        await bcrypt.compare(
+
+            oldPassword,
+
+            user.password
+
+        );
+
+
+
+
+
+        if(!match){
+
+
+            return res.status(401).json({
+
+                message:"كلمة المرور القديمة غير صحيحة"
+
+            });
+
+
+        }
+
+
+
+
+
+        let hash =
+
+        await bcrypt.hash(
+
+            newPassword,
+
+            10
+
+        );
+
+
+
+
+
+        await db.query(
+
+        `
+        UPDATE users
+
+        SET password=$1
+
+        WHERE username=$2
+
+        `,
+
+        [
+
+            hash,
+
+            username
+
+        ]
+
+        );
+
+
+
+
+
+        res.json({
+
+            message:"تم تغيير كلمة المرور بنجاح"
+
+        });
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"حدث خطأ"
+
+        });
+
+
+    }
+
+
 
 });
-
-
-}
-
-
-
-const user =
-result.rows[0];
-
-
-
-
-const match =
-await bcrypt.compare(
-
-oldPassword,
-
-user.password
-
-);
-
-
-
-if(!match){
-
-
-return res.status(401).json({
-
-message:"كلمة المرور القديمة غير صحيحة"
-
-});
-
-
-}
-
-
-
-
-const hash =
-await bcrypt.hash(
-
-newPassword,
-
-10
-
-);
-
-
-
-await db.query(
-
-`
-
-UPDATE users
-
-SET password=$1
-
-WHERE username=$2
-
-`,
-
-[
-hash,
-username
-]
-
-);
-
-
-
-res.json({
-
-message:"تم تغيير كلمة المرور بنجاح"
-
-});
-
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"حدث خطأ"
-
-});
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
 
 // =====================
 // القضايا
 // =====================
 
 
-app.get("/cases",async(req,res)=>{
+// جلب القضايا
 
+app.get("/cases", async(req,res)=>{
 
-try{
 
+    try{
 
-const result =
-await db.query(
 
-"SELECT * FROM cases ORDER BY id DESC"
+        let result =
 
-);
+        await db.query(
 
+        `
+        SELECT *
+        FROM cases
+        ORDER BY id DESC
 
+        `
 
-res.json(result.rows);
+        );
 
 
+        res.json(result.rows);
 
-}
 
-catch(error){
 
+    }
 
-res.status(500).json({
+    catch(error){
 
-message:"Database error"
 
-});
+        console.log(error);
 
 
-}
+        res.status(500).json({
 
+            message:"Error loading cases"
 
+        });
 
-});
 
-
-
-
-
-
-
-
-
-app.post("/cases",async(req,res)=>{
-
-
-try{
-
-
-const data=req.body;
-
-
-
-const result =
-await db.query(
-
-`
-
-INSERT INTO cases
-
-(
-
-file_number,
-
-client_name,
-
-opponent,
-
-court,
-
-type,
-
-birth_date,
-
-documentation
-
-)
-
-VALUES($1,$2,$3,$4,$5,$6,$7)
-
-RETURNING id
-
-`,
-
-[
-
-data.fileNumber,
-
-data.clientName,
-
-data.opponent,
-
-data.court,
-
-data.type,
-
-data.birthDate,
-
-data.documentation
-
-]
-
-);
-
-
-
-res.json({
-
-id:result.rows[0].id
-
-});
-
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"Insert error"
-
-});
-
-
-}
+    }
 
 
 
@@ -535,83 +518,108 @@ message:"Insert error"
 
 
 
+// إضافة قضية
 
-app.put("/cases/:id",async(req,res)=>{
-
-
-try{
+app.post("/cases", async(req,res)=>{
 
 
-await db.query(
-
-`
-
-UPDATE cases
-
-SET
-
-file_number=$1,
-
-client_name=$2,
-
-opponent=$3,
-
-court=$4,
-
-type=$5,
-
-birth_date=$6,
-
-documentation=$7
-
-WHERE id=$8
-
-`,
-
-[
-
-req.body.fileNumber,
-
-req.body.clientName,
-
-req.body.opponent,
-
-req.body.court,
-
-req.body.type,
-
-req.body.birthDate,
-
-req.body.documentation,
-
-req.params.id
-
-]
-
-);
+    const data=req.body;
 
 
 
-res.json({
-
-message:"Updated"
-
-});
+    try{
 
 
-}
+        let result =
 
-catch(error){
+        await db.query(
+
+        `
+        INSERT INTO cases
+
+        (
+
+            file_number,
+
+            client_name,
+
+            opponent,
+
+            court,
+
+            type,
+
+            birth_date,
+
+            documentation
+
+        )
 
 
-res.status(500).json({
+        VALUES
 
-message:"Update error"
-
-});
+        ($1,$2,$3,$4,$5,$6,$7)
 
 
-}
+        RETURNING id
+
+        `,
+
+
+        [
+
+
+            data.fileNumber || "",
+
+            data.clientName || "",
+
+            data.opponent || "",
+
+            data.court || "",
+
+            data.type || "",
+
+            data.birthDate || "",
+
+            data.documentation || ""
+
+        ]
+
+
+        );
+
+
+
+
+
+        res.json({
+
+            id:
+            result.rows[0].id
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Insert failed"
+
+        });
+
+
+
+    }
 
 
 
@@ -625,28 +633,169 @@ message:"Update error"
 
 
 
-app.delete("/cases/:id",async(req,res)=>{
+// تعديل قضية
+
+app.put("/cases/:id", async(req,res)=>{
 
 
-await db.query(
-
-"DELETE FROM cases WHERE id=$1",
-
-[
-req.params.id
-]
-
-);
+    const data=req.body;
 
 
+    try{
 
-res.json({
 
-message:"Deleted"
+        await db.query(
+
+        `
+
+        UPDATE cases
+
+        SET
+
+        file_number=$1,
+
+        client_name=$2,
+
+        opponent=$3,
+
+        court=$4,
+
+        type=$5,
+
+        birth_date=$6,
+
+        documentation=$7
+
+
+        WHERE id=$8
+
+
+        `,
+
+
+        [
+
+
+            data.fileNumber || "",
+
+            data.clientName || "",
+
+            data.opponent || "",
+
+            data.court || "",
+
+            data.type || "",
+
+            data.birthDate || "",
+
+            data.documentation || "",
+
+            req.params.id
+
+
+        ]
+
+        );
+
+
+
+
+        res.json({
+
+            message:"Updated"
+
+        });
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Update failed"
+
+        });
+
+
+
+    }
+
+
 
 });
 
 
+
+
+
+
+
+
+
+// حذف قضية
+
+app.delete("/cases/:id", async(req,res)=>{
+
+
+    try{
+
+
+        await db.query(
+
+        `
+
+        DELETE FROM cases
+
+        WHERE id=$1
+
+        `,
+
+        [
+
+            req.params.id
+
+        ]
+
+        );
+
+
+
+
+        res.json({
+
+            message:"Deleted"
+
+        });
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Delete failed"
+
+        });
+
+
+    }
+
+
+
 });
 
 
@@ -656,136 +805,173 @@ message:"Deleted"
 
 
 
+
+// =====================
+// استيراد القضايا Excel
+// =====================
+
+
+app.post("/cases/import", async(req,res)=>{
+
+
+    try{
+
+
+        const rows = req.body.data;
+
+
+
+        for(let item of rows){
+
+
+
+            await db.query(
+
+            `
+
+            INSERT INTO cases
+
+            (
+
+            file_number,
+
+            client_name,
+
+            opponent,
+
+            court,
+
+            type,
+
+            birth_date,
+
+            documentation
+
+            )
+
+
+            VALUES
+
+            ($1,$2,$3,$4,$5,$6,$7)
+
+
+            `,
+
+
+            [
+
+
+                item.fileNumber || "",
+
+                item.clientName || "",
+
+                item.opponent || "",
+
+                item.court || "",
+
+                item.type || "",
+
+                item.birthDate || "",
+
+                item.documentation || ""
+
+
+            ]
+
+            );
+
+
+
+        }
+
+
+
+
+
+        res.json({
+
+            message:"Cases imported successfully",
+
+            count:rows.length
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Import failed"
+
+        });
+
+
+    }
+
+
+
+});
 
 // =====================
 // التوكيلات
 // =====================
 
 
-app.get("/powers",async(req,res)=>{
+// جلب التوكيلات
 
+app.get("/powers", async(req,res)=>{
 
-try{
 
+    try{
 
-const result =
-await db.query(
 
-"SELECT * FROM powers ORDER BY id DESC"
+        let result =
 
-);
+        await db.query(
 
+        `
 
+        SELECT *
 
-res.json(result.rows);
+        FROM powers
 
+        ORDER BY id DESC
 
+        `
 
-}
+        );
 
-catch(error){
 
 
-res.status(500).json({
+        res.json(result.rows);
 
-message:"Database error"
 
-});
 
+    }
 
-}
+    catch(error){
 
 
+        console.log(error);
 
-});
 
+        res.status(500).json({
 
+            message:"Error loading powers"
 
+        });
 
 
-
-
-
-
-app.post("/powers",async(req,res)=>{
-
-
-try{
-
-
-const data=req.body;
-
-
-
-const result =
-await db.query(
-
-`
-
-INSERT INTO powers
-
-(
-
-file_number,
-
-power_number,
-
-client_name,
-
-type,
-
-birth_date,
-
-documentation
-
-)
-
-VALUES($1,$2,$3,$4,$5,$6)
-
-RETURNING id
-
-`,
-
-[
-
-data.fileNumber,
-
-data.powerNumber,
-
-data.clientName,
-
-data.type,
-
-data.birthDate,
-
-data.documentation
-
-]
-
-);
-
-
-
-res.json({
-
-id:result.rows[0].id
-
-});
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"Insert error"
-
-});
-
-
-}
+    }
 
 
 
@@ -799,62 +985,215 @@ message:"Insert error"
 
 
 
-app.put("/powers/:id",async(req,res)=>{
+// إضافة توكيل
+
+app.post("/powers", async(req,res)=>{
 
 
-await db.query(
-
-`
-
-UPDATE powers
-
-SET
-
-file_number=$1,
-
-power_number=$2,
-
-client_name=$3,
-
-type=$4,
-
-birth_date=$5,
-
-documentation=$6
-
-WHERE id=$7
-
-`,
-
-[
-
-req.body.fileNumber,
-
-req.body.powerNumber,
-
-req.body.clientName,
-
-req.body.type,
-
-req.body.birthDate,
-
-req.body.documentation,
-
-req.params.id
-
-]
-
-);
+    const data=req.body;
 
 
 
-res.json({
+    try{
 
-message:"Updated"
+
+        let result =
+
+        await db.query(
+
+        `
+
+        INSERT INTO powers
+
+        (
+
+        file_number,
+
+        power_number,
+
+        client_name,
+
+        type,
+
+        birth_date,
+
+        documentation
+
+        )
+
+
+        VALUES
+
+        ($1,$2,$3,$4,$5,$6)
+
+
+        RETURNING id
+
+
+        `,
+
+
+        [
+
+
+            data.fileNumber || "",
+
+            data.powerNumber || "",
+
+            data.clientName || "",
+
+            data.type || "",
+
+            data.birthDate || "",
+
+            data.documentation || ""
+
+
+        ]
+
+        );
+
+
+
+
+
+        res.json({
+
+            id:
+            result.rows[0].id
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Insert failed"
+
+        });
+
+
+
+    }
+
+
 
 });
 
 
+
+
+
+
+
+
+
+
+
+// تعديل توكيل
+
+app.put("/powers/:id", async(req,res)=>{
+
+
+    const data=req.body;
+
+
+
+    try{
+
+
+        await db.query(
+
+        `
+
+        UPDATE powers
+
+        SET
+
+        file_number=$1,
+
+        power_number=$2,
+
+        client_name=$3,
+
+        type=$4,
+
+        birth_date=$5,
+
+        documentation=$6
+
+
+        WHERE id=$7
+
+
+        `,
+
+
+        [
+
+
+            data.fileNumber || "",
+
+            data.powerNumber || "",
+
+            data.clientName || "",
+
+            data.type || "",
+
+            data.birthDate || "",
+
+            data.documentation || "",
+
+            req.params.id
+
+
+        ]
+
+        );
+
+
+
+
+
+        res.json({
+
+            message:"Updated"
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Update failed"
+
+        });
+
+
+    }
+
+
+
 });
 
 
@@ -865,29 +1204,190 @@ message:"Updated"
 
 
 
-app.delete("/powers/:id",async(req,res)=>{
 
 
-await db.query(
+// حذف توكيل
 
-"DELETE FROM powers WHERE id=$1",
-
-[
-req.params.id
-]
-
-);
+app.delete("/powers/:id", async(req,res)=>{
 
 
+    try{
 
-res.json({
 
-message:"Deleted"
+        await db.query(
+
+        `
+
+        DELETE FROM powers
+
+        WHERE id=$1
+
+        `,
+
+
+        [
+
+            req.params.id
+
+        ]
+
+        );
+
+
+
+
+
+        res.json({
+
+            message:"Deleted"
+
+        });
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Delete failed"
+
+        });
+
+
+
+    }
+
+
 
 });
 
 
+
+
+
+
+
+
+
+// =====================
+// استيراد التوكيلات Excel
+// =====================
+
+
+app.post("/powers/import", async(req,res)=>{
+
+
+    try{
+
+
+        const rows=req.body.data;
+
+
+
+        for(let item of rows){
+
+
+
+            await db.query(
+
+            `
+
+            INSERT INTO powers
+
+            (
+
+            file_number,
+
+            power_number,
+
+            client_name,
+
+            type,
+
+            birth_date,
+
+            documentation
+
+            )
+
+
+            VALUES
+
+            ($1,$2,$3,$4,$5,$6)
+
+
+            `,
+
+
+            [
+
+
+                item.fileNumber || "",
+
+                item.powerNumber || "",
+
+                item.clientName || "",
+
+                item.type || "",
+
+                item.birthDate || "",
+
+                item.documentation || ""
+
+
+            ]
+
+            );
+
+
+
+        }
+
+
+
+
+
+        res.json({
+
+            message:"Powers imported successfully",
+
+            count:rows.length
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            message:"Import failed"
+
+        });
+
+
+    }
+
+
+
 });
+
+
 
 
 
@@ -917,12 +1417,8 @@ PORT,
 
 
 console.log(
-
 `Mizan Server Running on port ${PORT}`
-
 );
 
 
-}
-
-);
+});
