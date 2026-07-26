@@ -13,19 +13,13 @@ const API =
 
 let powers = [];
 
+let currentData = [];
+
 let currentPage = 1;
 
 let rowsPerPage = 50;
 
-let currentData = [];
-
 let searchTimer;
-
-let showingEmpty = false;
-
-
-
-
 
 
 
@@ -42,19 +36,16 @@ async function loadPowers(){
 
 
         let response = await fetch(
-
             `${API}/powers`
-
         );
 
 
+        powers =
+        await response.json();
 
-        powers = await response.json();
 
 
-
-        currentData=[];
-
+        currentData = [];
 
 
         displayPowers();
@@ -68,9 +59,7 @@ async function loadPowers(){
 
 
         alert(
-
             "تعذر الاتصال بالسيرفر"
-
         );
 
 
@@ -86,13 +75,11 @@ async function loadPowers(){
 
 
 
-
 // =====================
 // رقم الملف القادم
 // =====================
 
 function getNextFileNumber(){
-
 
 
     let last = 2432;
@@ -102,14 +89,15 @@ function getNextFileNumber(){
     powers.forEach(item=>{
 
 
-        let num = Number(item.fileNumber);
+        let num =
+        Number(item.fileNumber);
 
 
 
         if(!isNaN(num) && num > last){
 
 
-            last=num;
+            last = num;
 
 
         }
@@ -119,8 +107,7 @@ function getNextFileNumber(){
 
 
 
-    return String(last+1);
-
+    return String(last + 1);
 
 
 }
@@ -146,7 +133,6 @@ async function addPower(){
     document.getElementById(
         "fileNumber"
     ).value.trim();
-
 
 
 
@@ -186,7 +172,8 @@ async function addPower(){
     if(fileNumber===""){
 
 
-        fileNumber=getNextFileNumber();
+        fileNumber =
+        getNextFileNumber();
 
 
     }
@@ -214,85 +201,66 @@ async function addPower(){
 
 
 
-    try{
+
+    await fetch(
+
+        `${API}/powers`,
+
+        {
 
 
-        await fetch(
-
-            `${API}/powers`,
-
-            {
-
-                method:"POST",
-
-
-                headers:{
-
-
-                    "Content-Type":
-                    "application/json"
-
-
-                },
-
-
-                body:JSON.stringify({
-
-
-                    fileNumber:fileNumber,
-
-
-                    powerNumber:powerNumber,
-
-
-                    clientName:clientName,
-
-
-                    documentation:documentation
+            method:"POST",
 
 
 
-                })
+            headers:{
 
 
-            }
+                "Content-Type":
+                "application/json"
 
 
-        );
+            },
 
+
+
+            body:JSON.stringify({
+
+
+                fileNumber,
+
+                powerNumber,
+
+                clientName,
+
+                documentation
+
+
+            })
+
+
+
+        }
+
+
+    );
 
 
 
 
 
-
-        alert(
-            "تم إضافة التوكيل"
-        );
-
+    alert(
+        "تم إضافة التوكيل"
+    );
 
 
 
-        clearInputs();
 
 
-
-        loadPowers();
-
+    clearInputs();
 
 
-    }
-
-
-    catch(error){
-
-
-        alert(
-            "تعذر الاتصال بالسيرفر"
-        );
-
-
-    }
+    loadPowers();
 
 
 
@@ -329,9 +297,7 @@ function displayPowers(){
 
 
 
-
     table.innerHTML="";
-
 
 
 
@@ -348,7 +314,6 @@ function displayPowers(){
     :
 
     powers;
-
 
 
 
@@ -373,7 +338,7 @@ function displayPowers(){
 
         start,
 
-        start+rowsPerPage
+        start + rowsPerPage
 
     )
 
@@ -389,11 +354,13 @@ function displayPowers(){
 <tr>
 
 
+
 <td>
 
 ${power.fileNumber || ""}
 
 </td>
+
 
 
 
@@ -405,6 +372,7 @@ ${power.powerNumber || ""}
 
 
 
+
 <td>
 
 ${power.clientName || ""}
@@ -413,11 +381,14 @@ ${power.clientName || ""}
 
 
 
+
 <td>
 
 ${power.documentation || ""}
 
 </td>
+
+
 
 
 
@@ -437,6 +408,9 @@ onclick="editPower(${power.id})">
 
 
 
+
+
+
 <td>
 
 
@@ -453,6 +427,7 @@ onclick="deletePower(${power.id})">
 
 
 
+
 </tr>
 
 
@@ -461,12 +436,6 @@ onclick="deletePower(${power.id})">
 
 
     });
-
-
-
-
-
-    createPagination();
 
 
 
@@ -505,7 +474,6 @@ function searchPowers(){
 
 
 
-
     if(value===""){
 
 
@@ -517,50 +485,51 @@ function searchPowers(){
     else{
 
 
-        currentData = powers.filter(item=>{
+
+        currentData =
+
+        powers.filter(item=>{
 
 
             return (
 
 
                 String(item.fileNumber)
-
                 .includes(value)
 
 
 
                 ||
+
+
 
                 String(item.powerNumber)
-
                 .toLowerCase()
-
                 .includes(value)
 
 
 
                 ||
+
+
 
                 String(item.clientName)
-
                 .toLowerCase()
-
                 .includes(value)
 
 
 
                 ||
 
+
+
                 String(item.documentation)
-
                 .toLowerCase()
-
                 .includes(value)
 
 
 
             );
-
 
 
         });
@@ -573,7 +542,7 @@ function searchPowers(){
 
 
 
-    currentPage=1;
+    currentPage = 1;
 
 
     displayPowers();
@@ -587,7 +556,6 @@ function searchPowers(){
 
 
 
-
 function delaySearch(){
 
 
@@ -595,62 +563,16 @@ function delaySearch(){
 
 
 
-    searchTimer=setTimeout(()=>{
+    searchTimer =
+
+    setTimeout(()=>{
 
 
         searchPowers();
 
 
+
     },500);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// حذف
-// =====================
-
-async function deletePower(id){
-
-
-
-    if(!confirm(
-        "هل تريد حذف التوكيل؟"
-    ))
-
-    return;
-
-
-
-
-
-
-    await fetch(
-
-        `${API}/powers/${id}`,
-
-        {
-
-            method:"DELETE"
-
-        }
-
-    );
-
-
-
-
-
-    loadPowers();
 
 
 
@@ -697,6 +619,58 @@ function editPower(id){
 
 
 // =====================
+// حذف
+// =====================
+
+async function deletePower(id){
+
+
+
+    if(!confirm(
+        "هل تريد حذف التوكيل؟"
+    ))
+
+    return;
+
+
+
+
+
+
+    await fetch(
+
+        `${API}/powers/${id}`,
+
+        {
+
+
+            method:"DELETE"
+
+
+        }
+
+
+    );
+
+
+
+
+
+    loadPowers();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
 // تنظيف الخانات
 // =====================
 
@@ -706,7 +680,8 @@ function clearInputs(){
 
     document.getElementById(
         "fileNumber"
-    ).value=getNextFileNumber();
+    ).value =
+    getNextFileNumber();
 
 
 
@@ -749,14 +724,15 @@ function showLastFileNumber(){
 
 
 
-    let last=2432;
+    let last = 2432;
 
 
 
     powers.forEach(item=>{
 
 
-        let num=Number(item.fileNumber);
+        let num =
+        Number(item.fileNumber);
 
 
 
@@ -791,47 +767,11 @@ function showLastFileNumber(){
 
 
 // =====================
-// الصفحات
-// =====================
-
-function createPagination(){
-
-
-
-    let pagination =
-
-    document.getElementById(
-        "pagination"
-    );
-
-
-
-    if(!pagination)
-
-    return;
-
-
-
-
-    pagination.innerHTML="";
-
-
-
-}
-
-
-
-
-
-
-// =====================
 // تشغيل
 // =====================
 
 if(
-
 document.getElementById("powersTable")
-
 ){
 
 

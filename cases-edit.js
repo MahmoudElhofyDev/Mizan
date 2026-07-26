@@ -8,13 +8,11 @@ const API =
 
 
 // =====================
-// جلب رقم القضية
+// جلب رقم التعديل
 // =====================
 
-let id = localStorage.getItem("editCaseId");
-
-let currentCase = null;
-
+let id =
+localStorage.getItem("editCaseId");
 
 
 
@@ -34,19 +32,19 @@ async function loadCaseEdit(){
         );
 
 
-        let cases = await response.json();
+        let cases =
+        await response.json();
 
 
 
-        currentCase = cases.find(
+        let currentCase =
+        cases.find(
             item => item.id == id
         );
 
 
 
-
         if(currentCase){
-
 
 
             document.getElementById(
@@ -55,6 +53,11 @@ async function loadCaseEdit(){
             currentCase.fileNumber || "";
 
 
+
+            document.getElementById(
+                "caseNumber"
+            ).value =
+            currentCase.caseNumber || "";
 
 
 
@@ -65,17 +68,30 @@ async function loadCaseEdit(){
 
 
 
+            document.getElementById(
+                "court"
+            ).value =
+            currentCase.court || "";
+
+
+
+            document.getElementById(
+                "caseType"
+            ).value =
+            currentCase.caseType || "";
+
+
         }
 
 
-
     }
+
 
     catch(error){
 
 
         alert(
-            "تعذر الاتصال بالسيرفر"
+            "تعذر تحميل البيانات"
         );
 
 
@@ -101,142 +117,121 @@ async function saveCaseEdit(){
 
 
 
-    if(!currentCase){
+    let data = {
 
 
-        alert(
-            "القضية غير موجودة"
-        );
+        fileNumber:
 
+        document.getElementById(
+            "fileNumber"
+        ).value,
 
-        return;
 
 
-    }
+        caseNumber:
 
+        document.getElementById(
+            "caseNumber"
+        ).value,
 
 
 
+        clientName:
 
+        document.getElementById(
+            "clientName"
+        ).value,
 
-    let fileNumber =
 
-    document.getElementById(
-        "fileNumber"
-    )
-    .value.trim();
 
+        court:
 
+        document.getElementById(
+            "court"
+        ).value,
 
 
 
-    let clientName =
+        caseType:
 
-    document.getElementById(
-        "clientName"
-    )
-    .value.trim();
+        document.getElementById(
+            "caseType"
+        ).value
 
 
 
+    };
 
 
 
-    try{
 
 
 
-        let response = await fetch(
 
+    await fetch(
 
-            `${API}/cases/${id}`,
+        `${API}/cases/${id}`,
 
-            {
+        {
 
-                method:"PUT",
+            method:"PUT",
 
 
-                headers:{
+            headers:{
 
+                "Content-Type":
+                "application/json"
 
-                    "Content-Type":
-                    "application/json"
+            },
 
 
-                },
+            body:
+            JSON.stringify(data)
 
 
-                body:JSON.stringify({
+        }
 
 
-                    fileNumber:fileNumber,
+    );
 
 
-                    clientName:clientName
 
 
 
-                })
+    alert(
+        "تم حفظ التعديل"
+    );
 
 
 
-            }
-
-
-        );
-
-
-
-
-
-
-        await response.json();
-
-
-
-
-
-
-        alert(
-
-            "تم تعديل القضية بنجاح"
-
-        );
-
-
-
-
-
-        localStorage.removeItem(
-            "editCaseId"
-        );
-
-
-
-
-
-        window.location.href =
-        "cases.html";
-
-
-
-
-
-    }
-
-    catch(error){
-
-
-        alert(
-            "تعذر الاتصال بالسيرفر"
-        );
-
-
-    }
+    window.location.href =
+    "cases.html";
 
 
 
 }
+
+
+
+
+
+
+
+
+
+// =====================
+// رجوع
+// =====================
+
+function goBack(){
+
+
+    window.location.href =
+    "cases.html";
+
+
+}
+
 
 
 

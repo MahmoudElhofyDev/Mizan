@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ميزان | ملفات الحفظ</title>
+<title>ميزان | ملفات القضايا</title>
 
 <link rel="stylesheet" href="cases.css">
 
@@ -19,11 +19,9 @@
 
 <header class="top">
 
-<h1>📁 ملفات الحفظ</h1>
+<h1>⚖️ ملفات القضايا</h1>
 
-<p>
-إدارة ملفات الحفظ
-</p>
+<p>إدارة بيانات القضايا</p>
 
 </header>
 
@@ -31,35 +29,114 @@
 
 
 
-
-<section class="box">
-
-<h2>إضافة ملف جديد</h2>
+<section class="container">
 
 
-<div class="form">
+
+<div class="form-box">
+
+
+<h2>
+إضافة قضية جديدة
+</h2>
+
+
+
+<div class="inputs">
 
 
 
 <input
+
 id="fileNumber"
-placeholder="رقم الملف">
+
+type="text"
+
+placeholder="رقم الملف"
+
+
+
+>
 
 
 
 <input
+
+id="caseNumber"
+
+type="text"
+
+placeholder="رقم القضية"
+
+
+
+>
+
+
+
+<input
+
 id="clientName"
-placeholder="اسم الموكل">
+
+type="text"
+
+placeholder="اسم الموكل"
+
+
+
+>
+
+
+
+<input
+
+id="court"
+
+type="text"
+
+placeholder="المحكمة"
+
+
+
+>
+
+
+
+<input
+
+id="caseType"
+
+type="text"
+
+placeholder="نوع القضية"
+
+
+
+>
+
+
+
+</div>
 
 
 
 
 
-<button 
-type="button"
-onclick="addCase()">
 
-إضافة الملف
+<div class="buttons">
+
+
+<button onclick="addCase()">
+
+إضافة
+
+</button>
+
+
+
+<button onclick="showLastFileNumber()">
+
+آخر رقم ملف
 
 </button>
 
@@ -68,7 +145,8 @@ onclick="addCase()">
 </div>
 
 
-</section>
+
+</div>
 
 
 
@@ -77,36 +155,33 @@ onclick="addCase()">
 
 
 
-<section class="box">
 
 
-<h2>البحث</h2>
-
+<div class="search-box">
 
 
 <input
 
 id="search"
 
+type="text"
+
+placeholder="بحث..."
+
 oninput="delaySearch()"
 
-placeholder="ابحث برقم الملف أو اسم الموكل">
+
+
+>
+
+
+</div>
 
 
 
-</section>
 
 
 
-
-
-
-
-
-<section class="box">
-
-
-<h2>قائمة الملفات</h2>
 
 
 
@@ -119,22 +194,46 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 <tr>
 
 
-<th>رقم الملف</th>
+<th>
+رقم الملف
+</th>
 
 
-<th>اسم الموكل</th>
+<th>
+رقم القضية
+</th>
 
 
-<th>تعديل</th>
+<th>
+اسم الموكل
+</th>
 
 
-<th>حذف</th>
+<th>
+المحكمة
+</th>
+
+
+<th>
+نوع القضية
+</th>
+
+
+<th>
+تعديل
+</th>
+
+
+<th>
+حذف
+</th>
 
 
 </tr>
 
 
 </thead>
+
 
 
 
@@ -150,6 +249,20 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
+
+
+
+
+<div id="pagination">
+
+
+</div>
+
+
+
+
+
+
 </section>
 
 
@@ -158,36 +271,8 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
-<!-- أزرار الصفحات -->
-
-<div id="pagination"></div>
-
-
-
-
-
-
-
-
-<a href="dashboard.html">
-
-
-<button class="back">
-
-العودة للرئيسية
-
-</button>
-
-
-</a>
-
-
-
-
-
-
-
 <script src="cases.js"></script>
+
 
 
 </body>

@@ -7,20 +7,12 @@ const API =
 
 
 
-
 // =====================
-// رقم التوكيل
+// رقم التعديل
 // =====================
 
 let id =
-
 localStorage.getItem("editPowerId");
-
-
-
-let currentPower = null;
-
-
 
 
 
@@ -37,24 +29,20 @@ async function loadPowerEdit(){
 
 
         let response = await fetch(
-
             `${API}/powers`
-
         );
 
 
-
-        let powers = await response.json();
-
-
+        let powers =
+        await response.json();
 
 
-        currentPower = powers.find(
 
+
+        let currentPower =
+        powers.find(
             item => item.id == id
-
         );
-
 
 
 
@@ -67,9 +55,7 @@ async function loadPowerEdit(){
             document.getElementById(
                 "fileNumber"
             ).value =
-
             currentPower.fileNumber || "";
-
 
 
 
@@ -77,9 +63,7 @@ async function loadPowerEdit(){
             document.getElementById(
                 "powerNumber"
             ).value =
-
             currentPower.powerNumber || "";
-
 
 
 
@@ -87,9 +71,7 @@ async function loadPowerEdit(){
             document.getElementById(
                 "clientName"
             ).value =
-
             currentPower.clientName || "";
-
 
 
 
@@ -97,7 +79,6 @@ async function loadPowerEdit(){
             document.getElementById(
                 "documentation"
             ).value =
-
             currentPower.documentation || "";
 
 
@@ -106,14 +87,15 @@ async function loadPowerEdit(){
 
 
 
+
     }
+
 
     catch(error){
 
 
-
         alert(
-            "تعذر الاتصال بالسيرفر"
+            "تعذر تحميل البيانات"
         );
 
 
@@ -139,186 +121,124 @@ async function savePowerEdit(){
 
 
 
-    if(!currentPower){
+    let data = {
 
 
-        alert(
-            "التوكيل غير موجود"
-        );
 
+        fileNumber:
 
-        return;
 
+        document.getElementById(
+            "fileNumber"
+        ).value,
 
-    }
 
 
 
 
+        powerNumber:
 
 
+        document.getElementById(
+            "powerNumber"
+        ).value,
 
-    let powerNumber =
 
-    document.getElementById(
-        "powerNumber"
-    )
 
-    .value.trim();
 
 
+        clientName:
 
 
+        document.getElementById(
+            "clientName"
+        ).value,
 
 
 
-    let clientName =
 
-    document.getElementById(
-        "clientName"
-    )
 
-    .value.trim();
+        documentation:
 
 
+        document.getElementById(
+            "documentation"
+        ).value
 
 
 
+    };
 
 
-    let documentation =
 
-    document.getElementById(
-        "documentation"
-    )
 
-    .value.trim();
 
 
 
+    await fetch(
 
+        `${API}/powers/${id}`,
 
+        {
 
+            method:"PUT",
 
 
+            headers:{
 
-    try{
+                "Content-Type":
+                "application/json"
 
+            },
 
 
-        let response = await fetch(
+            body:
+            JSON.stringify(data)
 
-            `${API}/powers/${id}`,
 
-            {
+        }
 
 
-                method:"PUT",
+    );
 
 
-                headers:{
 
 
-                    "Content-Type":
-                    "application/json"
 
 
-                },
 
+    alert(
+        "تم حفظ التعديل"
+    );
 
-                body:JSON.stringify({
 
 
 
-                    fileNumber:
-                    currentPower.fileNumber,
 
+    window.location.href =
+    "powers.html";
 
 
-                    powerNumber:
-                    powerNumber,
 
+}
 
 
-                    clientName:
-                    clientName,
 
 
 
-                    documentation:
-                    documentation
 
 
 
-                })
 
+// =====================
+// رجوع
+// =====================
 
+function goBack(){
 
-            }
 
-
-        );
-
-
-
-
-
-
-
-        await response.json();
-
-
-
-
-
-
-
-        alert(
-
-            "تم تعديل التوكيل بنجاح"
-
-        );
-
-
-
-
-
-
-
-        localStorage.removeItem(
-
-            "editPowerId"
-
-        );
-
-
-
-
-
-
-        window.location.href =
-
-        "powers.html";
-
-
-
-
-
-    }
-
-
-    catch(error){
-
-
-        alert(
-
-            "تعذر الاتصال بالسيرفر"
-
-        );
-
-
-    }
-
+    window.location.href =
+    "powers.html";
 
 
 }

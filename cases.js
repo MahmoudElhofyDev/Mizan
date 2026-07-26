@@ -1,18 +1,67 @@
 // =====================
-// تحميل البيانات
+// API Railway
 // =====================
 
-let cases =
-JSON.parse(localStorage.getItem("cases")) || [];
+const API =
+"https://mizan-production-32bb.up.railway.app";
 
+
+
+// =====================
+// متغيرات
+// =====================
+
+let cases = [];
+
+let currentData = [];
 
 let currentPage = 1;
 
 let rowsPerPage = 50;
 
-let currentData = [];
-
 let searchTimer;
+
+
+
+
+
+// =====================
+// تحميل القضايا
+// =====================
+
+async function loadCases(){
+
+
+    try{
+
+
+        let response = await fetch(
+            `${API}/cases`
+        );
+
+
+        cases = await response.json();
+
+
+        currentData = [];
+
+
+        displayCases();
+
+
+    }
+
+    catch(error){
+
+        alert(
+            "تعذر الاتصال بالسيرفر"
+        );
+
+    }
+
+
+}
+
 
 
 
@@ -26,22 +75,21 @@ let searchTimer;
 function getNextFileNumber(){
 
 
-    let last = 0;
+    let last = 2432;
 
 
 
     cases.forEach(item=>{
 
 
-        let num = Number(item.fileNumber);
-
+        let num = Number(
+            item.fileNumber
+        );
 
 
         if(!isNaN(num) && num > last){
 
-
             last = num;
-
 
         }
 
@@ -50,9 +98,7 @@ function getNextFileNumber(){
 
 
 
-
     return String(last + 1);
-
 
 
 }
@@ -66,33 +112,62 @@ function getNextFileNumber(){
 
 
 // =====================
-// إضافة ملف
+// إضافة قضية
 // =====================
 
-function addCase(){
+async function addCase(){
 
 
 
     let fileNumber =
+    document.getElementById(
+        "fileNumber"
+    ).value.trim();
 
-    getNextFileNumber();
 
 
+    let caseNumber =
+    document.getElementById(
+        "caseNumber"
+    ).value.trim();
 
 
 
     let clientName =
-
-    document.getElementById("clientName")
-    .value
-    .trim();
-
+    document.getElementById(
+        "clientName"
+    ).value.trim();
 
 
 
+    let court =
+    document.getElementById(
+        "court"
+    ).value.trim();
 
 
-    if(clientName === ""){
+
+    let caseType =
+    document.getElementById(
+        "caseType"
+    ).value.trim();
+
+
+
+
+
+    if(fileNumber===""){
+
+        fileNumber =
+        getNextFileNumber();
+
+    }
+
+
+
+
+
+    if(clientName===""){
 
 
         alert(
@@ -102,7 +177,6 @@ function addCase(){
 
         return;
 
-
     }
 
 
@@ -111,71 +185,55 @@ function addCase(){
 
 
 
-    let newCase = {
+    await fetch(
+
+        `${API}/cases`,
+
+        {
+
+            method:"POST",
 
 
+            headers:{
 
-        id:Date.now(),
+                "Content-Type":
+                "application/json"
 
-
-
-        fileNumber:fileNumber,
-
-
-
-        clientName:clientName
+            },
 
 
+            body:JSON.stringify({
 
-    };
+                fileNumber,
+
+                caseNumber,
+
+                clientName,
+
+                court,
+
+                caseType
+
+            })
 
 
-
-
-
-
-
-    cases.push(newCase);
-
-
-
-
-
-    localStorage.setItem(
-
-        "cases",
-
-        JSON.stringify(cases)
+        }
 
     );
-
-
-
 
 
 
 
     alert(
-
-        "تم إضافة الملف رقم " + fileNumber
-
+        "تم إضافة القضية"
     );
-
-
-
 
 
 
     clearInputs();
 
 
-
-    currentData=[];
-
-
-
-    displayCases();
-
+    loadCases();
 
 
 
@@ -196,9 +254,7 @@ function addCase(){
 function displayCases(){
 
 
-
     let table =
-
     document.getElementById(
         "casesTable"
     );
@@ -206,10 +262,7 @@ function displayCases(){
 
 
     if(!table)
-
     return;
-
-
 
 
 
@@ -217,42 +270,33 @@ function displayCases(){
 
 
 
+    let data =
+    currentData.length
+    ?
+    currentData
+    :
+    cases;
 
 
 
 
     let start =
-
-    (currentPage - 1)
-
+    (currentPage-1)
     *
-
     rowsPerPage;
 
 
 
 
-
-
-
-    let data =
-
-    currentData.slice(
+    data.slice(
 
         start,
 
         start + rowsPerPage
 
-    );
+    )
 
-
-
-
-
-
-
-    data.forEach(item=>{
-
+    .forEach(item=>{
 
 
         table.innerHTML += `
@@ -261,61 +305,51 @@ function displayCases(){
 <tr>
 
 
-<td>
-
-${item.fileNumber || ""}
-
-</td>
+<td>${item.fileNumber || ""}</td>
 
 
+<td>${item.caseNumber || ""}</td>
 
 
-<td>
+<td>${item.clientName || ""}</td>
 
-${item.clientName || ""}
 
-</td>
+<td>${item.court || ""}</td>
 
+
+<td>${item.caseType || ""}</td>
 
 
 
 <td>
-
 
 <button class="edit"
 
 onclick="editCase(${item.id})">
 
-
 تعديل
-
 
 </button>
 
 
-
 </td>
-
 
 
 
 
 <td>
 
-
 <button class="delete"
 
 onclick="deleteCase(${item.id})">
 
-
 حذف
-
 
 </button>
 
 
-
 </td>
+
 
 
 </tr>
@@ -329,16 +363,7 @@ onclick="deleteCase(${item.id})">
 
 
 
-
-
-
-    createPagination();
-
-
-
 }
-
-
 
 
 
@@ -358,24 +383,21 @@ function searchCases(){
 
     let value =
 
-    document.getElementById("search")
-
+    document.getElementById(
+        "search"
+    )
     .value
-
     .toLowerCase()
-
     .trim();
 
 
 
 
 
+    if(value===""){
 
-    if(value === ""){
 
-
-        currentData = [];
-
+        currentData=[];
 
 
     }
@@ -383,43 +405,51 @@ function searchCases(){
     else{
 
 
-
         currentData =
-
         cases.filter(item=>{
 
 
             return (
 
-
-                String(item.fileNumber || "")
-
-                .toLowerCase()
-
+                String(item.fileNumber)
                 .includes(value)
 
+
+                ||
+
+                String(item.caseNumber)
+                .toLowerCase()
+                .includes(value)
 
 
 
                 ||
 
-
-
-
-                String(item.clientName || "")
-
+                String(item.clientName)
                 .toLowerCase()
-
                 .includes(value)
 
+
+
+                ||
+
+                String(item.court)
+                .toLowerCase()
+                .includes(value)
+
+
+
+                ||
+
+                String(item.caseType)
+                .toLowerCase()
+                .includes(value)
 
 
             );
 
 
-
         });
-
 
 
     }
@@ -427,11 +457,7 @@ function searchCases(){
 
 
 
-
-
-
-    currentPage = 1;
-
+    currentPage=1;
 
 
     displayCases();
@@ -445,85 +471,20 @@ function searchCases(){
 
 
 
-
-
-
 function delaySearch(){
-
 
 
     clearTimeout(searchTimer);
 
 
-
-
-    searchTimer=setTimeout(()=>{
+    searchTimer =
+    setTimeout(()=>{
 
 
         searchCases();
 
 
-
     },500);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// حذف
-// =====================
-
-function deleteCase(id){
-
-
-
-    if(confirm("هل تريد حذف الملف؟")){
-
-
-
-        cases =
-
-        cases.filter(
-
-            item=>item.id != id
-
-        );
-
-
-
-
-
-        localStorage.setItem(
-
-            "cases",
-
-            JSON.stringify(cases)
-
-        );
-
-
-
-
-
-        currentData=[];
-
-
-
-        displayCases();
-
-
-
-    }
-
 
 
 }
@@ -554,10 +515,53 @@ function editCase(id){
 
 
 
-
     window.location.href =
-
     "cases-edit.html";
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// حذف
+// =====================
+
+async function deleteCase(id){
+
+
+
+    if(!confirm(
+        "هل تريد حذف القضية؟"
+    ))
+
+    return;
+
+
+
+
+
+    await fetch(
+
+        `${API}/cases/${id}`,
+
+        {
+
+            method:"DELETE"
+
+        }
+
+    );
+
+
+
+    loadCases();
 
 
 
@@ -572,10 +576,23 @@ function editCase(id){
 
 
 // =====================
-// تنظيف
+// تنظيف الخانات
 // =====================
 
 function clearInputs(){
+
+
+
+    document.getElementById(
+        "fileNumber"
+    ).value =
+    getNextFileNumber();
+
+
+
+    document.getElementById(
+        "caseNumber"
+    ).value="";
 
 
 
@@ -585,14 +602,15 @@ function clearInputs(){
 
 
 
+    document.getElementById(
+        "court"
+    ).value="";
+
 
 
     document.getElementById(
-        "fileNumber"
-    ).value =
-
-    getNextFileNumber();
-
+        "caseType"
+    ).value="";
 
 
 }
@@ -612,43 +630,33 @@ function clearInputs(){
 function showLastFileNumber(){
 
 
-
-    let last = 0;
-
+    let last = 2432;
 
 
     cases.forEach(item=>{
 
 
-        let num = Number(item.fileNumber);
+        let num =
+        Number(item.fileNumber);
 
 
 
-        if(!isNaN(num) && num > last){
-
+        if(!isNaN(num)&&num>last){
 
             last=num;
 
-
         }
-
 
 
     });
 
 
 
-
-
-
     alert(
-
-        "آخر رقم ملف هو: " + last
-
+        "آخر رقم ملف هو: "+last
     );
 
 
-
 }
 
 
@@ -660,128 +668,13 @@ function showLastFileNumber(){
 
 
 // =====================
-// الصفحات
+// تشغيل
 // =====================
 
-function createPagination(){
-
-
-
-    let pagination =
-
-    document.getElementById(
-        "pagination"
-    );
-
-
-
-    if(!pagination)
-
-    return;
-
-
-
-
-
-    pagination.innerHTML="";
-
-
-
-
-
-    let pages =
-
-    Math.ceil(
-
-        currentData.length /
-
-        rowsPerPage
-
-    );
-
-
-
-
-
-
-    for(let i=1;i<=pages;i++){
-
-
-
-        pagination.innerHTML += `
-
-
-<button onclick="changePage(${i})">
-
-${i}
-
-</button>
-
-
-`;
-
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-function changePage(page){
-
-
-    currentPage=page;
-
-
-    displayCases();
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// تشغيل الصفحة
-// =====================
-
-if(document.getElementById("casesTable")){
-
-
-    currentData=[];
-
-
-    displayCases();
-
-
-}
-
-
-
-
-
-
-// إظهار رقم الملف القادم
-
-if(document.getElementById("fileNumber")){
-
-
-    document.getElementById("fileNumber").value =
-
-    getNextFileNumber();
-
+if(
+document.getElementById("casesTable")
+){
+
+    loadCases();
 
 }

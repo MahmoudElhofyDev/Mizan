@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ميزان | تعديل ملف</title>
+<title>ميزان | تعديل قضية</title>
 
 <link rel="stylesheet" href="cases.css">
 
@@ -19,13 +19,9 @@
 
 <header class="top">
 
-<h1>
-✏️ تعديل ملف القضية
-</h1>
+<h1>⚖️ تعديل بيانات القضية</h1>
 
-<p>
-تعديل بيانات الملف
-</p>
+<p>تعديل ملف القضية</p>
 
 </header>
 
@@ -34,17 +30,22 @@
 
 
 
+<section class="container">
 
-<section class="box">
+
+<div class="form-box">
+
 
 
 <h2>
-بيانات الملف
+تعديل القضية
 </h2>
 
 
 
-<div class="form">
+
+
+<div class="inputs">
 
 
 
@@ -52,11 +53,23 @@
 
 id="fileNumber"
 
+type="text"
+
 placeholder="رقم الملف"
 
-readonly>
+>
 
 
+
+<input
+
+id="caseNumber"
+
+type="text"
+
+placeholder="رقم القضية"
+
+>
 
 
 
@@ -64,9 +77,47 @@ readonly>
 
 id="clientName"
 
-placeholder="اسم الموكل">
+type="text"
+
+placeholder="اسم الموكل"
+
+>
 
 
+
+<input
+
+id="court"
+
+type="text"
+
+placeholder="المحكمة"
+
+>
+
+
+
+<input
+
+id="caseType"
+
+type="text"
+
+placeholder="نوع القضية"
+
+>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="buttons">
 
 
 
@@ -79,33 +130,23 @@ placeholder="اسم الموكل">
 
 
 
+<button onclick="goBack()">
 
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<a href="cases.html">
-
-
-<button class="back">
-
-العودة
+رجوع
 
 </button>
 
 
-</a>
+
+</div>
 
 
 
+</div>
+
+
+
+</section>
 
 
 
