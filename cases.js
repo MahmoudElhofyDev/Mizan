@@ -20,34 +20,19 @@ let searchTimer;
 
 
 // =====================
-// حساب رقم الملف القادم
+// رقم الملف القادم
 // =====================
 
 function getNextFileNumber(){
 
 
-    let last = 2431;
+    let last =
 
-
-
-    cases.forEach(item=>{
-
-
-        let num =
-        parseInt(item.fileNumber);
-
-
-
-        if(!isNaN(num) && num > last){
-
-
-            last = num;
-
-
-        }
-
-
-    });
+    Number(
+        localStorage.getItem(
+            "lastCaseFileNumber"
+        )
+    ) || 2431;
 
 
 
@@ -55,6 +40,8 @@ function getNextFileNumber(){
 
 
 }
+
+
 
 
 
@@ -71,28 +58,17 @@ function addCase(){
 
 
     let fileNumber =
-    document.getElementById("fileNumber")
-    .value
-    .trim();
+
+    getNextFileNumber();
+
 
 
 
     let clientName =
+
     document.getElementById("clientName")
     .value
     .trim();
-
-
-
-
-
-    if(fileNumber === ""){
-
-
-        fileNumber = getNextFileNumber();
-
-
-    }
 
 
 
@@ -102,13 +78,16 @@ function addCase(){
     if(clientName === ""){
 
 
-        alert("أدخل اسم الموكل");
+        alert(
+            "أدخل اسم الموكل"
+        );
 
 
         return;
 
 
     }
+
 
 
 
@@ -133,7 +112,10 @@ function addCase(){
 
 
 
+
+
     cases.push(newCase);
+
 
 
 
@@ -149,7 +131,32 @@ function addCase(){
 
 
 
-    alert("تم إضافة الملف بنجاح");
+    // تحديث آخر رقم ملف
+
+    localStorage.setItem(
+
+        "lastCaseFileNumber",
+
+        fileNumber
+
+    );
+
+
+
+
+
+
+
+
+    alert(
+
+        "تم إضافة الملف رقم " + fileNumber
+
+    );
+
+
+
+
 
 
 
@@ -165,6 +172,7 @@ function addCase(){
 
 
 
+
 }
 
 
@@ -175,10 +183,8 @@ function addCase(){
 
 
 
-
-
 // =====================
-// عرض البيانات
+// عرض الملفات
 // =====================
 
 function displayCases(){
@@ -186,12 +192,18 @@ function displayCases(){
 
 
     let table =
-    document.getElementById("casesTable");
+
+    document.getElementById(
+        "casesTable"
+    );
 
 
 
     if(!table)
+
     return;
+
+
 
 
 
@@ -201,12 +213,21 @@ function displayCases(){
 
 
 
+
     let start =
-    (currentPage - 1) * rowsPerPage;
+
+    (currentPage - 1)
+
+    *
+
+    rowsPerPage;
+
+
 
 
 
     let data =
+
     currentData.slice(
 
         start,
@@ -226,46 +247,69 @@ function displayCases(){
 
         table.innerHTML += `
 
+
 <tr>
 
+
 <td>
+
 ${item.fileNumber || ""}
+
 </td>
 
 
+
 <td>
+
 ${item.clientName || ""}
+
 </td>
 
 
 
+
+
 <td>
+
 
 <button class="edit"
+
 onclick="editCase(${item.id})">
+
 
 تعديل
 
+
 </button>
 
+
 </td>
+
 
 
 
 
 <td>
 
+
 <button class="delete"
+
 onclick="deleteCase(${item.id})">
+
 
 حذف
 
+
 </button>
+
 
 </td>
 
 
+
+
 </tr>
+
 
 `;
 
@@ -290,6 +334,8 @@ onclick="deleteCase(${item.id})">
 
 
 
+
+
 // =====================
 // البحث
 // =====================
@@ -301,9 +347,13 @@ function searchCases(){
     let value =
 
     document.getElementById("search")
+
     .value
+
     .toLowerCase()
+
     .trim();
+
 
 
 
@@ -322,6 +372,7 @@ function searchCases(){
     else{
 
 
+
         currentData =
 
         cases.filter(item=>{
@@ -329,25 +380,45 @@ function searchCases(){
 
             return (
 
-                String(item.fileNumber || "")
+
+                String(
+                    item.fileNumber
+                )
+
                 .toLowerCase()
+
                 .includes(value)
+
+
 
 
                 ||
 
-                String(item.clientName || "")
+
+
+
+
+                String(
+                    item.clientName
+                )
+
                 .toLowerCase()
+
                 .includes(value)
+
 
 
             );
 
 
+
         });
 
 
+
     }
+
+
 
 
 
@@ -373,7 +444,9 @@ function searchCases(){
 function delaySearch(){
 
 
+
     clearTimeout(searchTimer);
+
 
 
 
@@ -381,6 +454,7 @@ function delaySearch(){
 
 
         searchCases();
+
 
 
     },500);
@@ -405,7 +479,9 @@ function deleteCase(id){
 
 
 
-    if(confirm("هل تريد حذف الملف؟")){
+    if(confirm(
+        "هل تريد حذف الملف؟"
+    )){
 
 
 
@@ -427,6 +503,8 @@ function deleteCase(id){
             JSON.stringify(cases)
 
         );
+
+
 
 
 
@@ -470,6 +548,7 @@ function editCase(id){
 
 
 
+
     window.location.href =
 
     "cases-edit.html";
@@ -487,21 +566,66 @@ function editCase(id){
 
 
 // =====================
-// تنظيف الخانات
+// تنظيف
 // =====================
 
 function clearInputs(){
 
 
 
-    document.getElementById("fileNumber")
-    .value = getNextFileNumber();
+    document.getElementById(
+        "clientName"
+    ).value = "";
 
 
 
-    document.getElementById("clientName")
-    .value = "";
+    document.getElementById(
+        "fileNumber"
+    ).value =
 
+    getNextFileNumber();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// آخر رقم ملف
+// =====================
+
+function showLastFileNumber(){
+
+
+
+    let last =
+
+    Number(
+        localStorage.getItem(
+            "lastCaseFileNumber"
+        )
+    ) || 2432;
+
+
+
+
+
+    alert(
+
+        "آخر رقم ملف هو: "
+
+        +
+
+        last
+
+    );
 
 
 }
@@ -524,13 +648,16 @@ function createPagination(){
 
     let pagination =
 
-    document.getElementById("pagination");
+    document.getElementById(
+        "pagination"
+    );
 
 
 
     if(!pagination)
 
     return;
+
 
 
 
@@ -554,23 +681,33 @@ function createPagination(){
 
 
 
-    for(let i=1;i<=pages;i++){
+
+    for(
+        let i=1;
+        i<=pages;
+        i++
+    ){
 
 
 
         pagination.innerHTML += `
 
+
 <button onclick="changePage(${i})">
+
 
 ${i}
 
+
 </button>
+
 
 `;
 
 
 
     }
+
 
 
 
@@ -590,34 +727,6 @@ function changePage(page){
     displayCases();
 
 
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// آخر رقم ملف
-// =====================
-
-function showLastFileNumber(){
-
-
-
-    alert(
-
-        "آخر رقم ملف هو: "
-
-        +
-
-        getNextFileNumber()
-
-    );
-
 
 }
 
@@ -633,11 +742,13 @@ function showLastFileNumber(){
 // تشغيل الصفحة
 // =====================
 
-if(document.getElementById("casesTable")){
+if(
+document.getElementById("casesTable")
+){
+
 
 
     currentData = [];
-
 
     displayCases();
 
@@ -650,15 +761,20 @@ if(document.getElementById("casesTable")){
 
 
 
-
 // إظهار رقم الملف القادم
 
-if(document.getElementById("fileNumber")){
+if(
+document.getElementById("fileNumber")
+){
 
 
-    document.getElementById("fileNumber").value =
+
+    document.getElementById(
+        "fileNumber"
+    ).value =
 
     getNextFileNumber();
+
 
 
 }
