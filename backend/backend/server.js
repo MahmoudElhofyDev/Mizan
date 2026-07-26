@@ -7,7 +7,7 @@ const db = require("./database");
 
 
 const app = express();
-
+console.log("SERVER VERSION POSTGRES 2026");
 
 app.use(cors());
 
