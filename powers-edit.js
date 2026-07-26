@@ -5,10 +5,7 @@
 
 let id =
 
-localStorage.getItem(
-    "editPowerId"
-);
-
+localStorage.getItem("editPowerId");
 
 
 
@@ -20,7 +17,6 @@ JSON.parse(
 localStorage.getItem("powers")
 
 ) || [];
-
 
 
 
@@ -49,47 +45,31 @@ item => item.id == id
 if(currentPower){
 
 
+document.getElementById("fileNumber").value =
 
-    document.getElementById(
-        "documentation"
-    ).value =
-
-    currentPower.documentation || "";
+currentPower.fileNumber || "";
 
 
 
+document.getElementById("powerNumber").value =
 
-
-    document.getElementById(
-        "clientName"
-    ).value =
-
-    currentPower.clientName || "";
+currentPower.powerNumber || "";
 
 
 
+document.getElementById("clientName").value =
 
-
-    document.getElementById(
-        "powerNumber"
-    ).value =
-
-    currentPower.powerNumber || "";
+currentPower.clientName || "";
 
 
 
+document.getElementById("documentation").value =
 
-
-    document.getElementById(
-        "fileNumber"
-    ).value =
-
-    currentPower.fileNumber || "";
+currentPower.documentation || "";
 
 
 
 }
-
 
 
 
@@ -107,119 +87,98 @@ function savePowerEdit(){
 
 
 
-    if(!currentPower){
+if(!currentPower){
 
 
-        alert(
-            "لم يتم العثور على التوكيل"
-        );
+alert("لم يتم العثور على التوكيل");
 
 
-        return;
+return;
 
 
-    }
+}
 
 
 
 
 
 
+currentPower.powerNumber =
 
-    currentPower.documentation =
+document.getElementById("powerNumber")
 
-    document.getElementById(
-        "documentation"
-    )
+.value.trim();
 
-    .value
 
-    .trim();
 
 
 
 
+currentPower.clientName =
 
+document.getElementById("clientName")
 
+.value.trim();
 
 
-    currentPower.clientName =
 
-    document.getElementById(
-        "clientName"
-    )
 
-    .value
 
-    .trim();
 
+currentPower.documentation =
 
+document.getElementById("documentation")
 
+.value.trim();
 
 
 
 
 
-    currentPower.powerNumber =
 
-    document.getElementById(
-        "powerNumber"
-    )
 
-    .value
 
-    .trim();
+localStorage.setItem(
 
+"powers",
 
+JSON.stringify(powers)
 
+);
 
 
 
 
 
-    localStorage.setItem(
 
-        "powers",
 
-        JSON.stringify(powers)
 
-    );
+localStorage.removeItem(
 
+"editPowerId"
 
+);
 
 
 
 
 
 
-    localStorage.removeItem(
 
-        "editPowerId"
+alert(
 
-    );
+"تم تعديل التوكيل بنجاح"
 
+);
 
 
 
 
 
 
+window.location.href =
 
-    alert(
-
-        "تم تعديل التوكيل بنجاح"
-
-    );
-
-
-
-
-
-
-
-    window.location.href =
-
-    "powers.html";
+"powers.html";
 
 
 

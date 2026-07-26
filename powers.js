@@ -20,6 +20,73 @@ let showingEmpty = false;
 
 
 
+
+
+// =====================
+// تصحيح البيانات القديمة مرة واحدة
+// =====================
+
+function fixOldPowers(){
+
+
+    let fixed = powers.map(item=>{
+
+
+        return {
+
+            id:item.id || Date.now(),
+
+
+            fileNumber:
+            item.fileNumber || "",
+
+
+            powerNumber:
+            item.powerNumber || "",
+
+
+            clientName:
+            item.clientName || "",
+
+
+            documentation:
+            item.documentation || ""
+
+
+        };
+
+
+    });
+
+
+
+    powers = fixed;
+
+
+
+    localStorage.setItem(
+
+        "powers",
+
+        JSON.stringify(powers)
+
+    );
+
+
+}
+
+
+
+fixOldPowers();
+
+
+
+
+
+
+
+
+
 // =====================
 // رقم الملف القادم
 // =====================
@@ -71,27 +138,45 @@ function getNextFileNumber(){
 function addPower(){
 
 
-    let documentation =
-    document.getElementById("documentation")
+
+    let fileNumber =
+
+    document.getElementById("fileNumber")
+
     .value.trim();
 
 
-
-    let clientName =
-    document.getElementById("clientName")
-    .value.trim();
 
 
 
     let powerNumber =
+
     document.getElementById("powerNumber")
+
     .value.trim();
 
 
 
-    let fileNumber =
-    document.getElementById("fileNumber")
+
+
+    let clientName =
+
+    document.getElementById("clientName")
+
     .value.trim();
+
+
+
+
+
+    let documentation =
+
+    document.getElementById("documentation")
+
+    .value.trim();
+
+
+
 
 
 
@@ -99,9 +184,12 @@ function addPower(){
 
     if(fileNumber === ""){
 
+
         fileNumber = getNextFileNumber();
 
+
     }
+
 
 
 
@@ -109,9 +197,12 @@ function addPower(){
 
     if(clientName === ""){
 
+
         alert("أدخل اسم الموكل");
 
+
         return;
+
 
     }
 
@@ -119,7 +210,10 @@ function addPower(){
 
 
 
+
+
     let newPower = {
+
 
 
         id:Date.now(),
@@ -144,7 +238,11 @@ function addPower(){
 
 
 
+
+
+
     powers.push(newPower);
+
 
 
 
@@ -162,7 +260,14 @@ function addPower(){
 
 
 
-    alert("تم إضافة التوكيل بنجاح");
+
+
+    alert(
+
+        "تم إضافة التوكيل بنجاح"
+
+    );
+
 
 
 
@@ -171,7 +276,9 @@ function addPower(){
     clearInputs();
 
 
+
     currentData=[];
+
 
 
     displayPowers();
@@ -199,7 +306,9 @@ function displayPowers(){
     let table =
 
     document.getElementById(
+
         "powersTable"
+
     );
 
 
@@ -211,7 +320,10 @@ function displayPowers(){
 
 
 
+
     table.innerHTML="";
+
+
 
 
 
@@ -219,7 +331,14 @@ function displayPowers(){
 
     let start =
 
-    (currentPage - 1) * rowsPerPage;
+    (currentPage - 1)
+
+    *
+
+    rowsPerPage;
+
+
+
 
 
 
@@ -243,46 +362,42 @@ function displayPowers(){
     data.forEach(power=>{
 
 
+
         table.innerHTML += `
 
 
 <tr>
 
 
-
 <td>
 
-${power.fileNumber || ""}
+${power.fileNumber}
 
 </td>
 
 
 
-
 <td>
 
-${power.powerNumber || ""}
+${power.powerNumber}
 
 </td>
 
 
 
-
 <td>
 
-${power.clientName || ""}
+${power.clientName}
 
 </td>
 
 
 
-
 <td>
 
-${power.documentation || ""}
+${power.documentation}
 
 </td>
-
 
 
 
@@ -332,6 +447,8 @@ onclick="deletePower(${power.id})">
 
 
 
+
+
     createPagination();
 
 
@@ -368,6 +485,7 @@ function searchPowers(){
 
 
 
+
     if(value === ""){
 
 
@@ -382,12 +500,14 @@ function searchPowers(){
         currentData = powers.filter(item=>{
 
 
+
             return (
 
 
-                String(item.fileNumber || "")
-                .toLowerCase()
+                String(item.fileNumber)
+
                 .includes(value)
+
 
 
 
@@ -395,9 +515,13 @@ function searchPowers(){
 
 
 
-                String(item.powerNumber || "")
+
+                item.powerNumber
+
                 .toLowerCase()
+
                 .includes(value)
+
 
 
 
@@ -405,9 +529,13 @@ function searchPowers(){
 
 
 
-                String(item.clientName || "")
+
+                item.clientName
+
                 .toLowerCase()
+
                 .includes(value)
+
 
 
 
@@ -415,8 +543,11 @@ function searchPowers(){
 
 
 
-                String(item.documentation || "")
+
+                item.documentation
+
                 .toLowerCase()
+
                 .includes(value)
 
 
@@ -424,11 +555,13 @@ function searchPowers(){
             );
 
 
+
         });
 
 
 
     }
+
 
 
 
@@ -449,8 +582,8 @@ function searchPowers(){
 
 
 
-
 function delaySearch(){
+
 
 
     clearTimeout(searchTimer);
@@ -497,6 +630,8 @@ function deletePower(id){
 
 
 
+
+
         localStorage.setItem(
 
             "powers",
@@ -507,10 +642,15 @@ function deletePower(id){
 
 
 
+
+
+
         currentData=[];
 
 
+
         displayPowers();
+
 
 
     }
@@ -533,6 +673,7 @@ function deletePower(id){
 function editPower(id){
 
 
+
     localStorage.setItem(
 
         "editPowerId",
@@ -543,7 +684,9 @@ function editPower(id){
 
 
 
-    window.location.href="powers-edit.html";
+    window.location.href =
+    "powers-edit.html";
+
 
 
 }
@@ -564,27 +707,30 @@ function clearInputs(){
 
 
 
-    document.getElementById(
-        "documentation"
-    ).value="";
+    document.getElementById("fileNumber")
+
+    .value=getNextFileNumber();
 
 
 
-    document.getElementById(
-        "clientName"
-    ).value="";
+
+    document.getElementById("powerNumber")
+
+    .value="";
 
 
 
-    document.getElementById(
-        "powerNumber"
-    ).value="";
+
+    document.getElementById("clientName")
+
+    .value="";
 
 
 
-    document.getElementById(
-        "fileNumber"
-    ).value=getNextFileNumber();
+
+    document.getElementById("documentation")
+
+    .value="";
 
 
 
@@ -606,18 +752,18 @@ function showLastFileNumber(){
 
 
 
-    let last = 2432;
+    let last=2432;
 
 
 
     powers.forEach(item=>{
 
 
-        let num = Number(item.fileNumber);
+        let num=Number(item.fileNumber);
 
 
 
-        if(!isNaN(num) && num > last){
+        if(!isNaN(num) && num>last){
 
 
             last=num;
@@ -627,6 +773,7 @@ function showLastFileNumber(){
 
 
     });
+
 
 
 
@@ -671,7 +818,7 @@ function showEmptyPowers(){
     else{
 
 
-        currentData=powers.filter(item=>{
+        currentData = powers.filter(item=>{
 
 
             return (
@@ -702,7 +849,9 @@ function showEmptyPowers(){
 
 
 
+
     currentPage=1;
+
 
 
     displayPowers();
@@ -730,7 +879,9 @@ function createPagination(){
     let pagination =
 
     document.getElementById(
+
         "pagination"
+
     );
 
 
@@ -741,19 +892,31 @@ function createPagination(){
 
 
 
+
+
     pagination.innerHTML="";
 
 
 
-    let pages = Math.ceil(
 
-        currentData.length / rowsPerPage
+
+    let pages =
+
+    Math.ceil(
+
+        currentData.length /
+
+        rowsPerPage
 
     );
 
 
 
+
+
+
     for(let i=1;i<=pages;i++){
+
 
 
         pagination.innerHTML += `
@@ -767,6 +930,7 @@ ${i}
 
 
 `;
+
 
 
     }
@@ -788,6 +952,7 @@ function changePage(page){
 
 
     displayPowers();
+
 
 
 }
