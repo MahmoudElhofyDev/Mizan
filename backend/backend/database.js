@@ -1,31 +1,34 @@
-const express = require("express");
-const cors = require("cors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const db = require("./database");
+console.log("PostgreSQL Database running");
 
 
-const app = express();
+const { Pool } = require("pg");
 
 
-app.use(cors());
+const pool = new Pool({
 
-app.use(express.json());
+    connectionString: process.env.DATABASE_URL,
 
+    ssl:{
+        rejectUnauthorized:false
+    }
 
-const SECRET = "MIZAN_SECRET_KEY";
+});
 
 
 
+pool.connect()
 
-// =====================
-// اختبار السيرفر
-// =====================
+.then(client=>{
 
-app.get("/",(req,res)=>{
+    console.log("PostgreSQL Connected");
 
-    res.send("Mizan Backend Running");
+    client.release();
+
+})
+
+.catch(err=>{
+
+    console.log("Database Error:",err);
 
 });
 
@@ -33,814 +36,83 @@ app.get("/",(req,res)=>{
 
 
 
-
-// =====================
-// تسجيل مستخدم
-// =====================
-
-app.post("/register", async(req,res)=>{
-
+async function setupDatabase(){
 
 try{
 
 
-const {
-username,
-password
-}=req.body;
+await pool.query(`
 
+CREATE TABLE IF NOT EXISTS users(
 
+id SERIAL PRIMARY KEY,
 
-const hash =
-await bcrypt.hash(password,10);
+username TEXT UNIQUE,
 
-
-
-await db.query(
-
-`
-INSERT INTO users(username,password)
-
-VALUES($1,$2)
-`,
-
-[
-username,
-hash
-]
-
-);
-
-
-
-res.json({
-
-message:"Account created"
-
-});
-
-
-
-}
-
-catch(error){
-
-
-res.status(400).json({
-
-message:"User already exists"
-
-});
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
-
-// =====================
-// تسجيل الدخول
-// =====================
-
-app.post("/login",async(req,res)=>{
-
-
-try{
-
-
-const {
-username,
-password
-}=req.body;
-
-
-
-
-let result =
-await db.query(
-
-"SELECT * FROM users WHERE username=$1",
-
-[
-username
-]
-
-);
-
-
-
-if(result.rows.length===0){
-
-
-return res.status(401).json({
-
-message:"Wrong username or password"
-
-});
-
-
-}
-
-
-
-
-let user =
-result.rows[0];
-
-
-
-
-
-let match =
-await bcrypt.compare(
-
-password,
-
-user.password
-
-);
-
-
-
-
-
-if(!match){
-
-
-return res.status(401).json({
-
-message:"Wrong username or password"
-
-});
-
-
-}
-
-
-
-
-let token =
-jwt.sign(
-
-{
-
-id:user.id,
-
-username:user.username
-
-},
-
-SECRET,
-
-{
-
-expiresIn:"1d"
-
-}
-
-);
-
-
-
-
-
-res.json({
-
-message:"Login success",
-
-token,
-
-username:user.username
-
-});
-
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"Server error"
-
-});
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
-
-// =====================
-// تغيير كلمة المرور
-// =====================
-
-app.put("/change-password",async(req,res)=>{
-
-
-try{
-
-
-const {
-
-username,
-
-oldPassword,
-
-newPassword
-
-}=req.body;
-
-
-
-
-
-let result =
-await db.query(
-
-"SELECT * FROM users WHERE username=$1",
-
-[
-username
-]
-
-);
-
-
-
-
-
-if(result.rows.length===0){
-
-
-return res.status(404).json({
-
-message:"المستخدم غير موجود"
-
-});
-
-
-}
-
-
-
-
-
-let user=result.rows[0];
-
-
-
-
-
-let match =
-await bcrypt.compare(
-
-oldPassword,
-
-user.password
-
-);
-
-
-
-
-
-if(!match){
-
-
-return res.status(401).json({
-
-message:"كلمة المرور القديمة غير صحيحة"
-
-});
-
-
-}
-
-
-
-
-
-let hash =
-await bcrypt.hash(
-
-newPassword,
-
-10
-
-);
-
-
-
-
-
-await db.query(
-
-`
-
-UPDATE users
-
-SET password=$1
-
-WHERE username=$2
-
-`,
-
-[
-hash,
-username
-]
-
-);
-
-
-
-
-
-res.json({
-
-message:"تم تغيير كلمة المرور بنجاح"
-
-});
-
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"حدث خطأ"
-
-});
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
-
-// =====================
-// القضايا
-// =====================
-
-
-app.get("/cases",async(req,res)=>{
-
-
-try{
-
-
-let result =
-await db.query(
-
-"SELECT * FROM cases ORDER BY id DESC"
-
-);
-
-
-
-res.json(result.rows);
-
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"Database error"
-
-});
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
-
-app.post("/cases",async(req,res)=>{
-
-
-try{
-
-
-const data=req.body;
-
-
-
-let result =
-await db.query(
-
-`
-
-INSERT INTO cases
-
-(
-file_number,
-client_name
-)
-
-VALUES($1,$2)
-
-RETURNING id
-
-`,
-
-[
-
-data.fileNumber,
-
-data.clientName
-
-]
-
-);
-
-
-
-res.json({
-
-id:result.rows[0].id
-
-});
-
-
-
-}
-
-catch(error){
-
-
-res.status(500).json({
-
-message:"Insert error"
-
-});
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-
-
-
-app.put("/cases/:id",async(req,res)=>{
-
-
-await db.query(
-
-`
-
-UPDATE cases
-
-SET
-
-file_number=$1,
-
-client_name=$2
-
-WHERE id=$3
-
-`,
-
-[
-
-req.body.fileNumber,
-
-req.body.clientName,
-
-req.params.id
-
-]
-
-);
-
-
-
-res.json({
-
-message:"Updated"
-
-});
-
-
-});
-
-
-
-
-
-
-
-
-
-app.delete("/cases/:id",async(req,res)=>{
-
-
-await db.query(
-
-"DELETE FROM cases WHERE id=$1",
-
-[
-req.params.id
-]
-
-);
-
-
-
-res.json({
-
-message:"Deleted"
-
-});
-
-
-});
-
-
-
-
-
-
-
-
-
-
-
-// =====================
-// التوكيلات
-// =====================
-
-
-app.get("/powers",async(req,res)=>{
-
-
-let result =
-await db.query(
-
-"SELECT * FROM powers ORDER BY id DESC"
-
-);
-
-
-
-res.json(result.rows);
-
-
-
-});
-
-
-
-
-
-
-
-
-
-app.post("/powers",async(req,res)=>{
-
-
-const data=req.body;
-
-
-
-let result =
-await db.query(
-
-`
-
-INSERT INTO powers
-
-(
-
-file_number,
-
-power_number,
-
-client_name,
-
-documentation
+password TEXT
 
 )
 
-VALUES($1,$2,$3,$4)
+`);
 
-RETURNING id
 
-`,
 
-[
 
-data.fileNumber,
 
-data.powerNumber,
+await pool.query(`
 
-data.clientName,
+CREATE TABLE IF NOT EXISTS cases(
 
-data.documentation
+id SERIAL PRIMARY KEY,
 
-]
+file_number TEXT,
 
-);
+client_name TEXT,
 
+opponent TEXT,
 
+court TEXT,
 
-res.json({
+type TEXT,
 
-id:result.rows[0].id
+birth_date TEXT,
 
-});
+documentation TEXT
 
+)
 
+`);
 
-});
 
 
 
 
+await pool.query(`
 
+CREATE TABLE IF NOT EXISTS powers(
 
+id SERIAL PRIMARY KEY,
 
+file_number TEXT,
 
+power_number TEXT,
 
-app.put("/powers/:id",async(req,res)=>{
+client_name TEXT,
 
+type TEXT,
 
-await db.query(
+birth_date TEXT,
 
-`
+documentation TEXT
 
-UPDATE powers
+)
 
-SET
+`);
 
-file_number=$1,
 
-power_number=$2,
 
-client_name=$3,
 
-documentation=$4
-
-WHERE id=$5
-
-`,
-
-[
-
-req.body.fileNumber,
-
-req.body.powerNumber,
-
-req.body.clientName,
-
-req.body.documentation,
-
-req.params.id
-
-]
-
-);
-
-
-
-res.json({
-
-message:"Updated"
-
-});
-
-
-});
-
-
-
-
-
-
-
-
-
-app.delete("/powers/:id",async(req,res)=>{
-
-
-await db.query(
-
-"DELETE FROM powers WHERE id=$1",
-
-[
-req.params.id
-]
-
-);
-
-
-
-res.json({
-
-message:"Deleted"
-
-});
-
-
-});
-
-
-
-
-
-
-
-
-
-// =====================
-// فحص البيانات
-// =====================
-
-async function checkDatabase(){
-
-
-try{
-
-
-let cases =
-await db.query(
-"SELECT COUNT(*) FROM cases"
-);
-
-
-let powers =
-await db.query(
-"SELECT COUNT(*) FROM powers"
-);
-
-
-
-console.log(
-"CASES COUNT:",
-cases.rows[0].count
-);
-
-
-
-console.log(
-"POWERS COUNT:",
-powers.rows[0].count
-);
-
+console.log("Tables ready");
 
 
 }
@@ -852,48 +124,12 @@ console.log(error);
 }
 
 
-
 }
 
 
 
+setupDatabase();
 
 
 
-
-
-
-// =====================
-// تشغيل السيرفر
-// =====================
-
-
-const PORT =
-process.env.PORT || 3000;
-
-
-
-app.listen(
-
-PORT,
-
-"0.0.0.0",
-
-async()=>{
-
-
-console.log(
-
-`Mizan Server Running on port ${PORT}`
-
-);
-
-
-
-await checkDatabase();
-
-
-
-}
-
-);
+module.exports = pool;
