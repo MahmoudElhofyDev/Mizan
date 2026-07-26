@@ -14,7 +14,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
 const SECRET = "MIZAN_SECRET_KEY";
 
 
@@ -33,9 +32,6 @@ app.get("/",(req,res)=>{
 
 
 
-
-
-
 // =====================
 // تسجيل مستخدم
 // =====================
@@ -43,55 +39,59 @@ app.get("/",(req,res)=>{
 app.post("/register", async(req,res)=>{
 
 
-    const {
-        username,
-        password
-    } = req.body;
+try{
+
+
+const {
+username,
+password
+}=req.body;
 
 
 
-    const hash =
-    await bcrypt.hash(password,10);
+const hash =
+await bcrypt.hash(password,10);
 
 
 
-    db.run(
+await db.query(
 
-        `
-        INSERT INTO users(username,password)
-        VALUES(?,?)
-        `,
+`
+INSERT INTO users(username,password)
 
-        [
-            username,
-            hash
-        ],
+VALUES($1,$2)
+`,
 
-        function(err){
+[
+username,
+hash
+]
 
-
-            if(err){
-
-                return res.status(400).json({
-
-                    message:"User already exists"
-
-                });
-
-            }
+);
 
 
 
-            res.json({
+res.json({
 
-                message:"Account created"
+message:"Account created"
 
-            });
+});
 
 
-        }
+}
 
-    );
+catch(error){
+
+
+res.status(400).json({
+
+message:"User already exists"
+
+});
+
+
+}
+
 
 
 });
@@ -108,100 +108,131 @@ app.post("/register", async(req,res)=>{
 // تسجيل الدخول
 // =====================
 
-app.post("/login",(req,res)=>{
+app.post("/login",async(req,res)=>{
 
 
-    const {
-        username,
-        password
-    } = req.body;
+try{
 
 
-
-    db.get(
-
-        "SELECT * FROM users WHERE username=?",
-
-        [
-            username
-        ],
-
-
-        async(err,user)=>{
-
-
-            if(!user){
-
-                return res.status(401).json({
-
-                    message:"Wrong username or password"
-
-                });
-
-            }
+const {
+username,
+password
+}=req.body;
 
 
 
-            const match =
-            await bcrypt.compare(
-                password,
-                user.password
-            );
+const result =
+await db.query(
 
+"SELECT * FROM users WHERE username=$1",
 
+[
+username
+]
 
-            if(!match){
-
-                return res.status(401).json({
-
-                    message:"Wrong username or password"
-
-                });
-
-            }
+);
 
 
 
 
-
-            const token =
-            jwt.sign(
-
-                {
-                    id:user.id,
-                    username:user.username
-                },
-
-                SECRET,
-
-                {
-                    expiresIn:"1d"
-                }
-
-            );
+if(result.rows.length===0){
 
 
+return res.status(401).json({
 
-
-            res.json({
-
-                message:"Login success",
-
-                token
-
-            });
-
-
-
-        }
-
-
-    );
-
+message:"Wrong username or password"
 
 });
 
 
+}
+
+
+
+const user =
+result.rows[0];
+
+
+
+
+const match =
+await bcrypt.compare(
+
+password,
+
+user.password
+
+);
+
+
+
+
+if(!match){
+
+
+return res.status(401).json({
+
+message:"Wrong username or password"
+
+});
+
+
+}
+
+
+
+const token =
+jwt.sign(
+
+{
+
+id:user.id,
+
+username:user.username
+
+},
+
+SECRET,
+
+{
+
+expiresIn:"1d"
+
+}
+
+);
+
+
+
+res.json({
+
+message:"Login success",
+
+token,
+
+username:user.username
+
+});
+
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:"Server error"
+
+});
+
+
+}
+
+
+
+});
 
 
 
@@ -215,141 +246,140 @@ app.post("/login",(req,res)=>{
 // تغيير كلمة المرور
 // =====================
 
-app.put("/change-password", async(req,res)=>{
+app.put("/change-password",async(req,res)=>{
 
 
-    const {
+try{
 
-        username,
 
-        oldPassword,
+const {
 
-        newPassword
+username,
 
-    } = req.body;
+oldPassword,
 
+newPassword
 
+}=req.body;
 
 
-    db.get(
 
-        "SELECT * FROM users WHERE username=?",
+const result =
+await db.query(
 
-        [
-            username
-        ],
+"SELECT * FROM users WHERE username=$1",
 
+[
+username
+]
 
-        async(err,user)=>{
+);
 
 
-            if(!user){
 
-                return res.status(404).json({
+if(result.rows.length===0){
 
-                    message:"المستخدم غير موجود"
 
-                });
+return res.status(404).json({
 
-            }
-
-
-
-
-            const match =
-            await bcrypt.compare(
-
-                oldPassword,
-
-                user.password
-
-            );
-
-
-
-
-
-            if(!match){
-
-                return res.status(401).json({
-
-                    message:"كلمة المرور القديمة غير صحيحة"
-
-                });
-
-            }
-
-
-
-
-
-
-            const hash =
-            await bcrypt.hash(
-
-                newPassword,
-
-                10
-
-            );
-
-
-
-
-
-
-            db.run(
-
-                "UPDATE users SET password=? WHERE username=?",
-
-                [
-
-                    hash,
-
-                    username
-
-                ],
-
-
-                function(err){
-
-
-                    if(err){
-
-                        return res.status(500).json({
-
-                            message:"حدث خطأ"
-
-                        });
-
-                    }
-
-
-
-                    res.json({
-
-                        message:"تم تغيير كلمة المرور بنجاح"
-
-                    });
-
-
-                }
-
-
-            );
-
-
-
-        }
-
-
-    );
-
-
+message:"المستخدم غير موجود"
 
 });
 
 
+}
+
+
+
+const user =
+result.rows[0];
+
+
+
+
+const match =
+await bcrypt.compare(
+
+oldPassword,
+
+user.password
+
+);
+
+
+
+if(!match){
+
+
+return res.status(401).json({
+
+message:"كلمة المرور القديمة غير صحيحة"
+
+});
+
+
+}
+
+
+
+
+const hash =
+await bcrypt.hash(
+
+newPassword,
+
+10
+
+);
+
+
+
+await db.query(
+
+`
+
+UPDATE users
+
+SET password=$1
+
+WHERE username=$2
+
+`,
+
+[
+hash,
+username
+]
+
+);
+
+
+
+res.json({
+
+message:"تم تغيير كلمة المرور بنجاح"
+
+});
+
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:"حدث خطأ"
+
+});
+
+
+}
+
+
+
+});
 
 
 
@@ -364,26 +394,39 @@ app.put("/change-password", async(req,res)=>{
 // =====================
 
 
-
-app.get("/cases",(req,res)=>{
-
-
-    db.all(
-
-        "SELECT * FROM cases",
-
-        [],
-
-        (err,rows)=>{
+app.get("/cases",async(req,res)=>{
 
 
-            res.json(rows);
+try{
 
 
-        }
+const result =
+await db.query(
+
+"SELECT * FROM cases ORDER BY id DESC"
+
+);
 
 
-    );
+
+res.json(result.rows);
+
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:"Database error"
+
+});
+
+
+}
+
 
 
 });
@@ -394,25 +437,46 @@ app.get("/cases",(req,res)=>{
 
 
 
-app.post("/cases",(req,res)=>{
 
 
-    const data=req.body;
+app.post("/cases",async(req,res)=>{
+
+
+try{
+
+
+const data=req.body;
 
 
 
-    db.run(
+const result =
+await db.query(
 
 `
-INSERT INTO cases(
 
-fileNumber,
+INSERT INTO cases
 
-clientName
+(
+
+file_number,
+
+client_name,
+
+opponent,
+
+court,
+
+type,
+
+birth_date,
+
+documentation
 
 )
 
-VALUES(?,?)
+VALUES($1,$2,$3,$4,$5,$6,$7)
+
+RETURNING id
 
 `,
 
@@ -420,27 +484,46 @@ VALUES(?,?)
 
 data.fileNumber,
 
-data.clientName
+data.clientName,
 
-],
+data.opponent,
+
+data.court,
+
+data.type,
+
+data.birthDate,
+
+data.documentation
+
+]
+
+);
 
 
-function(err){
 
+res.json({
 
-    res.json({
+id:result.rows[0].id
 
-        id:this.lastID
-
-    });
+});
 
 
 
 }
 
+catch(error){
 
 
-);
+res.status(500).json({
+
+message:"Insert error"
+
+});
+
+
+}
+
 
 
 });
@@ -451,21 +534,37 @@ function(err){
 
 
 
-app.put("/cases/:id",(req,res)=>{
 
 
-    db.run(
+app.put("/cases/:id",async(req,res)=>{
+
+
+try{
+
+
+await db.query(
 
 `
+
 UPDATE cases
 
 SET
 
-fileNumber=?,
+file_number=$1,
 
-clientName=?
+client_name=$2,
 
-WHERE id=?
+opponent=$3,
+
+court=$4,
+
+type=$5,
+
+birth_date=$6,
+
+documentation=$7
+
+WHERE id=$8
 
 `,
 
@@ -475,70 +574,80 @@ req.body.fileNumber,
 
 req.body.clientName,
 
+req.body.opponent,
+
+req.body.court,
+
+req.body.type,
+
+req.body.birthDate,
+
+req.body.documentation,
+
 req.params.id
 
-],
+]
+
+);
 
 
-function(err){
+
+res.json({
+
+message:"Updated"
+
+});
 
 
-    res.json({
+}
 
-        message:"Updated"
+catch(error){
 
-    });
+
+res.status(500).json({
+
+message:"Update error"
+
+});
 
 
 }
 
 
+
+});
+
+
+
+
+
+
+
+
+
+app.delete("/cases/:id",async(req,res)=>{
+
+
+await db.query(
+
+"DELETE FROM cases WHERE id=$1",
+
+[
+req.params.id
+]
+
 );
 
 
-});
 
+res.json({
 
-
-
-
-
-
-
-
-app.delete("/cases/:id",(req,res)=>{
-
-
-    db.run(
-
-        "DELETE FROM cases WHERE id=?",
-
-        [
-
-            req.params.id
-
-        ],
-
-
-        function(err){
-
-
-            res.json({
-
-                message:"Deleted"
-
-            });
-
-
-        }
-
-
-    );
-
+message:"Deleted"
 
 });
 
 
+});
 
 
 
@@ -553,26 +662,39 @@ app.delete("/cases/:id",(req,res)=>{
 // =====================
 
 
-
-app.get("/powers",(req,res)=>{
-
-
-    db.all(
-
-        "SELECT * FROM powers",
-
-        [],
-
-        (err,rows)=>{
+app.get("/powers",async(req,res)=>{
 
 
-            res.json(rows);
+try{
 
 
-        }
+const result =
+await db.query(
+
+"SELECT * FROM powers ORDER BY id DESC"
+
+);
 
 
-    );
+
+res.json(result.rows);
+
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:"Database error"
+
+});
+
+
+}
+
 
 
 });
@@ -585,29 +707,42 @@ app.get("/powers",(req,res)=>{
 
 
 
-app.post("/powers",(req,res)=>{
+app.post("/powers",async(req,res)=>{
 
 
-    const data=req.body;
+try{
+
+
+const data=req.body;
 
 
 
-    db.run(
+const result =
+await db.query(
 
 `
-INSERT INTO powers(
 
-fileNumber,
+INSERT INTO powers
 
-powerNumber,
+(
 
-clientName,
+file_number,
+
+power_number,
+
+client_name,
+
+type,
+
+birth_date,
 
 documentation
 
 )
 
-VALUES(?,?,?,?)
+VALUES($1,$2,$3,$4,$5,$6)
+
+RETURNING id
 
 `,
 
@@ -619,27 +754,38 @@ data.powerNumber,
 
 data.clientName,
 
+data.type,
+
+data.birthDate,
+
 data.documentation
 
-],
+]
+
+);
 
 
 
-function(err){
+res.json({
 
+id:result.rows[0].id
 
-    res.json({
-
-        id:this.lastID
-
-    });
+});
 
 
 }
 
+catch(error){
 
 
-);
+res.status(500).json({
+
+message:"Insert error"
+
+});
+
+
+}
 
 
 
@@ -653,25 +799,30 @@ function(err){
 
 
 
-app.put("/powers/:id",(req,res)=>{
+app.put("/powers/:id",async(req,res)=>{
 
 
-    db.run(
+await db.query(
 
 `
+
 UPDATE powers
 
 SET
 
-fileNumber=?,
+file_number=$1,
 
-powerNumber=?,
+power_number=$2,
 
-clientName=?,
+client_name=$3,
 
-documentation=?
+type=$4,
 
-WHERE id=?
+birth_date=$5,
+
+documentation=$6
+
+WHERE id=$7
 
 `,
 
@@ -683,31 +834,27 @@ req.body.powerNumber,
 
 req.body.clientName,
 
+req.body.type,
+
+req.body.birthDate,
+
 req.body.documentation,
 
 req.params.id
 
-],
-
-
-function(err){
-
-
-    res.json({
-
-        message:"Updated"
-
-    });
-
-
-
-}
-
-
+]
 
 );
 
 
+
+res.json({
+
+message:"Updated"
+
+});
+
+
 });
 
 
@@ -718,39 +865,29 @@ function(err){
 
 
 
-app.delete("/powers/:id",(req,res)=>{
+app.delete("/powers/:id",async(req,res)=>{
 
 
-    db.run(
+await db.query(
 
-        "DELETE FROM powers WHERE id=?",
+"DELETE FROM powers WHERE id=$1",
 
-        [
+[
+req.params.id
+]
 
-            req.params.id
-
-        ],
-
-
-        function(err){
+);
 
 
-            res.json({
 
-                message:"Deleted"
+res.json({
 
-            });
-
-
-        }
-
-
-    );
-
+message:"Deleted"
 
 });
 
 
+});
 
 
 
@@ -764,22 +901,28 @@ app.delete("/powers/:id",(req,res)=>{
 // تشغيل السيرفر
 // =====================
 
-const PORT = process.env.PORT || 3000;
+
+const PORT =
+process.env.PORT || 3000;
+
+
 
 app.listen(
 
-    PORT,
+PORT,
 
-    "0.0.0.0",
+"0.0.0.0",
 
-    ()=>{
+()=>{
 
-        console.log(
 
-            `Mizan Server Running on port ${PORT}`
+console.log(
 
-        );
+`Mizan Server Running on port ${PORT}`
 
-    }
+);
+
+
+}
 
 );
