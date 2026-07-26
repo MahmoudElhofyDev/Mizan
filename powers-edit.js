@@ -1,7 +1,16 @@
 // =====================
-// تحميل البيانات
+// API Railway
 // =====================
 
+const API =
+"https://mizan-production-32bb.up.railway.app";
+
+
+
+
+// =====================
+// رقم التوكيل
+// =====================
 
 let id =
 
@@ -9,27 +18,7 @@ localStorage.getItem("editPowerId");
 
 
 
-
-let powers =
-
-JSON.parse(
-
-localStorage.getItem("powers")
-
-) || [];
-
-
-
-
-
-
-let currentPower =
-
-powers.find(
-
-item => item.id == id
-
-);
+let currentPower = null;
 
 
 
@@ -38,38 +27,102 @@ item => item.id == id
 
 
 // =====================
-// عرض البيانات
+// تحميل بيانات التوكيل
 // =====================
 
-
-if(currentPower){
-
-
-document.getElementById("fileNumber").value =
-
-currentPower.fileNumber || "";
+async function loadPowerEdit(){
 
 
+    try{
 
-document.getElementById("powerNumber").value =
 
-currentPower.powerNumber || "";
+        let response = await fetch(
+
+            `${API}/powers`
+
+        );
 
 
 
-document.getElementById("clientName").value =
-
-currentPower.clientName || "";
+        let powers = await response.json();
 
 
 
-document.getElementById("documentation").value =
 
-currentPower.documentation || "";
+        currentPower = powers.find(
+
+            item => item.id == id
+
+        );
+
+
+
+
+
+
+        if(currentPower){
+
+
+
+            document.getElementById(
+                "fileNumber"
+            ).value =
+
+            currentPower.fileNumber || "";
+
+
+
+
+
+            document.getElementById(
+                "powerNumber"
+            ).value =
+
+            currentPower.powerNumber || "";
+
+
+
+
+
+            document.getElementById(
+                "clientName"
+            ).value =
+
+            currentPower.clientName || "";
+
+
+
+
+
+            document.getElementById(
+                "documentation"
+            ).value =
+
+            currentPower.documentation || "";
+
+
+
+        }
+
+
+
+    }
+
+    catch(error){
+
+
+
+        alert(
+            "تعذر الاتصال بالسيرفر"
+        );
+
+
+    }
 
 
 
 }
+
 
 
 
@@ -82,18 +135,190 @@ currentPower.documentation || "";
 // حفظ التعديل
 // =====================
 
-
-function savePowerEdit(){
-
+async function savePowerEdit(){
 
 
-if(!currentPower){
+
+    if(!currentPower){
 
 
-alert("لم يتم العثور على التوكيل");
+        alert(
+            "التوكيل غير موجود"
+        );
 
 
-return;
+        return;
+
+
+    }
+
+
+
+
+
+
+
+    let powerNumber =
+
+    document.getElementById(
+        "powerNumber"
+    )
+
+    .value.trim();
+
+
+
+
+
+
+
+    let clientName =
+
+    document.getElementById(
+        "clientName"
+    )
+
+    .value.trim();
+
+
+
+
+
+
+
+    let documentation =
+
+    document.getElementById(
+        "documentation"
+    )
+
+    .value.trim();
+
+
+
+
+
+
+
+
+
+    try{
+
+
+
+        let response = await fetch(
+
+            `${API}/powers/${id}`,
+
+            {
+
+
+                method:"PUT",
+
+
+                headers:{
+
+
+                    "Content-Type":
+                    "application/json"
+
+
+                },
+
+
+                body:JSON.stringify({
+
+
+
+                    fileNumber:
+                    currentPower.fileNumber,
+
+
+
+                    powerNumber:
+                    powerNumber,
+
+
+
+                    clientName:
+                    clientName,
+
+
+
+                    documentation:
+                    documentation
+
+
+
+                })
+
+
+
+            }
+
+
+        );
+
+
+
+
+
+
+
+        await response.json();
+
+
+
+
+
+
+
+        alert(
+
+            "تم تعديل التوكيل بنجاح"
+
+        );
+
+
+
+
+
+
+
+        localStorage.removeItem(
+
+            "editPowerId"
+
+        );
+
+
+
+
+
+
+        window.location.href =
+
+        "powers.html";
+
+
+
+
+
+    }
+
+
+    catch(error){
+
+
+        alert(
+
+            "تعذر الاتصال بالسيرفر"
+
+        );
+
+
+    }
+
 
 
 }
@@ -103,83 +328,9 @@ return;
 
 
 
-currentPower.powerNumber =
-
-document.getElementById("powerNumber")
-
-.value.trim();
 
 
 
+// تشغيل
 
-
-
-currentPower.clientName =
-
-document.getElementById("clientName")
-
-.value.trim();
-
-
-
-
-
-
-currentPower.documentation =
-
-document.getElementById("documentation")
-
-.value.trim();
-
-
-
-
-
-
-
-
-localStorage.setItem(
-
-"powers",
-
-JSON.stringify(powers)
-
-);
-
-
-
-
-
-
-
-
-localStorage.removeItem(
-
-"editPowerId"
-
-);
-
-
-
-
-
-
-
-alert(
-
-"تم تعديل التوكيل بنجاح"
-
-);
-
-
-
-
-
-
-window.location.href =
-
-"powers.html";
-
-
-
-}
+loadPowerEdit();

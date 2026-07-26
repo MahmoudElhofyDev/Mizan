@@ -1,67 +1,85 @@
 // =====================
-// رقم الملف المراد تعديله
+// API Railway
 // =====================
 
-let id =
-
-localStorage.getItem(
-    "editCaseId"
-);
+const API =
+"https://mizan-production-32bb.up.railway.app";
 
 
 
+// =====================
+// جلب رقم القضية
+// =====================
 
+let id = localStorage.getItem("editCaseId");
 
-let cases =
-
-JSON.parse(
-
-localStorage.getItem("cases")
-
-) || [];
-
-
-
-
-
-
-
-let currentCase =
-
-cases.find(
-
-item => item.id == id
-
-);
-
-
+let currentCase = null;
 
 
 
 
 
 // =====================
-// تحميل البيانات
+// تحميل بيانات القضية
 // =====================
 
-if(currentCase){
+async function loadCaseEdit(){
+
+
+    try{
+
+
+        let response = await fetch(
+            `${API}/cases`
+        );
+
+
+        let cases = await response.json();
 
 
 
-    document.getElementById(
-        "fileNumber"
-    ).value =
-
-    currentCase.fileNumber || "";
+        currentCase = cases.find(
+            item => item.id == id
+        );
 
 
 
 
-    document.getElementById(
-        "clientName"
-    ).value =
+        if(currentCase){
 
-    currentCase.clientName || "";
+
+
+            document.getElementById(
+                "fileNumber"
+            ).value =
+            currentCase.fileNumber || "";
+
+
+
+
+
+            document.getElementById(
+                "clientName"
+            ).value =
+            currentCase.clientName || "";
+
+
+
+        }
+
+
+
+    }
+
+    catch(error){
+
+
+        alert(
+            "تعذر الاتصال بالسيرفر"
+        );
+
+
+    }
 
 
 
@@ -79,7 +97,7 @@ if(currentCase){
 // حفظ التعديل
 // =====================
 
-function saveCaseEdit(){
+async function saveCaseEdit(){
 
 
 
@@ -87,7 +105,7 @@ function saveCaseEdit(){
 
 
         alert(
-            "لم يتم العثور على الملف"
+            "القضية غير موجودة"
         );
 
 
@@ -96,6 +114,17 @@ function saveCaseEdit(){
 
     }
 
+
+
+
+
+
+    let fileNumber =
+
+    document.getElementById(
+        "fileNumber"
+    )
+    .value.trim();
 
 
 
@@ -106,85 +135,116 @@ function saveCaseEdit(){
     document.getElementById(
         "clientName"
     )
-
-    .value
-
-    .trim();
+    .value.trim();
 
 
 
 
 
 
-    if(clientName === ""){
+    try{
 
 
-        alert(
-            "أدخل اسم الموكل"
+
+        let response = await fetch(
+
+
+            `${API}/cases/${id}`,
+
+            {
+
+                method:"PUT",
+
+
+                headers:{
+
+
+                    "Content-Type":
+                    "application/json"
+
+
+                },
+
+
+                body:JSON.stringify({
+
+
+                    fileNumber:fileNumber,
+
+
+                    clientName:clientName
+
+
+
+                })
+
+
+
+            }
+
+
         );
 
 
-        return;
+
+
+
+
+        await response.json();
+
+
+
+
+
+
+        alert(
+
+            "تم تعديل القضية بنجاح"
+
+        );
+
+
+
+
+
+        localStorage.removeItem(
+            "editCaseId"
+        );
+
+
+
+
+
+        window.location.href =
+        "cases.html";
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        alert(
+            "تعذر الاتصال بالسيرفر"
+        );
 
 
     }
 
 
 
-
-
-
-
-    currentCase.clientName =
-
-    clientName;
-
-
-
-
-
-
-
-    localStorage.setItem(
-
-        "cases",
-
-        JSON.stringify(cases)
-
-    );
-
-
-
-
-
-
-
-    localStorage.removeItem(
-
-        "editCaseId"
-
-    );
-
-
-
-
-
-
-    alert(
-
-        "تم تعديل الملف بنجاح"
-
-    );
-
-
-
-
-
-
-    window.location.href =
-
-    "cases.html";
-
-
-
 }
+
+
+
+
+
+
+
+
+// تشغيل
+
+loadCaseEdit();
