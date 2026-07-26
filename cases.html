@@ -7,10 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-ميزان | ملفات القضايا
-</title>
-
+<title>ميزان | ملفات الحفظ</title>
 
 <link rel="stylesheet" href="cases.css">
 
@@ -20,19 +17,13 @@
 <body>
 
 
-
 <header class="top">
 
-
-<h1>
-📁 ملفات حفظ القضايا
-</h1>
-
+<h1>📁 ملفات الحفظ</h1>
 
 <p>
-إدارة وحفظ بيانات القضايا
+إدارة ملفات الحفظ
 </p>
-
 
 </header>
 
@@ -41,17 +32,9 @@
 
 
 
-
-
 <section class="box">
 
-
-<h2>
-إضافة ملف جديد
-</h2>
-
-
-
+<h2>إضافة ملف جديد</h2>
 
 
 <div class="form">
@@ -59,42 +42,26 @@
 
 
 <input
-
 id="fileNumber"
-
 placeholder="رقم الملف">
 
 
 
-
-
 <input
-
 id="clientName"
-
 placeholder="اسم الموكل">
 
 
 
 
 
-<button onclick="showLastFileNumber()">
-
-آخر رقم ملف
-
-</button>
-
-
-
-
-
-
-<button onclick="addCase()">
+<button 
+type="button"
+onclick="addCase()">
 
 إضافة الملف
 
 </button>
-
 
 
 
@@ -110,14 +77,10 @@ placeholder="اسم الموكل">
 
 
 
-
 <section class="box">
 
 
-<h2>
-البحث
-</h2>
-
+<h2>البحث</h2>
 
 
 
@@ -140,15 +103,10 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
-
 <section class="box">
 
 
-<h2>
-قائمة الملفات
-</h2>
-
-
+<h2>قائمة الملفات</h2>
 
 
 
@@ -161,35 +119,22 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 <tr>
 
 
-<th>
-رقم الملف
-</th>
+<th>رقم الملف</th>
 
 
-
-<th>
-اسم الموكل
-</th>
+<th>اسم الموكل</th>
 
 
-
-<th>
-تعديل
-</th>
+<th>تعديل</th>
 
 
-
-<th>
-حذف
-</th>
-
+<th>حذف</th>
 
 
 </tr>
 
 
 </thead>
-
 
 
 
@@ -213,8 +158,10 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
+<!-- أزرار الصفحات -->
 
 <div id="pagination"></div>
+
 
 
 
@@ -233,7 +180,6 @@ placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 </a>
-
 
 
 
