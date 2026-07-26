@@ -34,6 +34,7 @@
 
 
 
+
 <section class="box">
 
 <h2>إضافة توكيل جديد</h2>
@@ -90,6 +91,7 @@ onclick="showLastFileNumber()">
 
 
 
+
 <button 
 onclick="addPower()">
 
@@ -100,6 +102,66 @@ onclick="addPower()">
 
 
 </div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="box">
+
+
+<h2>
+استيراد التوكيلات من Excel
+</h2>
+
+
+
+<div class="form">
+
+
+<input
+
+type="file"
+
+id="excelFile"
+
+accept=".xlsx,.xls"
+
+>
+
+
+
+
+<button
+
+type="button"
+
+onclick="importPowersExcel()">
+
+📥 استيراد Excel
+
+</button>
+
+
+
+</div>
+
+
+<p style="text-align:center;margin-top:15px">
+
+ترتيب الأعمدة:
+<br>
+جهة التوثيق | اسم الموكل | رقم التوكيل | رقم الملف
+
+</p>
+
 
 
 </section>
@@ -230,6 +292,8 @@ placeholder="ابحث في التوكيلات"
 
 
 
+
+
 <button
 
 class="empty-btn"
@@ -241,6 +305,7 @@ onclick="showEmptyPowers()"
 عرض البيانات الناقصة
 
 </button>
+
 
 
 
@@ -267,6 +332,9 @@ onclick="showEmptyPowers()"
 
 
 
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
 <script src="powers.js"></script>
