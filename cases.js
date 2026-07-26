@@ -18,6 +18,9 @@ let searchTimer;
 
 
 
+
+
+
 // =====================
 // حفظ البيانات
 // =====================
@@ -30,6 +33,8 @@ function saveCases(){
     );
 
 }
+
+
 
 
 
@@ -53,7 +58,6 @@ function addCase(){
     let clientName =
     document.getElementById("clientName")
     .value.trim();
-
 
 
 
@@ -107,179 +111,6 @@ function addCase(){
 
 
     clearInputs();
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// استيراد Excel
-// =====================
-
-function importExcel(){
-
-
-
-    let file =
-    document.getElementById("excelFile")
-    .files[0];
-
-
-
-    if(!file){
-
-
-        alert("اختر ملف Excel أولاً");
-
-
-        return;
-
-
-    }
-
-
-
-
-
-
-    let reader = new FileReader();
-
-
-
-    reader.onload=function(e){
-
-
-
-        let data =
-        new Uint8Array(
-            e.target.result
-        );
-
-
-
-        let workbook =
-        XLSX.read(
-            data,
-            {type:"array"}
-        );
-
-
-
-        let sheet =
-        workbook.Sheets[
-            workbook.SheetNames[0]
-        ];
-
-
-
-        let rows =
-        XLSX.utils.sheet_to_json(
-            sheet,
-            {header:1}
-        );
-
-
-
-        let count=0;
-
-
-
-        rows.forEach((row,index)=>{
-
-
-
-            // تخطي العنوان
-
-            if(index===0)
-            return;
-
-
-
-            if(
-                !row[0] &&
-                !row[1]
-            )
-            return;
-
-
-
-
-
-            let newCase={
-
-
-                id:
-                Date.now()+index,
-
-
-
-                fileNumber:
-                row[0] || "",
-
-
-
-                clientName:
-                row[1] || ""
-
-
-
-            };
-
-
-
-
-
-            cases.push(newCase);
-
-
-
-            count++;
-
-
-
-        });
-
-
-
-
-
-
-        saveCases();
-
-
-
-        currentData=[];
-
-
-
-        displayCases();
-
-
-
-
-
-        alert(
-            "تم استيراد " +
-            count +
-            " ملف بنجاح"
-        );
-
-
-
-    };
-
-
-
-
-    reader.readAsArrayBuffer(file);
 
 
 
@@ -425,6 +256,7 @@ onclick="deleteCase(${item.id})">
 
 
 
+
 // =====================
 // البحث
 // =====================
@@ -517,7 +349,6 @@ function searchCases(){
 
 
 }
-
 
 
 
@@ -699,6 +530,9 @@ function editCase(id){
 
 
 
+
+
+
 // =====================
 // تنظيف الخانات
 // =====================
@@ -724,15 +558,18 @@ function clearInputs(){
 
 
 
+
+
+
 // =====================
-// آخر رقم ملف
+// آخر رقم ملف (معدل)
 // =====================
 
 function showLastFileNumber(){
 
 
 
-    if(cases.length===0){
+    if(cases.length === 0){
 
 
         alert("لا يوجد ملفات مسجلة");
@@ -748,12 +585,65 @@ function showLastFileNumber(){
 
 
 
-    let nums =
-    cases.map(c=>
+    let maxNumber = 0;
 
-        Number(c.fileNumber)||0
 
-    );
+
+
+
+    cases.forEach(c=>{
+
+
+
+        let num = Number(
+
+            String(c.fileNumber)
+            .trim()
+
+        );
+
+
+
+
+        if(
+
+            !isNaN(num) &&
+
+            num > maxNumber
+
+        ){
+
+
+            maxNumber = num;
+
+
+        }
+
+
+
+    });
+
+
+
+
+
+
+
+
+    if(maxNumber === 0){
+
+
+
+        alert(
+            "لا توجد أرقام ملفات صحيحة"
+        );
+
+
+        return;
+
+
+    }
+
 
 
 
@@ -763,7 +653,7 @@ function showLastFileNumber(){
 
         "آخر رقم ملف هو: " +
 
-        Math.max(...nums)
+        maxNumber
 
     );
 

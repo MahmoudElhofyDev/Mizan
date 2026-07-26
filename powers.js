@@ -7,9 +7,8 @@ JSON.parse(localStorage.getItem("powers")) || [];
 
 
 
-
 // =====================
-// تثبيت شكل البيانات
+// تثبيت البيانات
 // =====================
 
 powers = powers.map(p=>{
@@ -46,9 +45,12 @@ let rowsPerPage = 50;
 
 let currentData = [];
 
+let searchTimer;
+
 let showingEmpty = false;
 
-let searchTimer;
+
+
 
 
 
@@ -106,6 +108,7 @@ function getNextFileNumber(){
 function addPower(){
 
 
+
     let fileNumber =
     document.getElementById("fileNumber").value.trim();
 
@@ -127,6 +130,8 @@ function addPower(){
 
 
 
+
+
     if(clientName===""){
 
 
@@ -135,7 +140,10 @@ function addPower(){
 
         return;
 
+
     }
+
+
 
 
 
@@ -152,22 +160,31 @@ function addPower(){
 
 
 
+    let newPower={
 
-    powers.push({
 
         id:Date.now(),
 
-        fileNumber,
 
-        powerNumber,
-
-        clientName,
-
-        documentation
-
-    });
+        fileNumber:fileNumber,
 
 
+        powerNumber:powerNumber,
+
+
+        clientName:clientName,
+
+
+        documentation:documentation
+
+
+    };
+
+
+
+
+
+    powers.push(newPower);
 
 
 
@@ -194,178 +211,22 @@ function addPower(){
 
 
 // =====================
-// حفظ البيانات
+// حفظ
 // =====================
 
 function savePowers(){
 
+
     localStorage.setItem(
+
         "powers",
+
         JSON.stringify(powers)
+
     );
 
 
 }
-
-
-
-
-
-
-
-
-
-// =====================
-// استيراد Excel
-// =====================
-
-function importExcel(){
-
-
-
-    let file =
-    document.getElementById("excelFile").files[0];
-
-
-
-    if(!file){
-
-
-        alert("اختر ملف Excel أولاً");
-
-
-        return;
-
-    }
-
-
-
-
-    let reader = new FileReader();
-
-
-
-    reader.onload=function(e){
-
-
-
-        let data =
-        new Uint8Array(e.target.result);
-
-
-
-        let workbook =
-        XLSX.read(data,{type:"array"});
-
-
-
-        let sheet =
-        workbook.Sheets[
-            workbook.SheetNames[0]
-        ];
-
-
-
-        let rows =
-        XLSX.utils.sheet_to_json(
-            sheet,
-            {header:1}
-        );
-
-
-
-        let count=0;
-
-
-
-        rows.forEach((row,index)=>{
-
-
-
-            if(index===0)
-            return;
-
-
-
-            if(
-                !row[0] &&
-                !row[1] &&
-                !row[2] &&
-                !row[3]
-            )
-            return;
-
-
-
-
-            let newPower={
-
-
-                id:Date.now()+index,
-
-
-                documentation:
-                row[0] || "",
-
-
-                clientName:
-                row[1] || "",
-
-
-                powerNumber:
-                row[2] || "",
-
-
-                fileNumber:
-                row[3] || getNextFileNumber()
-
-
-            };
-
-
-
-            powers.push(newPower);
-
-
-
-            count++;
-
-
-
-        });
-
-
-
-
-
-        savePowers();
-
-
-
-        currentData=[];
-
-
-        displayPowers();
-
-
-
-        alert(
-            "تم استيراد " + count + " توكيل بنجاح"
-        );
-
-
-
-    };
-
-
-
-    reader.readAsArrayBuffer(file);
-
-
-
-}
-
-
 
 
 
@@ -393,7 +254,10 @@ function displayPowers(){
 
 
 
+
     table.innerHTML="";
+
+
 
 
 
@@ -404,51 +268,91 @@ function displayPowers(){
 
     let data =
     currentData.slice(
+
         start,
+
         start+rowsPerPage
+
     );
+
+
+
+
 
 
 
     data.forEach(power=>{
 
 
-
         table.innerHTML += `
 
 <tr>
 
-<td>${power.documentation}</td>
 
-<td>${power.clientName}</td>
+<td>
 
-<td>${power.powerNumber}</td>
+${power.documentation}
 
-<td>${power.fileNumber}</td>
+</td>
+
+
+
+<td>
+
+${power.clientName}
+
+</td>
+
+
+
+<td>
+
+${power.powerNumber}
+
+</td>
+
+
+
+<td>
+
+${power.fileNumber}
+
+</td>
+
+
+
 
 
 <td>
 
 <button class="edit"
+
 onclick="goEditPower(${power.id})">
 
 تعديل
 
 </button>
 
+
 </td>
+
+
+
 
 
 <td>
 
 <button class="delete"
+
 onclick="deletePower(${power.id})">
 
 حذف
 
 </button>
 
+
 </td>
+
 
 
 </tr>
@@ -458,6 +362,8 @@ onclick="deletePower(${power.id})">
 
 
     });
+
+
 
 
 
@@ -482,6 +388,7 @@ onclick="deletePower(${power.id})">
 function delaySearch(){
 
 
+
     clearTimeout(searchTimer);
 
 
@@ -490,10 +397,12 @@ function delaySearch(){
 
 
         let value =
+
         document.getElementById("search")
         .value
         .toLowerCase()
         .trim();
+
 
 
 
@@ -503,7 +412,9 @@ function delaySearch(){
             currentData=[];
 
 
-        }else{
+        }
+
+        else{
 
 
             currentData =
@@ -517,25 +428,35 @@ function delaySearch(){
                 .includes(value)
 
 
+
                 ||
+
+
 
                 String(p.powerNumber)
                 .toLowerCase()
                 .includes(value)
 
 
+
                 ||
+
+
 
                 String(p.clientName)
                 .toLowerCase()
                 .includes(value)
 
 
+
                 ||
+
+
 
                 String(p.documentation)
                 .toLowerCase()
                 .includes(value)
+
 
 
                 );
@@ -544,7 +465,9 @@ function delaySearch(){
             });
 
 
+
         }
+
 
 
 
@@ -591,14 +514,20 @@ function createPagination(){
 
 
     let pages =
+
     Math.ceil(
-        currentData.length / rowsPerPage
+
+        currentData.length /
+
+        rowsPerPage
+
     );
 
 
 
-    for(let i=1;i<=pages;i++){
 
+
+    for(let i=1;i<=pages;i++){
 
 
         pagination.innerHTML += `
@@ -611,6 +540,8 @@ ${i}
 
 `;
 
+
+
     }
 
 
@@ -622,9 +553,12 @@ ${i}
 
 function changePage(page){
 
+
     currentPage=page;
 
+
     displayPowers();
+
 
 }
 
@@ -649,7 +583,9 @@ function deletePower(id){
 
         powers =
         powers.filter(
-            p=>p.id!=id
+
+            p=>p.id != id
+
         );
 
 
@@ -657,7 +593,9 @@ function deletePower(id){
         savePowers();
 
 
+
         currentData=[];
+
 
 
         displayPowers();
@@ -665,7 +603,6 @@ function deletePower(id){
 
 
     }
-
 
 
 }
@@ -685,13 +622,18 @@ function deletePower(id){
 function goEditPower(id){
 
 
+
     localStorage.setItem(
+
         "editPowerId",
+
         id
+
     );
 
 
-    window.location.href=
+
+    window.location.href =
     "powers-edit.html";
 
 
@@ -721,8 +663,9 @@ function clearInputs(){
     document.getElementById("documentation").value="";
 
 
-    document.getElementById("fileNumber").value=
+    document.getElementById("fileNumber").value =
     getNextFileNumber();
+
 
 
 }
@@ -742,6 +685,7 @@ function clearInputs(){
 function showLastFileNumber(){
 
 
+
     let last=2432;
 
 
@@ -757,6 +701,7 @@ function showLastFileNumber(){
 
 
             last=num;
+
 
         }
 
@@ -781,7 +726,7 @@ function showLastFileNumber(){
 
 
 // =====================
-// البيانات الناقصة
+// عرض البيانات الناقصة
 // =====================
 
 function showEmptyPowers(){
@@ -798,7 +743,9 @@ function showEmptyPowers(){
 
 
 
-    }else{
+    }
+
+    else{
 
 
         currentData =
@@ -825,7 +772,9 @@ function showEmptyPowers(){
         showingEmpty=true;
 
 
+
     }
+
 
 
 
@@ -833,6 +782,7 @@ function showEmptyPowers(){
 
 
     displayPowers();
+
 
 
 }
@@ -861,6 +811,7 @@ document.getElementById("powersTable")
 
 
 }
+
 
 
 
