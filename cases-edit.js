@@ -1,102 +1,76 @@
-// =====================
-// API Railway
-// =====================
-
 const API =
 "https://mizan-production-32bb.up.railway.app";
 
 
 
-// =====================
-// جلب رقم التعديل
-// =====================
-
-let id =
+let editId =
 localStorage.getItem("editCaseId");
 
 
 
+let currentCase = null;
+
+
+
+
 
 // =====================
-// تحميل بيانات القضية
+// تحميل الملف
 // =====================
 
-async function loadCaseEdit(){
+async function loadCase(){
 
 
     try{
 
 
-        let response = await fetch(
-            `${API}/cases`
-        );
+        let res =
+        await fetch(`${API}/cases`);
+
 
 
         let cases =
-        await response.json();
+        await res.json();
 
 
 
-        let currentCase =
+        currentCase =
         cases.find(
-            item => item.id == id
+            c => c.id == editId
         );
 
 
 
-        if(currentCase){
 
+        if(!currentCase){
 
-            document.getElementById(
-                "fileNumber"
-            ).value =
-            currentCase.fileNumber || "";
+            alert("الملف غير موجود");
 
-
-
-            document.getElementById(
-                "caseNumber"
-            ).value =
-            currentCase.caseNumber || "";
-
-
-
-            document.getElementById(
-                "clientName"
-            ).value =
-            currentCase.clientName || "";
-
-
-
-            document.getElementById(
-                "court"
-            ).value =
-            currentCase.court || "";
-
-
-
-            document.getElementById(
-                "caseType"
-            ).value =
-            currentCase.caseType || "";
-
+            return;
 
         }
 
 
+
+
+        document.getElementById("fileNumber").value =
+        currentCase.fileNumber || "";
+
+
+
+        document.getElementById("clientName").value =
+        currentCase.clientName || "";
+
+
+
     }
+    catch(err){
 
+        console.log(err);
 
-    catch(error){
-
-
-        alert(
-            "تعذر تحميل البيانات"
-        );
-
+        alert("تعذر تحميل البيانات");
 
     }
-
 
 
 }
@@ -117,51 +91,30 @@ async function saveCaseEdit(){
 
 
 
-    let data = {
-
-
-        fileNumber:
-
-        document.getElementById(
-            "fileNumber"
-        ).value,
+    let fileNumber =
+    document.getElementById("fileNumber")
+    .value.trim();
 
 
 
-        caseNumber:
-
-        document.getElementById(
-            "caseNumber"
-        ).value,
+    let clientName =
+    document.getElementById("clientName")
+    .value.trim();
 
 
 
-        clientName:
-
-        document.getElementById(
-            "clientName"
-        ).value,
 
 
+    if(
+        fileNumber === "" ||
+        clientName === ""
+    ){
 
-        court:
+        alert("أدخل البيانات كاملة");
 
-        document.getElementById(
-            "court"
-        ).value,
+        return;
 
-
-
-        caseType:
-
-        document.getElementById(
-            "caseType"
-        ).value
-
-
-
-    };
-
+    }
 
 
 
@@ -170,64 +123,43 @@ async function saveCaseEdit(){
 
     await fetch(
 
-        `${API}/cases/${id}`,
+        `${API}/cases/${editId}`,
 
         {
 
             method:"PUT",
 
-
             headers:{
 
-                "Content-Type":
-                "application/json"
+                "Content-Type":"application/json"
 
             },
 
 
-            body:
-            JSON.stringify(data)
+            body:JSON.stringify({
 
+                fileNumber,
+
+                clientName
+
+            })
 
         }
 
-
     );
 
 
 
 
 
-    alert(
-        "تم حفظ التعديل"
-    );
+
+    alert("تم حفظ التعديل");
 
 
 
     window.location.href =
     "cases.html";
 
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// رجوع
-// =====================
-
-function goBack(){
-
-
-    window.location.href =
-    "cases.html";
 
 
 }
@@ -242,4 +174,4 @@ function goBack(){
 
 // تشغيل
 
-loadCaseEdit();
+loadCase();

@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ميزان | ملفات القضايا</title>
+<title>ميزان | ملفات الحفظ</title>
 
 <link rel="stylesheet" href="cases.css">
 
@@ -19,9 +19,11 @@
 
 <header class="top">
 
-<h1>⚖️ ملفات القضايا</h1>
+<h1>📁 ملفات الحفظ</h1>
 
-<p>إدارة بيانات القضايا</p>
+<p>
+إدارة ملفات الحفظ
+</p>
 
 </header>
 
@@ -29,28 +31,21 @@
 
 
 
-<section class="container">
 
 
-
-<div class="form-box">
-
-
-<h2>
-إضافة قضية جديدة
-</h2>
+<section class="box">
 
 
+<h2>إضافة ملف جديد</h2>
 
-<div class="inputs">
+
+<div class="form">
 
 
 
 <input
 
 id="fileNumber"
-
-type="text"
 
 placeholder="رقم الملف"
 
@@ -60,25 +55,10 @@ placeholder="رقم الملف"
 
 
 
-<input
-
-id="caseNumber"
-
-type="text"
-
-placeholder="رقم القضية"
-
-
-
->
-
-
 
 <input
 
 id="clientName"
-
-type="text"
 
 placeholder="اسم الموكل"
 
@@ -88,53 +68,15 @@ placeholder="اسم الموكل"
 
 
 
-<input
-
-id="court"
-
-type="text"
-
-placeholder="المحكمة"
 
 
+<button
+
+type="button"
+
+onclick="showLastFileNumber()"
 
 >
-
-
-
-<input
-
-id="caseType"
-
-type="text"
-
-placeholder="نوع القضية"
-
-
-
->
-
-
-
-</div>
-
-
-
-
-
-
-<div class="buttons">
-
-
-<button onclick="addCase()">
-
-إضافة
-
-</button>
-
-
-
-<button onclick="showLastFileNumber()">
 
 آخر رقم ملف
 
@@ -142,13 +84,27 @@ placeholder="نوع القضية"
 
 
 
-</div>
+
+
+
+<button
+
+type="button"
+
+onclick="addCase()"
+
+>
+
+إضافة الملف
+
+</button>
 
 
 
 </div>
 
 
+</section>
 
 
 
@@ -157,30 +113,50 @@ placeholder="نوع القضية"
 
 
 
-<div class="search-box">
+
+
+<section class="box">
+
+
+<h2>
+
+البحث
+
+</h2>
+
 
 
 <input
 
 id="search"
 
-type="text"
+oninput="searchCases()"
 
-placeholder="بحث..."
-
-oninput="delaySearch()"
-
-
+placeholder="ابحث برقم الملف أو اسم الموكل"
 
 >
 
 
-</div>
+
+</section>
 
 
 
 
 
+
+
+
+
+
+<section class="box">
+
+
+<h2>
+
+قائمة الملفات
+
+</h2>
 
 
 
@@ -200,22 +176,7 @@ oninput="delaySearch()"
 
 
 <th>
-رقم القضية
-</th>
-
-
-<th>
 اسم الموكل
-</th>
-
-
-<th>
-المحكمة
-</th>
-
-
-<th>
-نوع القضية
 </th>
 
 
@@ -244,23 +205,7 @@ oninput="delaySearch()"
 </tbody>
 
 
-
 </table>
-
-
-
-
-
-
-
-<div id="pagination">
-
-
-</div>
-
-
-
-
 
 
 </section>
@@ -271,11 +216,40 @@ oninput="delaySearch()"
 
 
 
+
+
+<div id="pagination"></div>
+
+
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+العودة للرئيسية
+
+</button>
+
+
+</a>
+
+
+
+
+
+
+
+
 <script src="cases.js"></script>
 
 
-
 </body>
-
 
 </html>

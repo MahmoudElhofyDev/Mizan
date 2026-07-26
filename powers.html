@@ -21,7 +21,9 @@
 
 <h1>📄 ملفات التوكيلات</h1>
 
-<p>إدارة بيانات التوكيلات</p>
+<p>
+إدارة بيانات التوكيلات
+</p>
 
 </header>
 
@@ -29,19 +31,15 @@
 
 
 
-<section class="container">
 
 
-<div class="form-box">
+<section class="box">
 
 
-<h2>
-إضافة توكيل جديد
-</h2>
+<h2>إضافة توكيل جديد</h2>
 
 
-
-<div class="inputs">
+<div class="form">
 
 
 
@@ -49,13 +47,10 @@
 
 id="fileNumber"
 
-type="text"
-
 placeholder="رقم الملف"
 
-
-
 >
+
 
 
 
@@ -63,13 +58,10 @@ placeholder="رقم الملف"
 
 id="powerNumber"
 
-type="text"
-
 placeholder="رقم التوكيل"
 
-
-
 >
+
 
 
 
@@ -77,13 +69,10 @@ placeholder="رقم التوكيل"
 
 id="clientName"
 
-type="text"
-
 placeholder="اسم الموكل"
 
-
-
 >
+
 
 
 
@@ -91,36 +80,24 @@ placeholder="اسم الموكل"
 
 id="documentation"
 
-type="text"
-
-placeholder="التوثيق"
-
-
+placeholder="جهة التوثيق"
 
 >
 
 
 
-</div>
 
 
 
 
 
+<button
 
+type="button"
 
-<div class="buttons">
+onclick="showLastFileNumber()"
 
-
-<button onclick="addPower()">
-
-إضافة
-
-</button>
-
-
-
-<button onclick="showLastFileNumber()">
+>
 
 آخر رقم ملف
 
@@ -128,42 +105,79 @@ placeholder="التوثيق"
 
 
 
-</div>
+
+
+
+
+<button
+
+type="button"
+
+onclick="addPower()"
+
+>
+
+إضافة التوكيل
+
+</button>
 
 
 
 </div>
 
 
+</section>
 
 
 
 
 
 
-<div class="search-box">
+
+
+
+<section class="box">
+
+
+<h2>
+
+البحث
+
+</h2>
+
+
 
 
 <input
 
 id="search"
 
-type="text"
-
-placeholder="بحث..."
-
 oninput="delaySearch()"
 
-
+placeholder="ابحث في التوكيلات"
 
 >
 
 
-</div>
+
+</section>
 
 
 
 
+
+
+
+
+
+<section class="box">
+
+
+<h2>
+
+قائمة التوكيلات
+
+</h2>
 
 
 
@@ -177,9 +191,11 @@ oninput="delaySearch()"
 <tr>
 
 
+
 <th>
 رقم الملف
 </th>
+
 
 
 <th>
@@ -187,14 +203,17 @@ oninput="delaySearch()"
 </th>
 
 
+
 <th>
 اسم الموكل
 </th>
 
 
+
 <th>
-التوثيق
+جهة التوثيق
 </th>
+
 
 
 <th>
@@ -202,9 +221,11 @@ oninput="delaySearch()"
 </th>
 
 
+
 <th>
 حذف
 </th>
+
 
 
 </tr>
@@ -216,30 +237,13 @@ oninput="delaySearch()"
 
 
 
-
 <tbody id="powersTable">
 
 
 </tbody>
 
 
-
-
 </table>
-
-
-
-
-
-
-
-<div id="pagination">
-
-</div>
-
-
-
-
 
 
 </section>
@@ -250,11 +254,40 @@ oninput="delaySearch()"
 
 
 
+
+
+<div id="pagination"></div>
+
+
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+العودة للرئيسية
+
+</button>
+
+
+</a>
+
+
+
+
+
+
+
+
 <script src="powers.js"></script>
 
 
-
 </body>
-
 
 </html>

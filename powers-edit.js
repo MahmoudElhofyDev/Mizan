@@ -1,86 +1,58 @@
-// =====================
-// API Railway
-// =====================
-
 const API =
 "https://mizan-production-32bb.up.railway.app";
 
 
 
-// =====================
-// رقم التعديل
-// =====================
-
-let id =
+let editId =
 localStorage.getItem("editPowerId");
 
 
 
+let currentPower = null;
+
+
+
+
+
 
 
 // =====================
-// تحميل بيانات التوكيل
+// تحميل التوكيل
 // =====================
 
-async function loadPowerEdit(){
+async function loadPower(){
 
 
     try{
 
 
-        let response = await fetch(
-            `${API}/powers`
-        );
+        let res =
+        await fetch(`${API}/powers`);
+
 
 
         let powers =
-        await response.json();
+        await res.json();
 
 
 
 
-        let currentPower =
+        currentPower =
         powers.find(
-            item => item.id == id
+            p => p.id == editId
         );
 
 
 
 
 
-        if(currentPower){
+        if(!currentPower){
 
 
-
-            document.getElementById(
-                "fileNumber"
-            ).value =
-            currentPower.fileNumber || "";
+            alert("التوكيل غير موجود");
 
 
-
-
-            document.getElementById(
-                "powerNumber"
-            ).value =
-            currentPower.powerNumber || "";
-
-
-
-
-            document.getElementById(
-                "clientName"
-            ).value =
-            currentPower.clientName || "";
-
-
-
-
-            document.getElementById(
-                "documentation"
-            ).value =
-            currentPower.documentation || "";
-
+            return;
 
 
         }
@@ -88,19 +60,42 @@ async function loadPowerEdit(){
 
 
 
+
+
+        document.getElementById("documentation").value =
+        currentPower.documentation || "";
+
+
+
+        document.getElementById("clientName").value =
+        currentPower.clientName || "";
+
+
+
+        document.getElementById("powerNumber").value =
+        currentPower.powerNumber || "";
+
+
+
+        document.getElementById("fileNumber").value =
+        currentPower.fileNumber || "";
+
+
+
+
+
     }
 
+    catch(err){
 
-    catch(error){
+
+        console.log(err);
 
 
-        alert(
-            "تعذر تحميل البيانات"
-        );
+        alert("تعذر تحميل البيانات");
 
 
     }
-
 
 
 }
@@ -121,53 +116,44 @@ async function savePowerEdit(){
 
 
 
-    let data = {
+    let documentation =
+    document.getElementById("documentation")
+    .value.trim();
 
 
 
-        fileNumber:
-
-
-        document.getElementById(
-            "fileNumber"
-        ).value,
+    let clientName =
+    document.getElementById("clientName")
+    .value.trim();
 
 
 
-
-
-        powerNumber:
-
-
-        document.getElementById(
-            "powerNumber"
-        ).value,
+    let powerNumber =
+    document.getElementById("powerNumber")
+    .value.trim();
 
 
 
-
-
-        clientName:
-
-
-        document.getElementById(
-            "clientName"
-        ).value,
+    let fileNumber =
+    document.getElementById("fileNumber")
+    .value.trim();
 
 
 
 
 
-        documentation:
+
+    if(clientName===""){
 
 
-        document.getElementById(
-            "documentation"
-        ).value
+        alert("أدخل اسم الموكل");
 
 
+        return;
 
-    };
+
+    }
+
 
 
 
@@ -177,23 +163,34 @@ async function savePowerEdit(){
 
     await fetch(
 
-        `${API}/powers/${id}`,
+        `${API}/powers/${editId}`,
 
         {
 
             method:"PUT",
 
-
             headers:{
 
-                "Content-Type":
-                "application/json"
+
+                "Content-Type":"application/json"
+
 
             },
 
 
-            body:
-            JSON.stringify(data)
+            body:JSON.stringify({
+
+
+                documentation,
+
+                clientName,
+
+                powerNumber,
+
+                fileNumber
+
+
+            })
 
 
         }
@@ -207,10 +204,7 @@ async function savePowerEdit(){
 
 
 
-    alert(
-        "تم حفظ التعديل"
-    );
-
+    alert("تم حفظ التعديل");
 
 
 
@@ -218,27 +212,6 @@ async function savePowerEdit(){
     window.location.href =
     "powers.html";
 
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// رجوع
-// =====================
-
-function goBack(){
-
-
-    window.location.href =
-    "powers.html";
 
 
 }
@@ -253,4 +226,4 @@ function goBack(){
 
 // تشغيل
 
-loadPowerEdit();
+loadPower();
