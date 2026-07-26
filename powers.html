@@ -7,15 +7,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
 <title>ميزان | ملفات التوكيلات</title>
-
 
 <link rel="stylesheet" href="powers.css">
 
-
 </head>
-
 
 
 <body>
@@ -40,74 +36,52 @@
 
 
 
-<div class="container">
+
+<section class="box">
+
+
+<h2>
+إضافة توكيل جديد
+</h2>
 
 
 
-<div class="actions">
-
-
-
-<input
-
-type="text"
-
-id="search"
-
-placeholder="بحث..."
-
-oninput="delaySearch()"
-
->
-
-
+<div class="form">
 
 
 <input
-
-type="text"
-
 id="fileNumber"
-
 placeholder="رقم الملف"
-
->
+readonly>
 
 
 
 <input
-
-type="text"
-
 id="powerNumber"
-
-placeholder="رقم التوكيل"
-
->
+placeholder="رقم التوكيل">
 
 
 
 <input
-
-type="text"
-
 id="clientName"
-
-placeholder="اسم الموكل"
-
->
+placeholder="اسم الموكل">
 
 
 
 <input
-
-type="text"
-
 id="documentation"
+placeholder="جهة التوثيق">
 
-placeholder="التوثيق"
 
->
+
+
+
+
+<button onclick="showLastFileNumber()">
+
+آخر رقم ملف
+
+</button>
 
 
 
@@ -115,16 +89,16 @@ placeholder="التوثيق"
 
 <button onclick="addPower()">
 
-إضافة توكيل
+إضافة التوكيل
 
 </button>
-
 
 
 
 </div>
 
 
+</section>
 
 
 
@@ -132,38 +106,42 @@ placeholder="التوثيق"
 
 
 
-<!-- استيراد Excel -->
 
 
-<div class="import-box">
+<section class="box">
+
+
+<h2>
+البحث
+</h2>
+
 
 
 <input
 
-type="file"
+id="search"
 
-id="excelFile"
+oninput="delaySearch()"
 
-accept=".xlsx,.xls"
-
->
+placeholder="ابحث في التوكيلات">
 
 
-
-<button onclick="importPowersExcel()">
-
-📥 استيراد Excel
-
-</button>
-
-
-</div>
+</section>
 
 
 
 
 
 
+
+
+
+<section class="box">
+
+
+<h2>
+قائمة التوكيلات
+</h2>
 
 
 
@@ -195,7 +173,7 @@ accept=".xlsx,.xls"
 
 
 <th>
-التوثيق
+جهة التوثيق
 </th>
 
 
@@ -212,7 +190,6 @@ accept=".xlsx,.xls"
 
 
 </tr>
-
 
 
 </thead>
@@ -232,21 +209,7 @@ accept=".xlsx,.xls"
 
 
 
-
-
-
-
-<div id="pagination">
-
-
-</div>
-
-
-
-
-
-
-</div>
+</section>
 
 
 
@@ -254,11 +217,49 @@ accept=".xlsx,.xls"
 
 
 
-<script src="xlsx.full.min.js"></script>
+
+
+<div id="pagination"></div>
+
+
+
+
+
+
+
+<button class="empty-btn" onclick="showEmptyPowers()">
+
+عرض البيانات الناقصة
+
+</button>
+
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+العودة للرئيسية
+
+</button>
+
+
+</a>
+
+
+
+
+
+
 
 
 <script src="powers.js"></script>
-
 
 
 </body>

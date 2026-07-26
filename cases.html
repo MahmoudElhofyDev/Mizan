@@ -7,15 +7,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-<title>ميزان | القضايا</title>
-
+<title>ميزان | ملفات حفظ القضايا</title>
 
 <link rel="stylesheet" href="cases.css">
 
-
 </head>
-
 
 
 <body>
@@ -23,12 +19,10 @@
 
 <header class="top">
 
-<h1>
-⚖️ ملفات القضايا
-</h1>
+<h1>📁 ملفات حفظ القضايا</h1>
 
 <p>
-إدارة بيانات القضايا
+إدارة وحفظ بيانات القضايا
 </p>
 
 </header>
@@ -37,82 +31,108 @@
 
 
 
-<div class="container">
+
+
+<section class="box">
+
+
+<h2>
+إضافة ملف جديد
+</h2>
 
 
 
-<div class="actions">
-
-
-
-<input 
-type="text"
-id="search"
-placeholder="بحث..."
-oninput="delaySearch()"
->
+<div class="form">
 
 
 
 <input
-type="text"
+
 id="fileNumber"
+
 placeholder="رقم الملف"
->
+
+readonly>
 
 
 
 <input
-type="text"
+
 id="clientName"
-placeholder="اسم الموكل"
->
+
+placeholder="اسم الموكل">
+
+
+
+
+
+<button onclick="showLastFileNumber()">
+
+آخر رقم ملف
+
+</button>
+
+
+
 
 
 
 <button onclick="addCase()">
 
-إضافة قضية
+إضافة الملف
 
 </button>
-
 
 
 
 </div>
 
 
+</section>
 
 
 
 
-<!-- استيراد Excel -->
 
 
-<div class="import-box">
+
+
+
+<section class="box">
+
+
+<h2>
+البحث
+</h2>
+
 
 
 <input
-type="file"
-id="excelFile"
-accept=".xlsx,.xls"
->
+
+id="search"
+
+oninput="delaySearch()"
+
+placeholder="ابحث برقم الملف أو اسم الموكل">
 
 
 
-<button onclick="importCasesExcel()">
-
-📥 استيراد Excel
-
-</button>
-
-
-
-</div>
+</section>
 
 
 
 
+
+
+
+
+
+<section class="box">
+
+
+<h2>
+قائمة ملفات الحفظ
+</h2>
 
 
 
@@ -120,6 +140,7 @@ accept=".xlsx,.xls"
 
 
 <thead>
+
 
 <tr>
 
@@ -163,21 +184,11 @@ accept=".xlsx,.xls"
 
 
 
-
 </table>
 
 
 
-
-
-<div id="pagination">
-
-</div>
-
-
-
-
-</div>
+</section>
 
 
 
@@ -186,10 +197,38 @@ accept=".xlsx,.xls"
 
 
 
-<script src="xlsx.full.min.js"></script>
+
+<div id="pagination"></div>
+
+
+
+
+
+
+
+
+
+<a href="dashboard.html">
+
+
+<button class="back">
+
+العودة للرئيسية
+
+</button>
+
+
+</a>
+
+
+
+
+
+
+
+
 
 <script src="cases.js"></script>
-
 
 
 </body>

@@ -9,25 +9,31 @@ const API =
 
 
 // =====================
-// بيانات
+// متغيرات
 // =====================
 
 let cases = [];
-
-let currentData = [];
 
 let currentPage = 1;
 
 let rowsPerPage = 50;
 
+let currentData = [];
+
 let searchTimer;
+
+let showingEmpty = false;
+
+
+
+
 
 
 
 
 
 // =====================
-// تحميل القضايا
+// تحميل القضايا من السيرفر
 // =====================
 
 async function loadCases(){
@@ -36,20 +42,141 @@ async function loadCases(){
     try{
 
 
-        let res =
-        await fetch(
+        let response = await fetch(
             `${API}/cases`
         );
 
 
-        cases =
-        await res.json();
+        cases = await response.json();
 
 
-        currentData=[];
 
+        currentData = [];
 
         displayCases();
+
+
+
+    }
+
+    catch(error){
+
+
+        alert(
+            "تعذر الاتصال بالسيرفر"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// إضافة قضية
+// =====================
+
+async function addCase(){
+
+
+
+    let fileNumber =
+
+    document.getElementById("fileNumber")
+    .value.trim();
+
+
+
+
+    let clientName =
+
+    document.getElementById("clientName")
+    .value.trim();
+
+
+
+
+
+
+    if(clientName === ""){
+
+
+        alert(
+            "أدخل اسم الموكل"
+        );
+
+
+        return;
+
+
+    }
+
+
+
+
+
+
+    try{
+
+
+        let response = await fetch(
+
+            `${API}/cases`,
+
+            {
+
+                method:"POST",
+
+                headers:{
+
+                    "Content-Type":"application/json"
+
+                },
+
+
+                body:JSON.stringify({
+
+                    fileNumber:fileNumber,
+
+                    clientName:clientName
+
+                })
+
+            }
+
+        );
+
+
+
+
+
+
+        await response.json();
+
+
+
+
+        alert(
+            "تم إضافة القضية"
+        );
+
+
+
+
+
+        clearInputs();
+
+
+
+        loadCases();
 
 
 
@@ -76,177 +203,110 @@ async function loadCases(){
 
 
 
-// =====================
-// إضافة قضية
-// =====================
-
-async function addCase(){
-
-
-
-let fileNumber =
-document.getElementById("fileNumber").value.trim();
-
-
-
-let clientName =
-document.getElementById("clientName").value.trim();
-
-
-
-
-
-if(clientName===""){
-
-
-alert(
-"ادخل اسم الموكل"
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-await fetch(
-
-`${API}/cases`,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":
-"application/json"
-
-},
-
-
-body:JSON.stringify({
-
-fileNumber,
-
-clientName
-
-})
-
-
-}
-
-);
-
-
-
-
-
-alert(
-"تم إضافة القضية"
-);
-
-
-
-document.getElementById("fileNumber").value="";
-
-document.getElementById("clientName").value="";
-
-
-
-loadCases();
-
-
-
-}
-
-
-
-
-
-
-
-
 
 // =====================
-// عرض البيانات
+// عرض القضايا
 // =====================
 
 function displayCases(){
 
 
 
-let table =
-document.getElementById(
-"casesTable"
-);
+    let table =
+
+    document.getElementById(
+        "casesTable"
+    );
 
 
 
-if(!table)
-return;
+    if(!table)
 
-
-
-
-table.innerHTML="";
-
-
-
-let data =
-currentData.length
-?
-currentData
-:
-cases;
+    return;
 
 
 
 
 
-let start =
-(currentPage-1)
-*
-rowsPerPage;
+    table.innerHTML="";
 
 
 
 
 
-data.slice(
-start,
-start+rowsPerPage
-)
+    let data =
 
-.forEach(item=>{
+    currentData.length
+
+    ?
+
+    currentData
+
+    :
+
+    cases;
 
 
-table.innerHTML += `
+
+
+
+
+
+    let start =
+
+    (currentPage-1)
+
+    *
+
+    rowsPerPage;
+
+
+
+
+
+
+
+    data
+
+    .slice(
+
+        start,
+
+        start+rowsPerPage
+
+    )
+
+    .forEach(item=>{
+
+
+
+        table.innerHTML += `
 
 
 <tr>
 
 
 <td>
-${item.file_number || ""}
+
+${item.fileNumber || ""}
+
 </td>
 
 
 
 <td>
-${item.client_name || ""}
+
+${item.clientName || ""}
+
 </td>
 
 
 
 <td>
 
-<button onclick="editCase(${item.id})">
+<button class="edit"
+
+onclick="editCase(${item.id})">
 
 تعديل
 
@@ -260,7 +320,9 @@ ${item.client_name || ""}
 
 <td>
 
-<button onclick="deleteCase(${item.id})">
+<button class="delete"
+
+onclick="deleteCase(${item.id})">
 
 حذف
 
@@ -274,12 +336,16 @@ ${item.client_name || ""}
 </tr>
 
 
-
 `;
 
 
 
-});
+    });
+
+
+
+
+    createPagination();
 
 
 
@@ -294,77 +360,84 @@ ${item.client_name || ""}
 
 
 // =====================
-// بحث
+// البحث
 // =====================
 
 function searchCases(){
 
 
 
-let value =
+    let value =
 
-document.getElementById(
-"search"
-)
+    document.getElementById("search")
 
-.value
+    .value
 
-.toLowerCase()
+    .toLowerCase()
 
-.trim();
+    .trim();
 
 
 
 
 
-if(value===""){
 
 
-currentData=[];
+    if(value===""){
 
 
-}
-
-else{
+        currentData=[];
 
 
-currentData =
-cases.filter(item=>{
+    }
+
+    else{
 
 
-return (
-
-String(item.file_number)
-
-.includes(value)
+        currentData = cases.filter(item=>{
 
 
+            return (
 
-||
 
-String(item.client_name)
+                String(item.fileNumber)
 
-.toLowerCase()
+                .toLowerCase()
 
-.includes(value)
+                .includes(value)
 
 
 
-);
-
-
-});
+                ||
 
 
 
-}
+                String(item.clientName)
+
+                .toLowerCase()
+
+                .includes(value)
 
 
 
-currentPage=1;
+            );
 
 
-displayCases();
+        });
+
+
+
+    }
+
+
+
+
+
+
+    currentPage=1;
+
+
+    displayCases();
 
 
 
@@ -380,19 +453,18 @@ displayCases();
 function delaySearch(){
 
 
-clearTimeout(searchTimer);
+    clearTimeout(searchTimer);
 
 
 
-searchTimer =
-setTimeout(()=>{
+    searchTimer=setTimeout(()=>{
 
 
-searchCases();
+        searchCases();
 
 
-},500);
 
+    },500);
 
 
 }
@@ -406,40 +478,54 @@ searchCases();
 
 
 // =====================
-// حذف
+// حذف قضية
 // =====================
 
 async function deleteCase(id){
 
 
 
-if(!confirm(
-"هل تريد حذف القضية؟"
-))
+    if(!confirm("هل تريد حذف القضية؟"))
 
-return;
+    return;
 
 
 
 
 
-await fetch(
-
-`${API}/cases/${id}`,
-
-{
-
-method:"DELETE"
-
-}
-
-);
+    try{
 
 
+        await fetch(
+
+            `${API}/cases/${id}`,
+
+            {
+
+                method:"DELETE"
+
+            }
+
+        );
 
 
-loadCases();
 
+
+        loadCases();
+
+
+
+    }
+
+    catch(error){
+
+
+        alert(
+            "تعذر الاتصال بالسيرفر"
+        );
+
+
+    }
 
 
 }
@@ -460,18 +546,18 @@ function editCase(id){
 
 
 
-localStorage.setItem(
+    localStorage.setItem(
 
-"editCaseId",
+        "editCaseId",
 
-id
+        id
 
-);
+    );
 
 
 
-window.location.href =
-"cases-edit.html";
+    window.location.href =
+    "cases-edit.html";
 
 
 
@@ -486,192 +572,22 @@ window.location.href =
 
 
 // =====================
-// استيراد Excel
+// تنظيف
 // =====================
 
-async function importCasesExcel(){
+function clearInputs(){
 
 
 
-let file =
+    document.getElementById(
+        "fileNumber"
+    ).value="";
 
-document.getElementById(
-"excelFile"
-)
 
-.files[0];
 
-
-
-
-
-if(!file){
-
-
-alert(
-"اختر ملف Excel"
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-
-let reader =
-new FileReader();
-
-
-
-
-
-
-reader.onload = async function(e){
-
-
-
-let data =
-new Uint8Array(
-e.target.result
-);
-
-
-
-let workbook =
-XLSX.read(
-
-data,
-
-{
-type:"array"
-}
-
-);
-
-
-
-
-let sheet =
-workbook.Sheets[
-workbook.SheetNames[0]
-];
-
-
-
-
-
-let rows =
-XLSX.utils.sheet_to_json(
-sheet,
-{
-header:1
-}
-);
-
-
-
-
-
-
-let sendData=[];
-
-
-
-
-
-rows.forEach(row=>{
-
-
-if(row[0] && row[1]){
-
-
-sendData.push({
-
-fileNumber:String(row[0]),
-
-clientName:String(row[1])
-
-});
-
-
-}
-
-
-});
-
-
-
-
-
-
-
-let res =
-await fetch(
-
-`${API}/cases/import`,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":
-"application/json"
-
-},
-
-
-body:JSON.stringify({
-
-data:sendData
-
-})
-
-
-}
-
-);
-
-
-
-
-
-let result =
-await res.json();
-
-
-
-
-
-alert(
-
-"تم استيراد "+
-result.count+
-" قضية"
-
-);
-
-
-
-
-loadCases();
-
-
-
-};
-
-
-
-
-
-reader.readAsArrayBuffer(file);
+    document.getElementById(
+        "clientName"
+    ).value="";
 
 
 
@@ -686,14 +602,184 @@ reader.readAsArrayBuffer(file);
 
 
 // =====================
-// تشغيل
+// بيانات ناقصة
 // =====================
 
+function showEmptyCases(){
+
+
+
+    if(showingEmpty){
+
+
+        currentData=[];
+
+        showingEmpty=false;
+
+
+
+    }
+
+    else{
+
+
+        currentData = cases.filter(item=>{
+
+
+            return (
+
+                !item.fileNumber ||
+
+                !item.clientName
+
+
+            );
+
+
+        });
+
+
+
+        showingEmpty=true;
+
+
+    }
+
+
+
+    currentPage=1;
+
+
+    displayCases();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// الصفحات
+// =====================
+
+function createPagination(){
+
+
+
+    let pagination =
+
+    document.getElementById(
+        "pagination"
+    );
+
+
+
+    if(!pagination)
+
+    return;
+
+
+
+
+    pagination.innerHTML="";
+
+
+
+
+
+    let data =
+
+    currentData.length
+
+    ?
+
+    currentData
+
+    :
+
+    cases;
+
+
+
+
+
+    let pages = Math.ceil(
+
+        data.length /
+
+        rowsPerPage
+
+    );
+
+
+
+
+
+    for(let i=1;i<=pages;i++){
+
+
+
+        pagination.innerHTML += `
+
+<button onclick="changePage(${i})">
+
+${i}
+
+</button>
+
+`;
+
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+function changePage(page){
+
+
+    currentPage=page;
+
+
+    displayCases();
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================
+// تشغيل الصفحة
+// =====================
 
 if(
+
 document.getElementById("casesTable")
+
 ){
 
-loadCases();
+
+    loadCases();
+
 
 }
