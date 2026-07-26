@@ -53,6 +53,8 @@ body{
 
 
 
+
+
 /* Boxes */
 
 .box{
@@ -97,6 +99,8 @@ body{
 
 
 
+
+
 /* Form */
 
 .form{
@@ -112,6 +116,7 @@ body{
     flex-wrap:wrap;
 
 }
+
 
 
 .form input{
@@ -131,6 +136,8 @@ body{
     font-size:18px;
 
 }
+
+
 
 
 
@@ -172,6 +179,8 @@ body{
 
 
 
+
+
 /* Search */
 
 #search{
@@ -197,6 +206,9 @@ body{
     font-size:20px;
 
 }
+
+
+
 
 
 
@@ -254,14 +266,16 @@ tr:hover{
 
 
 
+
+
 /* Buttons */
 
 .edit,
 .delete{
 
-    width:80px;
+    width:85px;
 
-    height:35px;
+    height:38px;
 
     border:none;
 
@@ -306,6 +320,58 @@ tr:hover{
 
 
 
+
+
+
+/* Empty Data Button */
+
+.empty-btn{
+
+    display:block;
+
+    margin:25px auto;
+
+    width:230px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:#D4AF37;
+
+    color:#000;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:0 10px 25px #0005;
+
+}
+
+
+
+.empty-btn:hover{
+
+    background:white;
+
+    transform:translateY(-5px);
+
+}
+
+
+
+
+
+
+
+
 /* Pagination */
 
 #pagination{
@@ -331,7 +397,6 @@ tr:hover{
 
 
 #pagination button{
-
 
     width:45px;
 
@@ -364,6 +429,9 @@ tr:hover{
     transform:translateY(-5px);
 
 }
+
+
+
 
 
 
@@ -407,6 +475,11 @@ tr:hover{
 
 
 
+
+
+
+/* Mobile */
+
 @media(max-width:700px){
 
 
@@ -417,11 +490,13 @@ body{
 }
 
 
+
 .box{
 
     width:100%;
 
 }
+
 
 
 .form input,
@@ -430,6 +505,7 @@ body{
     width:90%;
 
 }
+
 
 
 #search{

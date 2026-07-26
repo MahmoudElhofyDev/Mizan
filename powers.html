@@ -33,6 +33,7 @@
 
 
 
+
 <section class="box">
 
 <h2>إضافة توكيل جديد</h2>
@@ -41,9 +42,12 @@
 <div class="form">
 
 
+
 <input
 id="documentation"
 placeholder="جهة التوثيق">
+
+
 
 
 
@@ -53,9 +57,13 @@ placeholder="اسم الموكل">
 
 
 
+
+
 <input
 id="powerNumber"
 placeholder="رقم التوكيل">
+
+
 
 
 
@@ -67,7 +75,10 @@ placeholder="رقم الملف">
 
 
 
-<button onclick="showLastFileNumber()">
+
+
+<button 
+onclick="showLastFileNumber()">
 
 آخر رقم ملف
 
@@ -77,7 +88,10 @@ placeholder="رقم الملف">
 
 
 
-<button onclick="addPower()">
+
+
+<button 
+onclick="addPower()">
 
 إضافة التوكيل
 
@@ -106,6 +120,7 @@ placeholder="رقم الملف">
 </h2>
 
 
+
 <input
 
 id="search"
@@ -115,6 +130,7 @@ oninput="delaySearch()"
 placeholder="ابحث في التوكيلات"
 
 >
+
 
 
 </section>
@@ -184,6 +200,7 @@ placeholder="ابحث في التوكيلات"
 
 
 
+
 <tbody id="powersTable">
 
 
@@ -211,14 +228,20 @@ placeholder="ابحث في التوكيلات"
 
 
 
-<button 
+
+
+<button
+
 class="empty-btn"
+
 onclick="showEmptyPowers()"
+
 >
 
 عرض البيانات الناقصة
 
 </button>
+
 
 
 

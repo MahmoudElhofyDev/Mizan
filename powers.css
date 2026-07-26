@@ -21,6 +21,8 @@ body{
 
 
 
+/* Header */
+
 .top{
 
     text-align:center;
@@ -51,6 +53,8 @@ body{
 
 
 
+/* Boxes */
+
 .box{
 
     width:90%;
@@ -61,13 +65,17 @@ body{
 
     padding:30px;
 
+
     background:rgba(255,255,255,.12);
 
     backdrop-filter:blur(15px);
 
+
     border-radius:20px;
 
+
     border:1px solid rgba(255,255,255,.2);
+
 
     box-shadow:0 20px 40px #0005;
 
@@ -88,6 +96,10 @@ body{
 
 
 
+
+
+
+/* Form */
 
 .form{
 
@@ -129,6 +141,7 @@ input{
 
 
 
+
 button{
 
     border:none;
@@ -148,6 +161,8 @@ button:hover{
     transform:scale(1.05);
 
 }
+
+
 
 
 
@@ -174,7 +189,8 @@ button:hover{
 
 
 
-/* البحث */
+
+/* Search */
 
 #search{
 
@@ -200,7 +216,9 @@ button:hover{
 
 
 
-/* الجدول */
+
+
+/* Table */
 
 
 table{
@@ -253,17 +271,22 @@ tr:hover{
 
 
 
-/* أزرار التعديل والحذف */
+
+
+
+/* Edit Delete Buttons */
 
 
 .edit,
 .delete{
 
-    width:80px;
+    width:85px;
 
-    height:35px;
+    height:38px;
 
     font-weight:bold;
+
+    border-radius:10px;
 
 }
 
@@ -290,6 +313,7 @@ tr:hover{
 
 
 
+
 .edit:hover{
 
     background:white;
@@ -299,11 +323,15 @@ tr:hover{
 }
 
 
+
 .delete:hover{
 
     background:#ef4444;
 
 }
+
+
+
 
 
 
@@ -354,7 +382,62 @@ tr:hover{
 
 
 
-/* زر الرجوع */
+
+
+
+
+/* Empty Data Button */
+
+
+.empty-btn{
+
+    display:block;
+
+    margin:25px auto;
+
+    width:230px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:#D4AF37;
+
+    color:#000;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:0 10px 25px #0005;
+
+}
+
+
+
+.empty-btn:hover{
+
+    background:white;
+
+    transform:translateY(-5px);
+
+}
+
+
+
+
+
+
+
+
+
+/* Back Button */
 
 
 .back{
@@ -379,6 +462,13 @@ tr:hover{
 
 
 
+
+
+
+
+/* Mobile */
+
+
 @media(max-width:700px){
 
 
@@ -387,6 +477,7 @@ body{
     padding:15px;
 
 }
+
 
 
 .box{
@@ -426,48 +517,5 @@ input,
 
 }
 
-
-
-}
-
-/* زر عرض البيانات الناقصة */
-
-.empty-btn{
-
-    display:block;
-
-    margin:25px auto;
-
-    width:230px;
-
-    height:55px;
-
-    border:none;
-
-    border-radius:15px;
-
-    background:#ff9800;
-
-    color:white;
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-    box-shadow:0 10px 25px #0005;
-
-}
-
-
-
-.empty-btn:hover{
-
-    background:#ffb74d;
-
-    transform:translateY(-5px);
 
 }

@@ -12,10 +12,6 @@ let rowsPerPage = 50;
 
 let currentData = [];
 
-let searchTimer;
-
-
-
 
 
 
@@ -104,8 +100,6 @@ function addCase(){
 
 
 
-
-
     alert("تم إضافة الملف بنجاح");
 
 
@@ -141,10 +135,7 @@ function displayCases(){
 
 
 
-
     table.innerHTML="";
-
-
 
 
 
@@ -153,17 +144,11 @@ function displayCases(){
 
 
 
-
-
     let data =
     currentData.slice(
-
         start,
-
         start + rowsPerPage
-
     );
-
 
 
 
@@ -176,56 +161,39 @@ function displayCases(){
 
 <tr>
 
-
 <td>
-
 ${item.fileNumber || ""}
-
 </td>
-
 
 
 <td>
-
 ${item.clientName || ""}
-
 </td>
-
-
-
 
 
 <td>
 
 <button class="edit"
-
 onclick="editCase(${item.id})">
 
 تعديل
 
 </button>
 
-
 </td>
-
-
-
 
 
 
 <td>
 
 <button class="delete"
-
 onclick="deleteCase(${item.id})">
 
 حذف
 
 </button>
 
-
 </td>
-
 
 
 </tr>
@@ -238,16 +206,11 @@ onclick="deleteCase(${item.id})">
 
 
 
-
-
     createPagination();
 
 
 
 }
-
-
-
 
 
 
@@ -266,13 +229,10 @@ function searchCases(){
 
 
     let value =
-
     document.getElementById("search")
     .value
     .toLowerCase()
     .trim();
-
-
 
 
 
@@ -284,49 +244,31 @@ function searchCases(){
         currentData=[];
 
 
-
     }
 
     else{
-
 
 
         currentData =
         cases.filter(item=>{
 
 
-
             return (
 
-
-
-                String(item.fileNumber || "")
-
+                String(item.fileNumber)
                 .toLowerCase()
-
                 .includes(value)
-
-
 
 
 
                 ||
 
-
-
-
-
-
-                String(item.clientName || "")
-
+                String(item.clientName)
                 .toLowerCase()
-
                 .includes(value)
 
 
-
             );
-
 
 
         });
@@ -339,18 +281,13 @@ function searchCases(){
 
 
 
-
     currentPage=1;
-
 
 
     displayCases();
 
 
-
 }
-
-
 
 
 
@@ -367,7 +304,6 @@ function searchCases(){
 function createPagination(){
 
 
-
     let pagination =
     document.getElementById("pagination");
 
@@ -378,29 +314,18 @@ function createPagination(){
 
 
 
-
     pagination.innerHTML="";
 
 
 
     let pages =
-
     Math.ceil(
-
-        currentData.length /
-
-        rowsPerPage
-
+        currentData.length / rowsPerPage
     );
 
 
 
-
-
-
-
     for(let i=1;i<=pages;i++){
-
 
 
         pagination.innerHTML += `
@@ -413,16 +338,10 @@ ${i}
 
 `;
 
-
-
     }
 
 
-
 }
-
-
-
 
 
 
@@ -437,10 +356,7 @@ function changePage(page){
     displayCases();
 
 
-
 }
-
-
 
 
 
@@ -457,15 +373,12 @@ function changePage(page){
 function deleteCase(id){
 
 
-
     if(confirm("هل تريد حذف الملف؟")){
 
 
         cases =
         cases.filter(
-
             c=>c.id != id
-
         );
 
 
@@ -477,17 +390,13 @@ function deleteCase(id){
         currentData=[];
 
 
-
         displayCases();
-
 
 
     }
 
 
 }
-
-
 
 
 
@@ -506,11 +415,8 @@ function editCase(id){
 
 
     localStorage.setItem(
-
         "editCaseId",
-
         id
-
     );
 
 
@@ -519,7 +425,6 @@ function editCase(id){
     "cases-edit.html";
 
 
-
 }
 
 
@@ -530,15 +435,11 @@ function editCase(id){
 
 
 
-
-
-
 // =====================
-// تنظيف الخانات
+// تنظيف
 // =====================
 
 function clearInputs(){
-
 
 
     document.getElementById("fileNumber").value="";
@@ -547,7 +448,6 @@ function clearInputs(){
     document.getElementById("clientName").value="";
 
 
-
 }
 
 
@@ -558,18 +458,15 @@ function clearInputs(){
 
 
 
-
-
-
 // =====================
-// آخر رقم ملف (معدل)
+// آخر رقم ملف
 // =====================
 
 function showLastFileNumber(){
 
 
 
-    if(cases.length === 0){
+    if(cases.length===0){
 
 
         alert("لا يوجد ملفات مسجلة");
@@ -583,42 +480,29 @@ function showLastFileNumber(){
 
 
 
-
-
     let maxNumber = 0;
-
-
 
 
 
     cases.forEach(c=>{
 
 
-
-        let num = Number(
-
+        let num =
+        Number(
             String(c.fileNumber)
             .trim()
-
         );
 
 
 
-
         if(
-
             !isNaN(num) &&
-
             num > maxNumber
-
         ){
 
-
-            maxNumber = num;
-
+            maxNumber=num;
 
         }
-
 
 
     });
@@ -627,16 +511,10 @@ function showLastFileNumber(){
 
 
 
+    if(maxNumber===0){
 
 
-
-    if(maxNumber === 0){
-
-
-
-        alert(
-            "لا توجد أرقام ملفات صحيحة"
-        );
+        alert("لا توجد أرقام ملفات صحيحة");
 
 
         return;
@@ -646,17 +524,9 @@ function showLastFileNumber(){
 
 
 
-
-
-
     alert(
-
-        "آخر رقم ملف هو: " +
-
-        maxNumber
-
+        "آخر رقم ملف هو: " + maxNumber
     );
-
 
 
 }
