@@ -1422,3 +1422,87 @@ console.log(
 
 
 });
+
+// =====================
+// إضافة مستخدم جديد
+// =====================
+
+app.post("/users", async(req,res)=>{
+
+
+    const {
+        username,
+        password
+    } = req.body;
+
+
+
+    try{
+
+
+        const hash =
+        await bcrypt.hash(
+            password,
+            10
+        );
+
+
+
+        await db.query(
+
+        `
+        INSERT INTO users
+
+        (
+            username,
+            password
+        )
+
+        VALUES
+
+        ($1,$2)
+
+        `,
+
+        [
+
+            username,
+
+            hash
+
+        ]
+
+        );
+
+
+
+
+        res.json({
+
+            message:"User Added"
+
+        });
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(error);
+
+
+        res.status(400).json({
+
+            message:"Username already exists"
+
+        });
+
+
+
+    }
+
+
+
+});
