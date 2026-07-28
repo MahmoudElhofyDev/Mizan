@@ -1864,119 +1864,72 @@ function closeLastPowerModal(){
 async function importExcelPowers(event){
 
 
-
     const file =
-
     event.target.files[0];
 
 
-
     if(!file)
-
         return;
 
 
 
-
-
-
-
     const reader =
-
     new FileReader();
-
-
-
-
-
 
 
 
     reader.onload = async function(e){
 
 
-
         try{
 
 
-
             const data =
-
             new Uint8Array(
-
                 e.target.result
-
             );
-
-
-
 
 
 
             const workbook =
-
             XLSX.read(
-
                 data,
-
                 {
-
                     type:"array"
-
                 }
-
             );
-
-
-
-
 
 
 
             const sheet =
-
             workbook.Sheets[
-
                 workbook.SheetNames[0]
-
             ];
 
 
 
-
-
-
-
-
-            const rows =
-
+            let rows =
             XLSX.utils.sheet_to_json(
-
-                sheet
-
+                sheet,
+                {
+                    defval:""
+                }
             );
 
 
 
 
 
-
-
-
-            if(rows.length===0){
-
+            if(rows.length === 0){
 
 
                 alert(
-
                     "ملف Excel فارغ"
-
                 );
 
 
                 return;
 
-
             }
 
 
@@ -1984,261 +1937,122 @@ async function importExcelPowers(event){
 
 
 
+            // تحويل أعمدة Excel العربية
 
+            rows =
+            rows.map(row=>{
 
-            let added = 0;
 
-            let duplicate = 0;
+                return {
 
-            let failed = 0;
 
+                    documentation:
 
+                    String(
 
+                        row["جهة الإصدار"] ||
 
+                        row["جهة الاصدار"] ||
 
+                        row.documentation ||
 
+                        ""
 
-            for(const row of rows){
+                    ),
 
 
 
-                try{
 
+                    power_number:
 
+                    String(
 
-                    const power_number =
+                        row["رقم التوكيل"] ||
 
-                    row.power_number ||
+                        row["رقم التوكيل "] ||
 
-                    row["رقم التوكيل"] ||
+                        row.power_number ||
 
-                    "";
+                        ""
 
+                    ),
 
 
 
 
-                    const client_name =
 
-                    row.client_name ||
+                    client_name:
 
-                    row["اسم الموكل"] ||
+                    String(
 
-                    "";
+                        row["اسم الموكل"] ||
 
+                        row["اسم العميل"] ||
 
+                        row.client_name ||
 
+                        ""
 
+                    ),
 
-                    const documentation =
 
-                    row.documentation ||
 
-                    row["التوثيق"] ||
 
-                    "";
 
+                    file_number:
 
+                    String(
 
+                        row["رقم الملف"] ||
 
+                        row["رقم ملف"] ||
 
+                        row.file_number ||
 
+                        ""
 
+                    )
 
 
-                    if(
 
-                        !power_number ||
+                };
 
-                        !client_name
 
-                    ){
+            });
 
 
-                        failed++;
 
-                        continue;
 
 
-                    }
 
 
 
+            const response =
+            await fetch(
 
+                API +
+                "/powers/import",
 
+                {
 
+                method:"POST",
 
+                headers:{
 
-                    const exists =
+                    "Content-Type":
+                    "application/json"
 
-                    allPowers.find(p=>
+                },
 
 
-                        String(
+                body:JSON.stringify({
 
-                            p.power_number
+                    data:rows
 
-                        )
-
-                        ===
-
-                        String(
-
-                            power_number
-
-                        )
-
-
-                    );
-
-
-
-
-
-
-
-
-                    if(exists){
-
-
-
-                        duplicate++;
-
-                        continue;
-
-
-                    }
-
-
-
-
-
-
-
-
-
-                    const response =
-
-                    await fetch(
-
-                        API +
-
-                        "/powers",
-
-                        {
-
-
-                            method:"POST",
-
-
-
-                            headers:{
-
-
-                                "Content-Type":
-
-                                "application/json"
-
-
-                            },
-
-
-
-                            body:JSON.stringify({
-
-
-                                power_number,
-
-                                client_name,
-
-                                documentation
-
-
-                            })
-
-
-                        }
-
-                    );
-
-
-
-
-
-
-
-
-                    const result =
-
-                    await response.json();
-
-
-
-
-
-
-
-                    if(result.success){
-
-
-                        added++;
-
-
-                    }
-
-                    else{
-
-
-                        failed++;
-
-
-                    }
-
-
-
-
-
+                })
 
 
                 }
-
-                catch(err){
-
-
-                    failed++;
-
-
-                }
-
-
-
-            }
-
-
-
-
-
-
-
-
-            alert(
-
-
-                "نتيجة الاستيراد\n\n" +
-
-                "✅ المضاف: " +
-
-                added +
-
-                "\n⚠ المكرر: " +
-
-                duplicate +
-
-                "\n❌ الفاشل: " +
-
-                failed
-
-
 
             );
 
@@ -2248,10 +2062,57 @@ async function importExcelPowers(event){
 
 
 
-            await loadAllPowers();
+            const result =
+            await response.json();
 
 
 
+
+
+
+            if(result.success){
+
+
+
+                alert(
+
+                "تم استيراد التوكيلات بنجاح\n\n" +
+
+                "المضاف : " +
+                result.added +
+
+                "\nالمكرر : " +
+                result.duplicate +
+
+                "\nالأخطاء : " +
+                result.failed
+
+                );
+
+
+
+                await loadAllPowers();
+
+
+                clearSearch();
+
+
+
+            }
+
+            else{
+
+
+                alert(
+
+                    result.message ||
+
+                    "فشل الاستيراد"
+
+                );
+
+
+            }
 
 
 
@@ -2260,9 +2121,7 @@ async function importExcelPowers(event){
         catch(err){
 
 
-
             console.log(err);
-
 
 
             alert(
@@ -2277,10 +2136,6 @@ async function importExcelPowers(event){
 
 
     };
-
-
-
-
 
 
 

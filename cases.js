@@ -1255,41 +1255,30 @@ async function importExcelCases(event){
 
             // تحويل أسماء الأعمدة العربية
 
-            rows =
-            rows.map(row=>{
+    rows = rows.map(row => {
+
+    return {
+
+        file_number:
+        String(
+            row["رقم الملف"] ||
+            row["رقم ملف"] ||
+            row.file_number ||
+            ""
+        ),
 
 
-                return {
+        client_name:
+        String(
+            row["اسم الموكل"] ||
+            row["اسم العميل"] ||
+            row.client_name ||
+            ""
+        )
 
+    };
 
-                    file_number:
-
-                    row.file_number ||
-
-                    row["رقم الملف"] ||
-
-                    row["رقم ملف"] ||
-
-                    "",
-
-
-
-
-                    client_name:
-
-                    row.client_name ||
-
-                    row["اسم الموكل"] ||
-
-                    row["اسم العميل"] ||
-
-                    ""
-
-                };
-
-
-            });
-
+});
 
 
 
