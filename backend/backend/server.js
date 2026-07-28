@@ -1,12 +1,21 @@
+// =====================================
+// MIZAN BACKEND
+// PostgreSQL + Express
+// =====================================
+
+
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+
 const db = require("./database");
 
 
+
 const app = express();
+
 
 
 app.use(cors());
@@ -14,27 +23,34 @@ app.use(cors());
 app.use(express.json());
 
 
+
 const SECRET = "MIZAN_SECRET_KEY";
 
 
 
-// ===========================
+
+// =====================================
 // اختبار السيرفر
-// ===========================
+// =====================================
+
 
 app.get("/", (req,res)=>{
+
 
     res.send(
         "Mizan Backend Running"
     );
 
+
 });
 
 
 
-// ===========================
-// تسجيل مستخدم
-// ===========================
+
+// =====================================
+// Register
+// =====================================
+
 
 app.post("/register", async(req,res)=>{
 
@@ -43,15 +59,35 @@ app.post("/register", async(req,res)=>{
 
 
         const {
+
             username,
+
             password
+
         } = req.body;
 
 
 
-        const hash =
 
-        await bcrypt.hash(
+        if(!username || !password){
+
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"بيانات ناقصة"
+
+            });
+
+
+        }
+
+
+
+
+
+        const hash = await bcrypt.hash(
 
             password,
 
@@ -61,27 +97,46 @@ app.post("/register", async(req,res)=>{
 
 
 
+
+
         await db.query(
 
             `
+
             INSERT INTO users
+
             (
+
                 username,
+
                 password
+
             )
+
+
             VALUES
+
             (
+
                 $1,
+
                 $2
+
             )
+
             `,
 
             [
+
                 username,
+
                 hash
+
             ]
 
         );
+
+
 
 
 
@@ -92,12 +147,15 @@ app.post("/register", async(req,res)=>{
         });
 
 
+
+
     }
 
     catch(err){
 
 
         console.log(err);
+
 
 
         res.status(500).json({
@@ -109,6 +167,7 @@ app.post("/register", async(req,res)=>{
         });
 
 
+
     }
 
 
@@ -117,9 +176,13 @@ app.post("/register", async(req,res)=>{
 
 
 
-// ===========================
-// تسجيل الدخول
-// ===========================
+
+
+
+// =====================================
+// Login
+// =====================================
+
 
 app.post("/login", async(req,res)=>{
 
@@ -128,36 +191,50 @@ app.post("/login", async(req,res)=>{
 
 
         const {
+
             username,
+
             password
+
         } = req.body;
 
 
 
-        const result =
 
-        await db.query(
+
+
+        const result = await db.query(
 
             `
+
             SELECT *
+
             FROM users
+
             WHERE username=$1
+
             `,
 
             [
+
                 username
+
             ]
 
         );
 
 
 
-        if(result.rows.length===0){
+
+
+        if(result.rows.length === 0){
 
 
             return res.status(401).json({
 
-                success:false
+                success:false,
+
+                message:"المستخدم غير موجود"
 
             });
 
@@ -167,13 +244,15 @@ app.post("/login", async(req,res)=>{
 
 
 
+
         const user = result.rows[0];
 
 
 
-        const match =
 
-        await bcrypt.compare(
+
+
+        const match = await bcrypt.compare(
 
             password,
 
@@ -183,12 +262,17 @@ app.post("/login", async(req,res)=>{
 
 
 
+
+
+
         if(!match){
 
 
             return res.status(401).json({
 
-                success:false
+                success:false,
+
+                message:"كلمة المرور خطأ"
 
             });
 
@@ -197,9 +281,10 @@ app.post("/login", async(req,res)=>{
 
 
 
-        const token =
 
-        jwt.sign(
+
+
+        const token = jwt.sign(
 
             {
 
@@ -221,6 +306,9 @@ app.post("/login", async(req,res)=>{
 
 
 
+
+
+
         res.json({
 
             success:true,
@@ -228,6 +316,8 @@ app.post("/login", async(req,res)=>{
             token
 
         });
+
+
 
 
 
@@ -239,6 +329,7 @@ app.post("/login", async(req,res)=>{
         console.log(err);
 
 
+
         res.status(500).json({
 
             success:false,
@@ -248,17 +339,20 @@ app.post("/login", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
 
+ 
 // =====================================
 // CASES
 // =====================================
 
 
-// عرض جميع الملفات
+
+// عرض الملفات
 
 app.get("/cases", async(req,res)=>{
 
@@ -266,19 +360,26 @@ app.get("/cases", async(req,res)=>{
     try{
 
 
-        const result =
-
-        await db.query(
+        const result = await db.query(
 
             `
+
             SELECT *
+
             FROM cases
+
             ORDER BY
+
             CASE
+
                 WHEN file_number ~ '^[0-9]+$'
+
                 THEN CAST(file_number AS INTEGER)
+
                 ELSE 999999
+
             END ASC
+
             `
 
         );
@@ -301,6 +402,7 @@ app.get("/cases", async(req,res)=>{
         console.log(err);
 
 
+
         res.status(500).json({
 
             success:false,
@@ -310,10 +412,12 @@ app.get("/cases", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
+
 
 
 
@@ -330,21 +434,29 @@ app.get("/cases/last-file", async(req,res)=>{
     try{
 
 
-        const result =
-
-        await db.query(
+        const result = await db.query(
 
             `
+
             SELECT file_number
+
             FROM cases
+
             WHERE file_number ~ '^[0-9]+$'
+
             ORDER BY
+
             CAST(file_number AS INTEGER)
+
             DESC
+
             LIMIT 1
+
             `
 
         );
+
+
 
 
 
@@ -359,6 +471,8 @@ app.get("/cases/last-file", async(req,res)=>{
 
 
         }
+
+
 
 
 
@@ -403,6 +517,9 @@ app.get("/cases/last-file", async(req,res)=>{
 
 
 
+
+
+
 // إضافة ملف
 
 app.post("/cases", async(req,res)=>{
@@ -415,9 +532,21 @@ app.post("/cases", async(req,res)=>{
 
             file_number,
 
-            client_name
+            client_name,
+
+            opponent,
+
+            court,
+
+            type,
+
+            birth_date,
+
+            documentation
 
         } = req.body;
+
+
 
 
 
@@ -428,7 +557,7 @@ app.post("/cases", async(req,res)=>{
 
                 success:false,
 
-                message:"Missing Data"
+                message:"بيانات ناقصة"
 
             });
 
@@ -438,23 +567,32 @@ app.post("/cases", async(req,res)=>{
 
 
 
-        // منع التكرار
 
-        const check =
 
-        await db.query(
+
+        const check = await db.query(
 
             `
+
             SELECT id
+
             FROM cases
+
             WHERE file_number=$1
+
             `,
 
             [
+
                 file_number
+
             ]
 
         );
+
+
+
+
 
 
 
@@ -475,36 +613,84 @@ app.post("/cases", async(req,res)=>{
 
 
 
-        const result =
 
-        await db.query(
+
+
+
+
+        const result = await db.query(
 
             `
+
             INSERT INTO cases
+
             (
+
                 file_number,
-                client_name
+
+                client_name,
+
+                opponent,
+
+                court,
+
+                type,
+
+                birth_date,
+
+                documentation
+
             )
+
 
             VALUES
 
             (
+
                 $1,
-                $2
+
+                $2,
+
+                $3,
+
+                $4,
+
+                $5,
+
+                $6,
+
+                $7
+
             )
 
+
             RETURNING id
+
             `,
 
             [
 
                 file_number,
 
-                client_name
+                client_name,
+
+                opponent || "",
+
+                court || "",
+
+                type || "",
+
+                birth_date || "",
+
+                documentation || ""
 
             ]
 
         );
+
+
+
+
 
 
 
@@ -517,6 +703,8 @@ app.post("/cases", async(req,res)=>{
             result.rows[0].id
 
         });
+
+
 
 
 
@@ -538,10 +726,14 @@ app.post("/cases", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
+
+
+
 
 
 
@@ -562,9 +754,74 @@ app.put("/cases/:id", async(req,res)=>{
 
             file_number,
 
-            client_name
+            client_name,
+
+            opponent,
+
+            court,
+
+            type,
+
+            birth_date,
+
+            documentation
 
         } = req.body;
+
+
+
+
+
+
+
+
+        const check = await db.query(
+
+            `
+
+            SELECT id
+
+            FROM cases
+
+            WHERE file_number=$1
+
+            AND id<>$2
+
+            `,
+
+            [
+
+                file_number,
+
+                req.params.id
+
+            ]
+
+        );
+
+
+
+
+
+
+
+        if(check.rows.length > 0){
+
+
+            return res.json({
+
+                success:false,
+
+                message:"رقم الملف مستخدم بالفعل"
+
+            });
+
+
+        }
+
+
+
+
 
 
 
@@ -572,17 +829,29 @@ app.put("/cases/:id", async(req,res)=>{
         await db.query(
 
             `
+
             UPDATE cases
 
             SET
 
             file_number=$1,
 
-            client_name=$2
+            client_name=$2,
 
-            WHERE id=$3
+            opponent=$3,
+
+            court=$4,
+
+            type=$5,
+
+            birth_date=$6,
+
+            documentation=$7
+
+
+            WHERE id=$8
+
             `,
-
 
             [
 
@@ -590,11 +859,24 @@ app.put("/cases/:id", async(req,res)=>{
 
                 client_name,
 
+                opponent || "",
+
+                court || "",
+
+                type || "",
+
+                birth_date || "",
+
+                documentation || "",
+
                 req.params.id
 
             ]
 
         );
+
+
+
 
 
 
@@ -606,12 +888,15 @@ app.put("/cases/:id", async(req,res)=>{
 
 
 
+
+
     }
 
     catch(err){
 
 
         console.log(err);
+
 
 
         res.status(500).json({
@@ -623,10 +908,14 @@ app.put("/cases/:id", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
+
+
+
 
 
 
@@ -646,8 +935,11 @@ app.delete("/cases/:id", async(req,res)=>{
         await db.query(
 
             `
+
             DELETE FROM cases
+
             WHERE id=$1
+
             `,
 
             [
@@ -660,11 +952,16 @@ app.delete("/cases/:id", async(req,res)=>{
 
 
 
+
+
+
         res.json({
 
             success:true
 
         });
+
+
 
 
 
@@ -686,14 +983,17 @@ app.delete("/cases/:id", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
 
+ 
 // =====================================
 // POWERS
 // =====================================
+
 
 
 // عرض التوكيلات
@@ -704,11 +1004,10 @@ app.get("/powers", async(req,res)=>{
     try{
 
 
-        const result =
-
-        await db.query(
+        const result = await db.query(
 
             `
+
             SELECT *
 
             FROM powers
@@ -757,10 +1056,111 @@ app.get("/powers", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
+
+
+
+
+
+
+
+
+
+
+
+// آخر رقم توكيل
+
+app.get("/powers/last-number", async(req,res)=>{
+
+
+    try{
+
+
+        const result = await db.query(
+
+            `
+
+            SELECT power_number
+
+            FROM powers
+
+            WHERE power_number ~ '^[0-9]+$'
+
+            ORDER BY
+
+            CAST(power_number AS INTEGER)
+
+            DESC
+
+            LIMIT 1
+
+            `
+
+        );
+
+
+
+
+
+        if(result.rows.length === 0){
+
+
+            return res.json({
+
+                lastNumber:0
+
+            });
+
+
+        }
+
+
+
+
+
+
+        res.json({
+
+            lastNumber:
+
+            result.rows[0].power_number
+
+        });
+
+
+
+
+
+    }
+
+    catch(err){
+
+
+        console.log(err);
+
+
+
+        res.status(500).json({
+
+            success:false,
+
+            message:err.message
+
+        });
+
+
+
+    }
+
+
+});
+
+
+
 
 
 
@@ -779,6 +1179,7 @@ app.post("/powers", async(req,res)=>{
 
         const {
 
+
             file_number,
 
             power_number,
@@ -792,7 +1193,12 @@ app.post("/powers", async(req,res)=>{
             documentation
 
 
+
         } = req.body;
+
+
+
+
 
 
 
@@ -821,13 +1227,13 @@ app.post("/powers", async(req,res)=>{
 
 
 
-        // منع تكرار رقم التوكيل
 
-        const check =
 
-        await db.query(
+
+        const check = await db.query(
 
             `
+
             SELECT id
 
             FROM powers
@@ -843,6 +1249,10 @@ app.post("/powers", async(req,res)=>{
             ]
 
         );
+
+
+
+
 
 
 
@@ -864,11 +1274,14 @@ app.post("/powers", async(req,res)=>{
 
 
 
-        const result =
 
-        await db.query(
+
+
+
+        const result = await db.query(
 
             `
+
             INSERT INTO powers
 
             (
@@ -933,6 +1346,8 @@ app.post("/powers", async(req,res)=>{
 
 
 
+
+
         res.json({
 
             success:true,
@@ -942,6 +1357,7 @@ app.post("/powers", async(req,res)=>{
             result.rows[0].id
 
         });
+
 
 
 
@@ -964,10 +1380,14 @@ app.post("/powers", async(req,res)=>{
         });
 
 
+
     }
 
 
 });
+
+
+
 
 
 
@@ -987,6 +1407,7 @@ app.put("/powers/:id", async(req,res)=>{
 
         const {
 
+
             file_number,
 
             power_number,
@@ -999,7 +1420,67 @@ app.put("/powers/:id", async(req,res)=>{
 
             documentation
 
+
+
         } = req.body;
+
+
+
+
+
+
+
+
+
+        const check = await db.query(
+
+            `
+
+            SELECT id
+
+            FROM powers
+
+            WHERE power_number=$1
+
+            AND id<>$2
+
+            `,
+
+            [
+
+                power_number,
+
+                req.params.id
+
+            ]
+
+        );
+
+
+
+
+
+
+
+
+        if(check.rows.length > 0){
+
+
+            return res.json({
+
+                success:false,
+
+                message:"رقم التوكيل مستخدم بالفعل"
+
+            });
+
+
+        }
+
+
+
+
+
 
 
 
@@ -1007,6 +1488,7 @@ app.put("/powers/:id", async(req,res)=>{
         await db.query(
 
             `
+
             UPDATE powers
 
             SET
@@ -1030,17 +1512,17 @@ app.put("/powers/:id", async(req,res)=>{
 
             [
 
-                file_number,
+                file_number || "",
 
                 power_number,
 
                 client_name,
 
-                type,
+                type || "",
 
-                birth_date,
+                birth_date || "",
 
-                documentation,
+                documentation || "",
 
                 req.params.id
 
@@ -1051,11 +1533,17 @@ app.put("/powers/:id", async(req,res)=>{
 
 
 
+
+
+
+
         res.json({
 
             success:true
 
         });
+
+
 
 
 
@@ -1082,6 +1570,8 @@ app.put("/powers/:id", async(req,res)=>{
 
 
 });
+
+
 
 
 
@@ -1102,6 +1592,7 @@ app.delete("/powers/:id", async(req,res)=>{
         await db.query(
 
             `
+
             DELETE FROM powers
 
             WHERE id=$1
@@ -1118,11 +1609,17 @@ app.delete("/powers/:id", async(req,res)=>{
 
 
 
+
+
+
+
         res.json({
 
             success:true
 
         });
+
+
 
 
 
@@ -1144,37 +1641,8 @@ app.delete("/powers/:id", async(req,res)=>{
         });
 
 
+
     }
-
-
-});
-
-
-
-
-
-
-
-
-
-// =====================================
-// تشغيل السيرفر
-// =====================================
-
-const PORT =
-
-process.env.PORT || 3000;
-
-
-
-app.listen(PORT,()=>{
-
-
-    console.log(
-
-        `Server Running On Port ${PORT}`
-
-    );
 
 
 });

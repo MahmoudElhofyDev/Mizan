@@ -33,7 +33,10 @@
 
 
 
+
+
 <section class="toolbar">
+
 
 
 <button
@@ -43,6 +46,7 @@ onclick="openAddModal()">
 ➕ إضافة ملف
 
 </button>
+
 
 
 
@@ -56,6 +60,8 @@ id="lastFileBtn">
 
 
 
+
+
 <button
 class="orange"
 onclick="showIncompleteCases()">
@@ -66,13 +72,47 @@ onclick="showIncompleteCases()">
 
 
 
+
+
+
+<button
+class="green"
+onclick="document.getElementById('excelInput').click()">
+
+📥 استيراد Excel
+
+</button>
+
+
+
+
+
+<input
+
+type="file"
+
+id="excelInput"
+
+accept=".xlsx,.xls"
+
+hidden
+
+>
+
+
+
+
+
 </section>
 
 
 
 
 
+
+
 <section class="searchBox">
+
 
 
 <input
@@ -88,6 +128,7 @@ onkeyup="searchCases()"
 >
 
 
+
 <button onclick="clearSearch()">
 
 إعادة تعيين
@@ -95,7 +136,11 @@ onkeyup="searchCases()"
 </button>
 
 
+
 </section>
+
+
+
 
 
 
@@ -120,7 +165,11 @@ class="empty">
 
 
 
+
+
+
 <table id="casesTable">
+
 
 
 <thead>
@@ -150,7 +199,10 @@ class="empty">
 
 </tr>
 
+
 </thead>
+
+
 
 
 
@@ -160,7 +212,10 @@ class="empty">
 </tbody>
 
 
+
 </table>
+
+
 
 
 
@@ -179,19 +234,26 @@ class="pagination">
 
 
 
+
+
 <!-- نافذة إضافة ملف -->
+
 
 <div
 id="addModal"
 class="modal">
 
 
+
 <div class="modal-content">
+
 
 
 <h2>
 إضافة ملف جديد
 </h2>
+
+
 
 
 
@@ -204,6 +266,8 @@ type="text"
 placeholder="رقم الملف"
 
 >
+
+
 
 
 
@@ -221,7 +285,11 @@ placeholder="اسم الموكل"
 
 
 
+
+
+
 <div class="modal-buttons">
+
 
 
 <button
@@ -233,6 +301,8 @@ onclick="saveCase()">
 حفظ
 
 </button>
+
+
 
 
 
@@ -249,10 +319,14 @@ onclick="closeAddModal()">
 
 
 
-</div>
 
 
 </div>
+
+
+
+</div>
+
 
 
 </div>
@@ -267,12 +341,16 @@ onclick="closeAddModal()">
 
 <!-- نافذة تعديل -->
 
+
 <div
 id="editModal"
 class="modal">
 
 
+
 <div class="modal-content">
+
+
 
 
 
@@ -286,11 +364,15 @@ id="editId"
 
 
 
+
 <h2>
 
 تعديل الملف
 
 </h2>
+
+
+
 
 
 
@@ -303,6 +385,9 @@ type="text"
 placeholder="رقم الملف"
 
 >
+
+
+
 
 
 
@@ -320,7 +405,12 @@ placeholder="اسم الموكل"
 
 
 
+
+
+
 <div class="modal-buttons">
+
+
 
 
 
@@ -337,6 +427,9 @@ onclick="updateCase()">
 
 
 
+
+
+
 <button
 
 class="cancel"
@@ -349,11 +442,17 @@ onclick="closeEditModal()">
 
 
 
+
+
 </div>
 
 
 
+
+
+
 </div>
+
 
 
 </div>
@@ -368,6 +467,7 @@ onclick="closeEditModal()">
 
 <!-- نافذة آخر رقم ملف -->
 
+
 <div
 
 id="lastFileModal"
@@ -375,7 +475,10 @@ id="lastFileModal"
 class="modal">
 
 
+
 <div class="modal-content small">
+
+
 
 
 
@@ -387,11 +490,17 @@ class="modal">
 
 
 
+
+
+
 <h1 id="lastFileValue">
 
 0
 
 </h1>
+
+
+
 
 
 
@@ -408,10 +517,16 @@ onclick="closeLastFileModal()">
 
 
 
-</div>
+
+
 
 
 </div>
+
+
+
+</div>
+
 
 
 
@@ -421,6 +536,7 @@ onclick="closeLastFileModal()">
 
 
 <!-- Toast -->
+
 
 <div id="toast">
 
@@ -432,7 +548,14 @@ onclick="closeLastFileModal()">
 
 
 
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
 <script src="cases.js"></script>
+
+
 
 
 </body>

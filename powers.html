@@ -15,15 +15,22 @@ content="width=device-width,initial-scale=1.0">
 
 </title>
 
+
 <link
 rel="stylesheet"
 href="powers.css">
 
+
 </head>
+
+
 
 <body>
 
+
+
 <header class="top">
+
 
 <h1>
 
@@ -31,11 +38,13 @@ href="powers.css">
 
 </h1>
 
+
 <p>
 
 إدارة بيانات التوكيلات
 
 </p>
+
 
 </header>
 
@@ -43,7 +52,13 @@ href="powers.css">
 
 
 
+
+
+
+
 <section class="toolbar">
+
+
 
 <button
 class="gold"
@@ -55,6 +70,9 @@ onclick="openAddModal()">
 
 
 
+
+
+
 <button
 class="blue"
 id="lastPowerBtn">
@@ -63,7 +81,46 @@ id="lastPowerBtn">
 
 </button>
 
+
+
+
+
+
+
+<button
+class="green"
+onclick="document.getElementById('excelInput').click()">
+
+📥 استيراد Excel
+
+</button>
+
+
+
+
+
+
+<input
+
+type="file"
+
+id="excelInput"
+
+accept=".xlsx,.xls"
+
+hidden
+
+>
+
+
+
+
+
 </section>
+
+
+
+
 
 
 
@@ -71,26 +128,42 @@ id="lastPowerBtn">
 
 <section class="searchBox">
 
+
+
 <input
+
 
 id="searchInput"
 
+
 type="text"
+
 
 placeholder="ابحث برقم التوكيل أو اسم الموكل..."
 
+
 onkeyup="searchPowers()"
+
 
 >
 
+
+
 <button
+
 onclick="clearSearch()">
 
 إعادة تعيين
 
 </button>
 
+
+
 </section>
+
+
+
+
 
 
 
@@ -100,13 +173,21 @@ onclick="clearSearch()">
 id="emptyMessage"
 class="empty">
 
+
 🔍
+
 
 ابدأ بكتابة كلمة للبحث.
 
+
 لن تظهر البيانات إلا بعد البحث.
 
+
 </div>
+
+
+
+
 
 
 
@@ -115,9 +196,13 @@ class="empty">
 <table
 id="powersTable">
 
+
+
 <thead>
 
+
 <tr>
+
 
 <th>
 
@@ -125,11 +210,13 @@ id="powersTable">
 
 </th>
 
+
 <th>
 
 اسم الموكل
 
 </th>
+
 
 <th>
 
@@ -137,11 +224,13 @@ id="powersTable">
 
 </th>
 
+
 <th>
 
 تعديل
 
 </th>
+
 
 <th>
 
@@ -149,16 +238,28 @@ id="powersTable">
 
 </th>
 
+
 </tr>
 
+
 </thead>
+
+
+
+
 
 <tbody
 id="powersBody">
 
+
 </tbody>
 
+
+
 </table>
+
+
+
 
 
 
@@ -168,15 +269,29 @@ id="powersBody">
 id="pagination"
 class="pagination">
 
+
 </div>
 
+
+
+
+
+
+
+
+
 <!-- نافذة إضافة توكيل -->
+
 
 <div
 id="addModal"
 class="modal">
 
+
+
 <div class="modal-content">
+
+
 
 <h2>
 
@@ -184,57 +299,120 @@ class="modal">
 
 </h2>
 
+
+
+
+
+
+
 <input
+
 
 id="powerNumber"
 
+
 type="text"
+
 
 placeholder="رقم التوكيل">
 
+
+
+
+
+
+
 <input
+
 
 id="clientName"
 
+
 type="text"
+
 
 placeholder="اسم الموكل">
 
+
+
+
+
+
+
 <input
+
 
 id="documentation"
 
+
 type="text"
+
 
 placeholder="التوثيق">
 
+
+
+
+
+
+
 <div class="modal-buttons">
 
+
+
+
+
 <button
+
 
 class="save"
 
+
 onclick="savePower()">
+
 
 حفظ
 
+
 </button>
+
+
+
+
+
+
 
 <button
 
+
 class="cancel"
+
 
 onclick="closeAddModal()">
 
+
 إلغاء
+
 
 </button>
 
-</div>
+
+
+
 
 </div>
 
+
+
 </div>
+
+
+
+</div>
+
+
+
+
 
 
 
@@ -242,15 +420,31 @@ onclick="closeAddModal()">
 
 <!-- نافذة تعديل -->
 
+
 <div
+
 id="editModal"
+
 class="modal">
+
+
 
 <div class="modal-content">
 
+
+
+
+
 <input
+
 type="hidden"
+
 id="editId">
+
+
+
+
+
 
 <h2>
 
@@ -258,57 +452,122 @@ id="editId">
 
 </h2>
 
+
+
+
+
+
+
+
 <input
+
 
 id="editPowerNumber"
 
+
 type="text"
+
 
 placeholder="رقم التوكيل">
 
+
+
+
+
+
+
 <input
+
 
 id="editClientName"
 
+
 type="text"
+
 
 placeholder="اسم الموكل">
 
+
+
+
+
+
+
 <input
+
 
 id="editDocumentation"
 
+
 type="text"
+
 
 placeholder="التوثيق">
 
+
+
+
+
+
+
 <div class="modal-buttons">
 
+
+
+
+
 <button
+
 
 class="save"
 
+
 onclick="updatePower()">
+
 
 حفظ
 
+
 </button>
+
+
+
+
+
+
 
 <button
 
+
 class="cancel"
+
 
 onclick="closeEditModal()">
 
+
 إلغاء
+
 
 </button>
 
-</div>
+
+
+
+
 
 </div>
 
+
+
 </div>
+
+
+
+</div>
+
+
+
+
 
 
 
@@ -316,13 +575,23 @@ onclick="closeEditModal()">
 
 <!-- نافذة آخر رقم توكيل -->
 
+
 <div
+
 
 id="lastPowerModal"
 
+
 class="modal">
 
+
+
 <div class="modal-content small">
+
+
+
+
+
 
 <h2>
 
@@ -330,26 +599,55 @@ class="modal">
 
 </h2>
 
+
+
+
+
+
+
 <h1
+
 id="lastPowerValue">
+
 
 0
 
+
 </h1>
+
+
+
+
+
+
 
 <button
 
+
 class="save"
+
 
 onclick="closeLastPowerModal()">
 
+
 إغلاق
+
 
 </button>
 
-</div>
+
+
+
 
 </div>
+
+
+
+</div>
+
+
+
+
 
 
 
@@ -357,8 +655,11 @@ onclick="closeLastPowerModal()">
 
 <!-- Toast -->
 
+
 <div
+
 id="toast">
+
 
 </div>
 
@@ -366,11 +667,23 @@ id="toast">
 
 
 
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+
 <script
+
 src="powers.js">
+
 
 </script>
 
+
+
 </body>
+
 
 </html>

@@ -17,7 +17,6 @@ const { Pool } = require("pg");
 const pool = new Pool({
 
     connectionString:
-
     process.env.DATABASE_URL,
 
 
@@ -28,7 +27,6 @@ const pool = new Pool({
     }
 
 });
-
 
 
 
@@ -63,8 +61,6 @@ pool.connect()
 
 
 });
-
-
 
 
 
@@ -124,7 +120,7 @@ CREATE TABLE IF NOT EXISTS cases
 id SERIAL PRIMARY KEY,
 
 
-file_number TEXT NOT NULL,
+file_number TEXT UNIQUE NOT NULL,
 
 
 client_name TEXT NOT NULL,
@@ -148,7 +144,6 @@ documentation TEXT DEFAULT ''
 )
 
 `);
-
 
 
 
@@ -193,6 +188,51 @@ documentation TEXT DEFAULT ''
 
 `);
 
+
+
+
+
+
+
+// ===========================
+// تأكيد القيود
+// ===========================
+
+
+await pool.query(`
+
+DO $$
+
+BEGIN
+
+
+IF NOT EXISTS (
+
+SELECT 1
+
+FROM pg_constraint
+
+WHERE conname =
+'cases_file_number_unique'
+
+)
+
+THEN
+
+
+ALTER TABLE cases
+
+ADD CONSTRAINT cases_file_number_unique
+
+UNIQUE(file_number);
+
+
+END IF;
+
+
+END $$;
+
+`);
 
 
 

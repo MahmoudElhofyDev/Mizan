@@ -12,12 +12,18 @@
 }
 
 
+
 body{
 
     min-height:100vh;
 
     background:
-    linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    linear-gradient(
+        135deg,
+        #0f2027,
+        #203a43,
+        #2c5364
+    );
 
     color:white;
 
@@ -43,6 +49,7 @@ body{
 }
 
 
+
 .top h1{
 
     font-size:55px;
@@ -54,6 +61,7 @@ body{
 }
 
 
+
 .top p{
 
     font-size:20px;
@@ -62,32 +70,24 @@ body{
 
 
 
-
-
 /* =====================
-   CONTAINER
+   TOOLBAR
 ===================== */
 
 
-.container{
+.toolbar{
 
-    width:100%;
+    display:flex;
 
-    margin-top:40px;
+    justify-content:center;
 
-    background:rgba(255,255,255,.12);
+    align-items:center;
 
-    backdrop-filter:blur(15px);
+    gap:15px;
 
-    border-radius:20px;
+    flex-wrap:wrap;
 
-    padding:30px;
-
-    border:1px solid rgba(255,255,255,.2);
-
-    box-shadow:0 20px 40px #0005;
-
-    animation:show .8s ease;
+    margin:35px 0;
 
 }
 
@@ -106,10 +106,6 @@ button{
 
     padding:12px 25px;
 
-    background:#D4AF37;
-
-    color:#000;
-
     font-size:16px;
 
     font-weight:bold;
@@ -121,47 +117,28 @@ button{
 }
 
 
-button:hover{
 
-    background:white;
+button:hover{
 
     transform:scale(1.05);
 
-}
-
-
-
-
-.add-btn{
-
-    margin-bottom:25px;
+    filter:brightness(1.15);
 
 }
 
 
 
+.gold{
 
+    background:#D4AF37;
 
-.delete-btn{
-
-    background:#b91c1c;
-
-    color:white;
-
-}
-
-
-.delete-btn:hover{
-
-    background:#ef4444;
+    color:#000;
 
 }
 
 
 
-
-
-.edit-btn{
+.blue{
 
     background:#2563eb;
 
@@ -170,12 +147,64 @@ button:hover{
 }
 
 
-.edit-btn:hover{
 
-    background:#60a5fa;
+.orange{
+
+    background:#f97316;
+
+    color:white;
 
 }
 
+
+
+.green{
+
+    background:#16a34a;
+
+    color:white;
+
+}
+
+
+
+.save{
+
+    background:#16a34a;
+
+    color:white;
+
+}
+
+
+
+.cancel{
+
+    background:#555;
+
+    color:white;
+
+}
+
+
+
+.edit{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+
+
+.delete{
+
+    background:#b91c1c;
+
+    color:white;
+
+}
 
 
 
@@ -186,20 +215,19 @@ button:hover{
 ===================== */
 
 
-.search-box{
+.searchBox{
 
     display:flex;
 
     gap:15px;
 
-    margin-bottom:25px;
+    margin-bottom:30px;
 
 }
 
 
 
-.search-box input{
-
+.searchBox input{
 
     flex:1;
 
@@ -217,15 +245,32 @@ button:hover{
 
 
 
+.searchBox button{
 
-input{
+    background:#D4AF37;
 
-    font-family:"Cairo",sans-serif;
+    color:#000;
 
 }
 
 
 
+/* =====================
+   EMPTY MESSAGE
+===================== */
+
+
+.empty{
+
+    text-align:center;
+
+    margin:40px;
+
+    font-size:22px;
+
+    color:#D4AF37;
+
+}
 
 
 
@@ -234,17 +279,8 @@ input{
 ===================== */
 
 
-.table-box{
-
-    width:100%;
-
-    overflow-x:auto;
-
-}
-
-
-
-table{
+#casesTable,
+#powersTable{
 
     width:100%;
 
@@ -260,19 +296,13 @@ table{
 
 
 
-thead{
+th{
+
+    padding:15px;
 
     background:#D4AF37;
 
     color:#000;
-
-}
-
-
-
-th{
-
-    padding:15px;
 
     font-size:18px;
 
@@ -286,7 +316,9 @@ td{
 
     text-align:center;
 
-    border-bottom:1px solid rgba(255,255,255,.15);
+    border-bottom:
+
+    1px solid rgba(255,255,255,.15);
 
 }
 
@@ -299,17 +331,14 @@ tbody tr{
 }
 
 
+
 tbody tr:hover{
 
-    background:rgba(255,255,255,.12);
+    background:
+
+    rgba(255,255,255,.12);
 
 }
-
-
-
-
-
-
 
 /* =====================
    PAGINATION
@@ -326,7 +355,10 @@ tbody tr:hover{
 
     margin-top:30px;
 
+    flex-wrap:wrap;
+
 }
+
 
 
 .pagination button{
@@ -337,9 +369,11 @@ tbody tr:hover{
 
     padding:0;
 
+    background:#D4AF37;
+
+    color:#000;
+
 }
-
-
 
 
 
@@ -350,9 +384,6 @@ tbody tr:hover{
     color:#000;
 
 }
-
-
-
 
 
 
@@ -370,7 +401,9 @@ tbody tr:hover{
 
     inset:0;
 
-    background:rgba(0,0,0,.65);
+    background:
+
+    rgba(0,0,0,.65);
 
     justify-content:center;
 
@@ -391,18 +424,41 @@ tbody tr:hover{
 
     background:
 
-    linear-gradient(135deg,#203a43,#0f2027);
+    linear-gradient(
+
+        135deg,
+
+        #203a43,
+
+        #0f2027
+
+    );
 
     padding:30px;
 
     border-radius:20px;
 
-    box-shadow:0 30px 60px #0008;
+    box-shadow:
+
+    0 30px 60px #0008;
 
     animation:show .4s ease;
 
 
 }
+
+
+
+
+
+.modal-content.small{
+
+    width:300px;
+
+    text-align:center;
+
+}
+
 
 
 
@@ -422,6 +478,23 @@ tbody tr:hover{
 
 
 
+
+.modal-content h1{
+
+
+    color:#D4AF37;
+
+    font-size:55px;
+
+    margin:20px;
+
+
+}
+
+
+
+
+
 .modal-content input{
 
 
@@ -437,9 +510,10 @@ tbody tr:hover{
 
     outline:none;
 
+    font-size:16px;
+
 
 }
-
 
 
 
@@ -449,28 +523,12 @@ tbody tr:hover{
 
     display:flex;
 
-    gap:15px;
-
     justify-content:center;
 
+    gap:15px;
 
-}
+    margin-top:10px;
 
-
-
-.cancel-btn{
-
-
-    background:#555;
-
-    color:white;
-
-}
-
-
-.cancel-btn:hover{
-
-    background:#777;
 
 }
 
@@ -494,21 +552,32 @@ tbody tr:hover{
 
     left:50%;
 
-    transform:translateX(-50%);
+    transform:
+
+    translateX(-50%);
+
 
     background:#D4AF37;
 
     color:#000;
 
+
     padding:15px 35px;
+
 
     border-radius:15px;
 
+
     font-weight:bold;
 
-    box-shadow:0 10px 30px #0007;
+
+    box-shadow:
+
+    0 10px 30px #0007;
+
 
     z-index:2000;
+
 
     animation:show .3s ease;
 
@@ -519,65 +588,8 @@ tbody tr:hover{
 
 
 
-
 /* =====================
-   LAST POWER
-===================== */
-
-
-.last-power{
-
-
-    text-align:center;
-
-    font-size:25px;
-
-    color:#D4AF37;
-
-    margin:20px;
-
-
-}
-
-
-
-
-
-
-/* =====================
-   ANIMATION
-===================== */
-
-
-@keyframes show{
-
-
-from{
-
-    opacity:0;
-
-    transform:translateY(40px);
-
-}
-
-
-to{
-
-    opacity:1;
-
-    transform:translateY(0);
-
-}
-
-
-}
-
-
-
-
-
-/* =====================
-   RESPONSIVE
+   TABLE MOBILE
 ===================== */
 
 
@@ -594,30 +606,57 @@ to{
 
     .top h1{
 
+
         font-size:40px;
 
+
+    }
+
+
+
+    .toolbar{
+
+
+        flex-direction:column;
+
+
     }
 
 
 
-    .container{
+    .toolbar button{
 
-        padding:15px;
+
+        width:100%;
+
 
     }
-
 
 
 }
 
 
 
+
+
 @media(max-width:600px){
 
 
-    .search-box{
+    .searchBox{
+
 
         flex-direction:column;
+
+
+    }
+
+
+
+    .searchBox button{
+
+
+        width:100%;
+
 
     }
 
@@ -625,7 +664,23 @@ to{
 
     .modal-content{
 
+
         width:90%;
+
+
+    }
+
+
+
+
+    th,
+    td{
+
+
+        font-size:13px;
+
+        padding:10px;
+
 
     }
 
@@ -633,19 +688,51 @@ to{
 
     button{
 
+
         font-size:14px;
 
-    }
-
-
-
-    th,td{
-
-        font-size:13px;
-
-        padding:10px;
 
     }
+
+
+}
+
+
+
+/* =====================
+   ANIMATION
+===================== */
+
+
+@keyframes show{
+
+
+from{
+
+
+    opacity:0;
+
+    transform:
+
+    translateY(40px);
+
+
+}
+
+
+
+to{
+
+
+    opacity:1;
+
+    transform:
+
+    translateY(0);
+
+
+}
+
 
 
 }

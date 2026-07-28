@@ -1,9 +1,22 @@
 // =====================================
-// الإعدادات
+// MIZAN - POWERS.JS
+// Railway PostgreSQL Version
+// =====================================
+
+
+// =====================================
+// API
 // =====================================
 
 const API =
 "https://mizan-production-32bb.up.railway.app";
+
+
+
+
+// =====================================
+// المتغيرات
+// =====================================
 
 let allPowers = [];
 
@@ -17,17 +30,88 @@ let currentEditId = null;
 
 
 
+
+
 // =====================================
-// تحميل الصفحة
+// تشغيل الصفحة
 // =====================================
 
 window.onload = async ()=>{
 
     hideTable();
 
+    document
+    .getElementById("lastPowerBtn")
+    .onclick = getLastPower;
+
     await loadAllPowers();
 
 };
+
+
+
+
+
+
+// =====================================
+// الأحداث
+// =====================================
+
+function bindEvents(){
+
+
+
+    const lastBtn =
+
+    document.getElementById(
+        "lastPowerBtn"
+    );
+
+
+
+    if(lastBtn){
+
+
+        lastBtn.onclick =
+        getLastPower;
+
+
+    }
+
+
+
+
+
+
+    const excelInput =
+
+    document.getElementById(
+        "excelInput"
+    );
+
+
+
+    if(excelInput){
+
+
+        excelInput.addEventListener(
+
+            "change",
+
+            importExcelPowers
+
+        );
+
+
+    }
+
+
+
+}
+
+
+
+
 
 
 
@@ -37,29 +121,154 @@ window.onload = async ()=>{
 
 async function loadAllPowers(){
 
+
     try{
 
+
         const response =
+
         await fetch(
 
             API +
+
             "/powers"
 
         );
 
-        allPowers =
-        await response.json();
+const data =
+await response.json();
 
-    }
 
-    catch(err){
+if(Array.isArray(data)){
 
-        console.log(err);
-
-    }
+    allPowers = data;
 
 }
 
+else{
+
+    allPowers = [];
+
+}
+
+
+            console.log(
+
+                "Unexpected API response:",
+
+                data
+
+            );
+
+
+        }
+
+
+
+    
+
+
+    catch(err){
+
+
+        console.log(err);
+
+
+        allPowers = [];
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+// =====================================
+// إخفاء الجدول
+// =====================================
+
+function hideTable(){
+
+
+    const table =
+
+    document.getElementById(
+        "powersTable"
+    );
+
+
+
+    const empty =
+
+    document.getElementById(
+        "emptyMessage"
+    );
+
+
+
+    if(table)
+
+        table.style.display="none";
+
+
+
+    if(empty)
+
+        empty.style.display="block";
+
+
+
+}
+
+
+
+
+
+
+
+// =====================================
+// إظهار الجدول
+// =====================================
+
+function showTable(){
+
+
+
+    const table =
+
+    document.getElementById(
+        "powersTable"
+    );
+
+
+
+    const empty =
+
+    document.getElementById(
+        "emptyMessage"
+    );
+
+
+
+    if(table)
+
+        table.style.display="table";
+
+
+
+    if(empty)
+
+        empty.style.display="none";
+
+
+
+}
 
 
 // =====================================
@@ -68,37 +277,79 @@ async function loadAllPowers(){
 
 function searchPowers(){
 
+
+    const input =
+
+    document.getElementById(
+        "searchInput"
+    );
+
+
+
+    if(!input)
+
+        return;
+
+
+
+
+
     const keyword =
 
-    document
-    .getElementById("searchInput")
-    .value
+    input.value
+
     .trim()
+
     .toLowerCase();
 
+
+
+
+
     if(keyword===""){
+
 
         clearSearch();
 
         return;
 
+
     }
+
+
+
+
+
+
 
     filteredPowers =
 
     allPowers.filter(p=>{
 
+
         return(
+
+
 
             String(
 
-                p.power_number
+                p.power_number || ""
 
             )
 
+            .toLowerCase()
+
             .includes(keyword)
 
+
+
+
+
             ||
+
+
+
+
 
             String(
 
@@ -110,7 +361,15 @@ function searchPowers(){
 
             .includes(keyword)
 
+
+
+
+
             ||
+
+
+
+
 
             String(
 
@@ -122,57 +381,40 @@ function searchPowers(){
 
             .includes(keyword)
 
+
+
+
+
         );
+
 
     });
 
+
+
+
+
+
     currentPage = 1;
+
+
 
     showTable();
 
+
     renderPowers();
 
-}
 
-
-
-// =====================================
-// إخفاء الجدول
-// =====================================
-
-function hideTable(){
-
-    document
-    .getElementById("powersTable")
-    .style.display =
-    "none";
-
-    document
-    .getElementById("emptyMessage")
-    .style.display =
-    "block";
 
 }
 
 
 
-// =====================================
-// إظهار الجدول
-// =====================================
 
-function showTable(){
 
-    document
-    .getElementById("powersTable")
-    .style.display =
-    "table";
 
-    document
-    .getElementById("emptyMessage")
-    .style.display =
-    "none";
 
-}
+
 
 // =====================================
 // عرض البيانات
@@ -180,61 +422,43 @@ function showTable(){
 
 function renderPowers(){
 
+
+
     const body =
-    document.getElementById("powersBody");
 
-    body.innerHTML = "";
+    document.getElementById(
+        "powersBody"
+    );
 
-    if(filteredPowers.length === 0){
 
-        hideTable();
+
+    if(!body)
 
         return;
 
-    }
 
-    const start =
-    (currentPage - 1) * rowsPerPage;
 
-    const end =
-    start + rowsPerPage;
 
-    const pageData =
-    filteredPowers.slice(start, end);
 
-    pageData.forEach(power=>{
+    body.innerHTML="";
 
-        body.innerHTML += `
+
+
+
+
+
+
+    if(filteredPowers.length===0){
+
+
+
+        body.innerHTML=`
 
 <tr>
 
-<td>${power.power_number}</td>
+<td colspan="5">
 
-<td>${power.client_name}</td>
-
-<td>${power.documentation || ""}</td>
-
-<td>
-
-<button
-class="edit"
-onclick="openEditModal(${power.id})">
-
-تعديل
-
-</button>
-
-</td>
-
-<td>
-
-<button
-class="delete"
-onclick="deletePower(${power.id})">
-
-حذف
-
-</button>
+لا توجد نتائج
 
 </td>
 
@@ -242,11 +466,171 @@ onclick="deletePower(${power.id})">
 
 `;
 
+
+
+        document
+
+        .getElementById(
+            "pagination"
+        )
+
+        .innerHTML="";
+
+
+
+        return;
+
+
+    }
+
+
+
+
+
+
+
+
+    const start =
+
+    (currentPage - 1)
+
+    *
+
+    rowsPerPage;
+
+
+
+
+
+
+
+    const data =
+
+    filteredPowers.slice(
+
+        start,
+
+        start + rowsPerPage
+
+    );
+
+
+
+
+
+
+
+
+    data.forEach(power=>{
+
+
+
+        body.innerHTML += `
+
+
+
+<tr>
+
+
+
+<td>
+
+${power.power_number || ""}
+
+</td>
+
+
+
+
+
+<td>
+
+${power.client_name || ""}
+
+</td>
+
+
+
+
+
+<td>
+
+${power.documentation || ""}
+
+</td>
+
+
+
+
+
+<td>
+
+
+<button
+
+class="edit"
+
+onclick="openEditModal(${power.id})">
+
+تعديل
+
+</button>
+
+
+
+</td>
+
+
+
+
+
+
+
+<td>
+
+
+<button
+
+class="delete"
+
+onclick="deletePower(${power.id})">
+
+حذف
+
+</button>
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+`;
+
+
+
     });
+
+
+
+
+
 
     renderPagination();
 
+
+
 }
+
+
+
+
+
+
 
 
 
@@ -256,10 +640,31 @@ onclick="deletePower(${power.id})">
 
 function renderPagination(){
 
-    const pagination =
-    document.getElementById("pagination");
 
-    pagination.innerHTML = "";
+
+    const pagination =
+
+    document.getElementById(
+        "pagination"
+    );
+
+
+
+    if(!pagination)
+
+        return;
+
+
+
+
+
+    pagination.innerHTML="";
+
+
+
+
+
+
 
     const totalPages =
 
@@ -271,89 +676,181 @@ function renderPagination(){
 
     );
 
-    if(totalPages <= 1){
+
+
+
+
+
+
+    if(totalPages <= 1)
 
         return;
 
-    }
 
-    const prev = document.createElement("button");
 
-    prev.innerHTML = "❮";
+
+
+
+
+
+
+    const prev =
+
+    document.createElement(
+        "button"
+    );
+
+
+
+    prev.innerHTML="◀";
+
+
 
     prev.disabled =
 
-    currentPage === 1;
+    currentPage===1;
 
-    prev.onclick = ()=>{
 
-        currentPage--;
 
-        renderPowers();
+
+
+    prev.onclick=()=>{
+
+
+        if(currentPage>1){
+
+
+            currentPage--;
+
+            renderPowers();
+
+
+        }
+
 
     };
+
+
 
     pagination.appendChild(prev);
 
 
 
+
+
+
+
+
+
     for(
 
-        let i = 1;
+        let i=1;
 
-        i <= totalPages;
+        i<=totalPages;
 
         i++
 
     ){
 
+
+
         const btn =
 
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
-        btn.innerText = i;
 
-        if(i===currentPage){
+
+        btn.innerText=i;
+
+
+
+        if(i===currentPage)
 
             btn.className="active";
 
-        }
 
-        btn.onclick = ()=>{
 
-            currentPage = i;
+
+
+        btn.onclick=()=>{
+
+
+            currentPage=i;
+
 
             renderPowers();
 
+
         };
 
+
+
         pagination.appendChild(btn);
+
+
 
     }
 
 
 
+
+
+
+
+
+
     const next =
 
-    document.createElement("button");
+    document.createElement(
+        "button"
+    );
 
-    next.innerHTML = "❯";
+
+
+    next.innerHTML="▶";
+
+
 
     next.disabled =
 
-    currentPage === totalPages;
+    currentPage===totalPages;
 
-    next.onclick = ()=>{
 
-        currentPage++;
 
-        renderPowers();
+
+
+    next.onclick=()=>{
+
+
+        if(currentPage < totalPages){
+
+
+            currentPage++;
+
+
+            renderPowers();
+
+
+        }
+
 
     };
 
+
+
     pagination.appendChild(next);
 
+
+
 }
+
+
+
+
+
+
 
 
 
@@ -363,21 +860,55 @@ function renderPagination(){
 
 function clearSearch(){
 
-    document
-    .getElementById("searchInput")
-    .value = "";
 
-    filteredPowers = [];
 
-    currentPage = 1;
+    const input =
 
-    document
-    .getElementById("pagination")
-    .innerHTML = "";
+    document.getElementById(
+        "searchInput"
+    );
+
+
+
+    if(input)
+
+        input.value="";
+
+
+
+
+
+    filteredPowers=[];
+
+
+    currentPage=1;
+
+
+
+
+
+    const pagination =
+
+    document.getElementById(
+        "pagination"
+    );
+
+
+
+    if(pagination)
+
+        pagination.innerHTML="";
+
+
+
+
 
     hideTable();
 
+
+
 }
+
 
 // =====================================
 // إضافة توكيل
@@ -385,59 +916,103 @@ function clearSearch(){
 
 async function savePower(){
 
+
+
     const power_number =
+
     document
+
     .getElementById("powerNumber")
+
     .value
+
     .trim();
+
+
+
+
 
     const client_name =
+
     document
+
     .getElementById("clientName")
+
     .value
+
     .trim();
 
+
+
+
+
     const documentation =
+
     document
+
     .getElementById("documentation")
+
     .value
+
     .trim();
+
+
+
+
+
+
 
     if(
 
-        power_number==="" ||
+        power_number === "" ||
 
-        client_name===""
+        client_name === ""
 
     ){
 
-        alert("برجاء إدخال جميع البيانات");
+
+        alert(
+
+            "برجاء إدخال البيانات المطلوبة"
+
+        );
+
 
         return;
+
 
     }
 
 
 
-    const exist =
 
-    allPowers.find(
 
-        p =>
+
+
+    const exists =
+
+    allPowers.find(p =>
+
 
         String(
 
             p.power_number
 
-        ) ===
+        ) === String(power_number)
 
-        power_number
+
 
     );
 
 
 
-    if(exist){
+
+
+
+
+    if(exists){
+
+
 
         alert(
 
@@ -445,117 +1020,263 @@ async function savePower(){
 
         );
 
+
         return;
+
 
     }
 
 
 
-    const response =
-
-    await fetch(
-
-        API +
-
-        "/powers",
-
-        {
-
-            method:"POST",
-
-            headers:{
-
-                "Content-Type":
-
-                "application/json"
-
-            },
-
-            body:JSON.stringify({
-
-                power_number,
-
-                client_name,
-
-                documentation
-
-            })
-
-        }
-
-    );
 
 
 
-    const result =
-
-    await response.json();
 
 
 
-    if(result.success){
+    try{
 
-        closeAddModal();
 
-        showToast(
 
-            "تمت إضافة التوكيل"
+        const response =
+
+        await fetch(
+
+            API +
+
+            "/powers",
+
+            {
+
+
+                method:"POST",
+
+
+
+                headers:{
+
+
+                    "Content-Type":
+
+                    "application/json"
+
+
+                },
+
+
+
+                body:JSON.stringify({
+
+
+
+                    power_number,
+
+                    client_name,
+
+                    documentation
+
+
+
+                })
+
+
+            }
 
         );
 
-        await loadAllPowers();
 
-        clearSearch();
+
+
+
+
+
+
+        const result =
+
+        await response.json();
+
+
+
+
+
+
+
+
+
+        if(result.success){
+
+
+
+            showToast(
+
+                "تمت إضافة التوكيل"
+
+            );
+
+
+
+            closeAddModal();
+
+
+
+            await loadAllPowers();
+
+
+
+            clearSearch();
+
+
+
+        }
+
+        else{
+
+
+            alert(
+
+                result.message ||
+
+                "فشل الإضافة"
+
+            );
+
+
+        }
+
+
+
+
+
+
 
     }
+
+    catch(err){
+
+
+
+        console.log(err);
+
+
+
+        alert(
+
+            "تعذر الاتصال بالسيرفر"
+
+        );
+
+
+    }
+
+
 
 }
 
 
 
+
+
+
+
+
+
 // =====================================
-// فتح نافذة التعديل
+// فتح التعديل
 // =====================================
 
 function openEditModal(id){
 
-    currentEditId = id;
 
-    const p =
+
+    currentEditId=id;
+
+
+
+
+
+
+    const power =
 
     allPowers.find(
 
-        x => x.id == id
+        p => p.id == id
 
     );
 
-    if(!p){
+
+
+
+
+
+    if(!power)
 
         return;
 
-    }
+
+
+
+
+
 
     document
+
     .getElementById("editPowerNumber")
+
     .value =
-    p.power_number;
+
+    power.power_number;
+
+
+
+
+
+
 
     document
+
     .getElementById("editClientName")
+
     .value =
-    p.client_name;
+
+    power.client_name;
+
+
+
+
+
+
+
 
     document
+
     .getElementById("editDocumentation")
+
     .value =
-    p.documentation || "";
+
+    power.documentation || "";
+
+
+
+
+
+
+
 
     document
+
     .getElementById("editModal")
-    .style.display =
-    "flex";
+
+    .style.display="flex";
+
+
 
 }
+
+
+
+
+
+
 
 
 
@@ -565,98 +1286,262 @@ function openEditModal(id){
 
 async function updatePower(){
 
+
+
     const power_number =
 
     document
+
     .getElementById("editPowerNumber")
+
     .value
+
     .trim();
+
+
+
+
+
 
     const client_name =
 
     document
+
     .getElementById("editClientName")
+
     .value
+
     .trim();
+
+
+
+
+
 
     const documentation =
 
     document
+
     .getElementById("editDocumentation")
+
     .value
+
     .trim();
 
 
 
-    const response =
 
-    await fetch(
 
-        API +
 
-        "/powers/" +
 
-        currentEditId,
 
-        {
 
-            method:"PUT",
+    const duplicate =
 
-            headers:{
+    allPowers.find(p =>
 
-                "Content-Type":
 
-                "application/json"
 
-            },
+        String(p.power_number)
 
-            body:JSON.stringify({
+        ===
 
-                power_number,
+        String(power_number)
 
-                client_name,
 
-                documentation
 
-            })
+        &&
 
-        }
+
+
+        p.id != currentEditId
+
+
 
     );
 
 
 
-    const result =
-
-    await response.json();
 
 
 
-    if(result.success){
 
-        closeEditModal();
+    if(duplicate){
 
-        showToast(
 
-            "تم حفظ التعديل"
+
+        alert(
+
+            "رقم التوكيل موجود بالفعل"
 
         );
 
-        await loadAllPowers();
 
-        searchPowers();
+        return;
+
 
     }
+
+
+
+
+
+
+
+
+
+    try{
+
+
+
+        const response =
+
+        await fetch(
+
+            API +
+
+            "/powers/" +
+
+            currentEditId,
+
+            {
+
+
+                method:"PUT",
+
+
+
+                headers:{
+
+
+                    "Content-Type":
+
+                    "application/json"
+
+
+                },
+
+
+
+                body:JSON.stringify({
+
+
+                    power_number,
+
+                    client_name,
+
+                    documentation
+
+
+                })
+
+
+            }
+
+        );
+
+
+
+
+
+
+
+
+        const result =
+
+        await response.json();
+
+
+
+
+
+
+
+
+        if(result.success){
+
+
+
+            showToast(
+
+                "تم تعديل التوكيل"
+
+            );
+
+
+
+            closeEditModal();
+
+
+
+            await loadAllPowers();
+
+
+
+            searchPowers();
+
+
+
+        }
+
+        else{
+
+
+            alert(
+
+                result.message ||
+
+                "فشل التعديل"
+
+            );
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+    catch(err){
+
+
+
+        console.log(err);
+
+
+
+        alert(
+
+            "حدث خطأ أثناء التعديل"
+
+        );
+
+
+    }
+
+
 
 }
 
 
 
+
+
+
+
+
+
 // =====================================
-// حذف
+// حذف توكيل
 // =====================================
 
 async function deletePower(id){
+
+
 
     if(
 
@@ -668,54 +1553,125 @@ async function deletePower(id){
 
     ){
 
+
         return;
+
 
     }
 
 
 
-    const response =
-
-    await fetch(
-
-        API +
-
-        "/powers/" +
-
-        id,
-
-        {
-
-            method:"DELETE"
-
-        }
-
-    );
 
 
 
-    const result =
-
-    await response.json();
 
 
+    try{
 
-    if(result.success){
 
-        showToast(
 
-            "تم حذف التوكيل"
+        const response =
+
+        await fetch(
+
+            API +
+
+            "/powers/" +
+
+            id,
+
+            {
+
+
+                method:"DELETE"
+
+
+            }
 
         );
 
-        await loadAllPowers();
 
-        searchPowers();
+
+
+
+
+
+
+        const result =
+
+        await response.json();
+
+
+
+
+
+
+
+
+        if(result.success){
+
+
+
+            showToast(
+
+                "تم حذف التوكيل"
+
+            );
+
+
+
+            await loadAllPowers();
+
+
+
+            searchPowers();
+
+
+
+        }
+
+        else{
+
+
+            alert(
+
+                result.message ||
+
+                "فشل الحذف"
+
+            );
+
+
+        }
+
+
+
+
+
+
 
     }
 
-}
+    catch(err){
 
+
+
+        console.log(err);
+
+
+
+        alert(
+
+            "تعذر الاتصال بالسيرفر"
+
+        );
+
+
+    }
+
+
+
+}
 
 
 // =====================================
@@ -724,41 +1680,75 @@ async function deletePower(id){
 
 async function getLastPower(){
 
-    const response =
 
-    await fetch(
-
-        API +
-
-        "/powers/last-number"
-
-    );
+    try{
 
 
+        const response =
 
-    const data =
+        await fetch(
 
-    await response.json();
+            API +
+
+            "/powers/last-number"
+
+        );
 
 
 
-    document
-    .getElementById("lastPowerValue")
-    .innerText =
+        const data =
 
-    data.lastPower ||
-
-    "لا يوجد";
+        await response.json();
 
 
 
-    document
-    .getElementById("lastPowerModal")
-    .style.display =
 
-    "flex";
+        document
+
+        .getElementById("lastPowerValue")
+
+        .innerText =
+
+        data.lastPower || 0;
+
+
+
+
+        document
+
+        .getElementById("lastPowerModal")
+
+        .style.display="flex";
+
+
+
+    }
+
+    catch(err){
+
+
+        console.log(err);
+
+
+        alert(
+
+            "تعذر جلب آخر رقم توكيل"
+
+        );
+
+
+    }
+
 
 }
+
+
+
+
+
+
+
+
 
 // =====================================
 // فتح نافذة الإضافة
@@ -766,65 +1756,547 @@ async function getLastPower(){
 
 function openAddModal(){
 
+
+
     document
+
     .getElementById("powerNumber")
-    .value = "";
+
+    .value="";
+
+
 
     document
+
     .getElementById("clientName")
-    .value = "";
+
+    .value="";
+
+
 
     document
+
     .getElementById("documentation")
-    .value = "";
+
+    .value="";
+
+
+
+
 
     document
+
     .getElementById("addModal")
-    .style.display = "flex";
+
+    .style.display="flex";
+
 
 }
 
 
 
+
+
+
+
+
+
 // =====================================
-// غلق نافذة الإضافة
+// غلق النوافذ
 // =====================================
 
 function closeAddModal(){
 
+
     document
+
     .getElementById("addModal")
-    .style.display = "none";
+
+    .style.display="none";
+
 
 }
 
 
 
-// =====================================
-// غلق نافذة التعديل
-// =====================================
+
 
 function closeEditModal(){
 
+
     document
+
     .getElementById("editModal")
-    .style.display = "none";
+
+    .style.display="none";
+
 
 }
 
 
 
-// =====================================
-// غلق نافذة آخر رقم
-// =====================================
+
 
 function closeLastPowerModal(){
 
+
     document
+
     .getElementById("lastPowerModal")
-    .style.display = "none";
+
+    .style.display="none";
+
 
 }
+
+
+
+
+
+
+
+
+
+// =====================================
+// استيراد Excel
+// =====================================
+
+async function importExcelPowers(event){
+
+
+
+    const file =
+
+    event.target.files[0];
+
+
+
+    if(!file)
+
+        return;
+
+
+
+
+
+
+
+    const reader =
+
+    new FileReader();
+
+
+
+
+
+
+
+
+    reader.onload = async function(e){
+
+
+
+        try{
+
+
+
+            const data =
+
+            new Uint8Array(
+
+                e.target.result
+
+            );
+
+
+
+
+
+
+            const workbook =
+
+            XLSX.read(
+
+                data,
+
+                {
+
+                    type:"array"
+
+                }
+
+            );
+
+
+
+
+
+
+
+            const sheet =
+
+            workbook.Sheets[
+
+                workbook.SheetNames[0]
+
+            ];
+
+
+
+
+
+
+
+
+            const rows =
+
+            XLSX.utils.sheet_to_json(
+
+                sheet
+
+            );
+
+
+
+
+
+
+
+
+            if(rows.length===0){
+
+
+
+                alert(
+
+                    "ملف Excel فارغ"
+
+                );
+
+
+                return;
+
+
+            }
+
+
+
+
+
+
+
+
+            let added = 0;
+
+            let duplicate = 0;
+
+            let failed = 0;
+
+
+
+
+
+
+
+            for(const row of rows){
+
+
+
+                try{
+
+
+
+                    const power_number =
+
+                    row.power_number ||
+
+                    row["رقم التوكيل"] ||
+
+                    "";
+
+
+
+
+
+                    const client_name =
+
+                    row.client_name ||
+
+                    row["اسم الموكل"] ||
+
+                    "";
+
+
+
+
+
+                    const documentation =
+
+                    row.documentation ||
+
+                    row["التوثيق"] ||
+
+                    "";
+
+
+
+
+
+
+
+
+
+                    if(
+
+                        !power_number ||
+
+                        !client_name
+
+                    ){
+
+
+                        failed++;
+
+                        continue;
+
+
+                    }
+
+
+
+
+
+
+
+
+                    const exists =
+
+                    allPowers.find(p=>
+
+
+                        String(
+
+                            p.power_number
+
+                        )
+
+                        ===
+
+                        String(
+
+                            power_number
+
+                        )
+
+
+                    );
+
+
+
+
+
+
+
+
+                    if(exists){
+
+
+
+                        duplicate++;
+
+                        continue;
+
+
+                    }
+
+
+
+
+
+
+
+
+
+                    const response =
+
+                    await fetch(
+
+                        API +
+
+                        "/powers",
+
+                        {
+
+
+                            method:"POST",
+
+
+
+                            headers:{
+
+
+                                "Content-Type":
+
+                                "application/json"
+
+
+                            },
+
+
+
+                            body:JSON.stringify({
+
+
+                                power_number,
+
+                                client_name,
+
+                                documentation
+
+
+                            })
+
+
+                        }
+
+                    );
+
+
+
+
+
+
+
+
+                    const result =
+
+                    await response.json();
+
+
+
+
+
+
+
+                    if(result.success){
+
+
+                        added++;
+
+
+                    }
+
+                    else{
+
+
+                        failed++;
+
+
+                    }
+
+
+
+
+
+
+
+                }
+
+                catch(err){
+
+
+                    failed++;
+
+
+                }
+
+
+
+            }
+
+
+
+
+
+
+
+
+            alert(
+
+
+                "نتيجة الاستيراد\n\n" +
+
+                "✅ المضاف: " +
+
+                added +
+
+                "\n⚠ المكرر: " +
+
+                duplicate +
+
+                "\n❌ الفاشل: " +
+
+                failed
+
+
+
+            );
+
+
+
+
+
+
+
+            await loadAllPowers();
+
+
+
+
+
+
+        }
+
+        catch(err){
+
+
+
+            console.log(err);
+
+
+
+            alert(
+
+                "حدث خطأ أثناء قراءة الملف"
+
+            );
+
+
+        }
+
+
+
+    };
+
+
+
+
+
+
+
+    reader.readAsArrayBuffer(file);
+
+
+
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -834,32 +2306,65 @@ function closeLastPowerModal(){
 
 function showToast(message){
 
+
+
     const toast =
+
     document.getElementById("toast");
+
+
+
+    if(!toast)
+
+        return;
+
+
+
+
 
     toast.innerText = message;
 
-    toast.style.display = "block";
+
+
+    toast.style.display="block";
+
+
+
+
+
+
 
     setTimeout(()=>{
 
+
         toast.style.display="none";
 
+
     },2000);
+
+
 
 }
 
 
 
+
+
+
+
+
+
 // =====================================
-// غلق الـ Modal عند الضغط خارجها
+// إغلاق عند الضغط خارج النافذة
 // =====================================
 
-window.onclick = function(event){
+window.onclick=function(event){
+
+
 
     if(
 
-        event.target==
+        event.target ===
 
         document.getElementById("addModal")
 
@@ -869,9 +2374,13 @@ window.onclick = function(event){
 
     }
 
+
+
+
+
     if(
 
-        event.target==
+        event.target ===
 
         document.getElementById("editModal")
 
@@ -881,9 +2390,13 @@ window.onclick = function(event){
 
     }
 
+
+
+
+
     if(
 
-        event.target==
+        event.target ===
 
         document.getElementById("lastPowerModal")
 
@@ -893,18 +2406,29 @@ window.onclick = function(event){
 
     }
 
+
+
 };
 
 
 
+
+
+
+
+
+
 // =====================================
-// تحديث البيانات بعد أي عملية
+// تحديث البيانات
 // =====================================
 
 async function refreshPowers(){
 
+
     await loadAllPowers();
 
+
     searchPowers();
+
 
 }

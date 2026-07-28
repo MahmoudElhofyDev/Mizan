@@ -1,7 +1,8 @@
 // =====================================
 // MIZAN - CASES.JS
-// Railway Version - Fixed
+// Railway Version + Excel Import
 // =====================================
+
 
 
 // =====================================
@@ -10,6 +11,7 @@
 
 const API =
 "https://mizan-production-32bb.up.railway.app";
+
 
 
 
@@ -29,19 +31,26 @@ let currentEditId = null;
 
 
 
+
 // =====================================
 // تشغيل الصفحة
 // =====================================
 
 window.onload = function(){
 
+
     hideTable();
+
 
     bindEvents();
 
+
     loadAllCases();
 
+
 };
+
+
 
 
 
@@ -52,41 +61,92 @@ window.onload = function(){
 function bindEvents(){
 
 
+
     const lastBtn =
-    document.getElementById("lastFileBtn");
+
+    document.getElementById(
+
+        "lastFileBtn"
+
+    );
+
 
 
     if(lastBtn){
 
+
         lastBtn.onclick =
+
         showLastFileNumber;
+
 
     }
 
 
 
+
+
+
+
+    const importInput =
+
+    document.getElementById(
+
+        "excelInput"
+
+    );
+
+
+
+    if(importInput){
+
+
+        importInput.addEventListener(
+
+            "change",
+
+            importExcelCases
+
+        );
+
+
+    }
+
+
+
+
+
+
     const searchInput =
-    document.getElementById("searchInput");
+
+    document.getElementById(
+
+        "searchInput"
+
+    );
+
 
 
     if(searchInput){
+
 
         searchInput.addEventListener(
 
             "keyup",
 
-            function(){
-
-                searchCases();
-
-            }
+            searchCases
 
         );
+
 
     }
 
 
+
 }
+
+
+
 
 
 
@@ -97,27 +157,49 @@ function bindEvents(){
 function hideTable(){
 
 
+
     const body =
-    document.getElementById("casesBody");
+
+    document.getElementById(
+
+        "casesBody"
+
+    );
+
 
 
     if(body){
 
+
         body.innerHTML = "";
 
+
     }
+
+
+
+
 
 
 
     const pagination =
-    document.getElementById("pagination");
+
+    document.getElementById(
+
+        "pagination"
+
+    );
+
 
 
     if(pagination){
 
+
         pagination.innerHTML = "";
 
+
     }
+
 
 
 }
@@ -134,11 +216,22 @@ function hideTable(){
 function searchCases(){
 
 
+
     const input =
-    document.getElementById("searchInput");
+
+    document.getElementById(
+
+        "searchInput"
+
+    );
 
 
-    if(!input) return;
+
+    if(!input)
+
+        return;
+
+
 
 
 
@@ -152,31 +245,48 @@ function searchCases(){
 
 
 
+
+
+
+
     if(keyword === ""){
+
 
         hideTable();
 
+
         return;
+
 
     }
 
 
 
+
+
+
+
+
     filteredCases =
+
 
     allCases.filter(c=>{
 
 
-        return (
+        return(
+
 
 
             String(
+
                 c.file_number || ""
+
             )
 
             .toLowerCase()
 
             .includes(keyword)
+
 
 
 
@@ -184,8 +294,12 @@ function searchCases(){
 
 
 
+
+
             String(
+
                 c.client_name || ""
+
             )
 
             .toLowerCase()
@@ -193,17 +307,23 @@ function searchCases(){
             .includes(keyword)
 
 
+
         );
+
 
 
     });
 
 
 
+
+
     currentPage = 1;
 
 
+
     renderCases();
+
 
 
 }
@@ -220,11 +340,22 @@ function searchCases(){
 function renderCases(){
 
 
+
     const body =
-    document.getElementById("casesBody");
+
+    document.getElementById(
+
+        "casesBody"
+
+    );
 
 
-    if(!body) return;
+
+    if(!body)
+
+        return;
+
+
 
 
 
@@ -232,7 +363,11 @@ function renderCases(){
 
 
 
+
+
+
     if(filteredCases.length === 0){
+
 
 
         body.innerHTML = `
@@ -249,14 +384,28 @@ function renderCases(){
 
 `;
 
+
+
         document
-        .getElementById("pagination")
-        .innerHTML="";
+
+        .getElementById(
+
+            "pagination"
+
+        )
+
+        .innerHTML = "";
+
 
 
         return;
 
+
     }
+
+
+
+
 
 
 
@@ -264,7 +413,13 @@ function renderCases(){
 
     (currentPage - 1)
 
-    * rowsPerPage;
+    *
+
+    rowsPerPage;
+
+
+
+
 
 
 
@@ -280,7 +435,12 @@ function renderCases(){
 
 
 
+
+
+
+
     data.forEach(c=>{
+
 
 
         body.innerHTML += `
@@ -340,6 +500,7 @@ onclick="deleteCase(${c.id})">
 </tr>
 
 
+
 `;
 
 
@@ -348,27 +509,44 @@ onclick="deleteCase(${c.id})">
 
 
 
+
     renderPagination();
+
 
 
 }
 
+ 
 // =====================================
-// الصفحات
+// Pagination
 // =====================================
+
 
 function renderPagination(){
 
 
     const pagination =
-    document.getElementById("pagination");
+
+    document.getElementById(
+
+        "pagination"
+
+    );
 
 
-    if(!pagination) return;
+
+    if(!pagination)
+
+        return;
+
+
 
 
 
     pagination.innerHTML = "";
+
+
+
 
 
 
@@ -384,15 +562,21 @@ function renderPagination(){
 
 
 
-    if(totalPages <= 1){
+
+
+
+    if(totalPages <= 1)
 
         return;
 
-    }
+
+
+
 
 
 
     pagination.innerHTML += `
+
 
 <button
 
@@ -404,18 +588,37 @@ ${currentPage === 1 ? "disabled" : ""}>
 
 </button>
 
+
 `;
+
+
+
+
 
 
 
     for(let i = 1; i <= totalPages; i++){
 
 
+
         pagination.innerHTML += `
+
 
 <button
 
-class="${i === currentPage ? "active" : ""}"
+class="${
+
+i === currentPage
+
+?
+
+"active"
+
+:
+
+""
+
+}"
 
 onclick="goPage(${i})">
 
@@ -423,29 +626,52 @@ ${i}
 
 </button>
 
+
 `;
+
 
 
     }
 
 
 
+
+
+
+
     pagination.innerHTML += `
+
 
 <button
 
 onclick="nextPage()"
 
-${currentPage === totalPages ? "disabled" : ""}>
+${
+
+currentPage === totalPages
+
+?
+
+"disabled"
+
+:
+
+""
+
+}>
 
 ▶
 
 </button>
 
+
 `;
 
 
+
 }
+
+
 
 
 
@@ -453,16 +679,25 @@ ${currentPage === totalPages ? "disabled" : ""}>
 
 function goPage(page){
 
+
     currentPage = page;
 
+
     renderCases();
+
 
 }
 
 
 
 
+
+
+
+
+
 function nextPage(){
+
 
 
     const totalPages =
@@ -477,16 +712,27 @@ function nextPage(){
 
 
 
+
+
+
     if(currentPage < totalPages){
+
 
         currentPage++;
 
+
         renderCases();
+
 
     }
 
 
+
 }
+
+
+
+
 
 
 
@@ -494,13 +740,18 @@ function nextPage(){
 function prevPage(){
 
 
+
     if(currentPage > 1){
+
 
         currentPage--;
 
+
         renderCases();
 
+
     }
+
 
 
 }
@@ -509,29 +760,48 @@ function prevPage(){
 
 
 
+
+
+
+
 // =====================================
-// إعادة البحث
+// مسح البحث
 // =====================================
+
 
 function clearSearch(){
 
 
+
     const input =
 
-    document.getElementById("searchInput");
+    document.getElementById(
+
+        "searchInput"
+
+    );
+
 
 
     if(input){
 
+
         input.value = "";
 
+
     }
+
+
+
+
 
 
     filteredCases = [];
 
 
+
     hideTable();
+
 
 
 }
@@ -541,24 +811,36 @@ function clearSearch(){
 
 
 
+
+
+
 // =====================================
-// فتح نافذة الإضافة
+// فتح نافذة إضافة
 // =====================================
+
 
 function openAddModal(){
 
 
+
     const modal =
 
-    document.getElementById("addModal");
+    document.getElementById(
+
+        "addModal"
+
+    );
 
 
 
     if(modal){
 
-        modal.style.display = "flex";
+
+        modal.style.display="flex";
+
 
     }
+
 
 
 }
@@ -566,27 +848,38 @@ function openAddModal(){
 
 
 
-// =====================================
-// غلق نافذة الإضافة
-// =====================================
+
+
 
 function closeAddModal(){
 
 
+
     const modal =
 
-    document.getElementById("addModal");
+    document.getElementById(
+
+        "addModal"
+
+    );
 
 
 
     if(modal){
 
-        modal.style.display = "none";
+
+        modal.style.display="none";
+
 
     }
 
 
+
 }
+
+
+
+
 
 
 
@@ -596,48 +889,78 @@ function closeAddModal(){
 // حفظ ملف جديد
 // =====================================
 
+
 async function saveCase(){
 
 
+
     const file_number =
+
     document
-    .getElementById("fileNumber")
+
+    .getElementById(
+
+        "fileNumber"
+
+    )
+
     .value
+
     .trim();
+
+
+
+
 
 
 
     const client_name =
+
     document
-    .getElementById("clientName")
+
+    .getElementById(
+
+        "clientName"
+
+    )
+
     .value
+
     .trim();
 
 
 
-    if(file_number === "" || client_name === ""){
 
-        alert("يرجى إدخال جميع البيانات");
+
+
+
+    if(!file_number || !client_name){
+
+
+        alert(
+
+            "يرجى إدخال البيانات"
+
+        );
+
 
         return;
 
-    }
-
-
-
-    // التأكد أن allCases مصفوفة
-
-    if(!Array.isArray(allCases)){
-
-        allCases = [];
 
     }
+
+
+
+
+
+
 
 
 
     const exists =
 
-    allCases.find(c =>
+    allCases.find(c=>
+
 
         String(c.file_number)
 
@@ -645,21 +968,39 @@ async function saveCase(){
 
         String(file_number)
 
+
     );
+
+
+
+
 
 
 
     if(exists){
 
-        alert("رقم الملف موجود بالفعل");
+
+        alert(
+
+            "رقم الملف موجود بالفعل"
+
+        );
+
 
         return;
+
 
     }
 
 
 
+
+
+
+
+
     try{
+
 
 
         const response =
@@ -670,27 +1011,44 @@ async function saveCase(){
 
             {
 
+
                 method:"POST",
+
+
 
                 headers:{
 
+
                     "Content-Type":
+
                     "application/json"
+
 
                 },
 
 
-                body:JSON.stringify({
+
+                body:
+
+                JSON.stringify({
+
 
                     file_number,
 
+
                     client_name
 
+
                 })
+
 
             }
 
         );
+
+
+
+
 
 
 
@@ -700,40 +1058,56 @@ async function saveCase(){
 
 
 
-        console.log(data);
 
 
 
-        if(
 
-            data.success ||
+        if(data.success){
 
-            data.id ||
-
-            response.ok
-
-        ){
 
 
             showToast(
+
                 "تمت إضافة الملف"
+
             );
 
 
+
             document
-            .getElementById("fileNumber")
+
+            .getElementById(
+
+                "fileNumber"
+
+            )
+
             .value="";
 
 
+
+
             document
-            .getElementById("clientName")
+
+            .getElementById(
+
+                "clientName"
+
+            )
+
             .value="";
+
+
+
 
 
             closeAddModal();
 
 
-            await loadAllCases();
+
+            loadAllCases();
+
+
 
 
         }
@@ -741,16 +1115,21 @@ async function saveCase(){
         else{
 
 
+
             alert(
 
-                data.message ||
+                data.message
 
-                "فشل إضافة الملف"
+                ||
+
+                "فشل الإضافة"
 
             );
 
 
         }
+
+
 
 
 
@@ -759,18 +1138,27 @@ async function saveCase(){
     catch(err){
 
 
+
         console.log(err);
 
 
+
         alert(
+
             "تعذر الاتصال بالسيرفر"
+
         );
+
 
 
     }
 
 
+
 }
+
+
+
 
 
 
@@ -781,10 +1169,13 @@ async function saveCase(){
 // آخر رقم ملف
 // =====================================
 
+
 async function showLastFileNumber(){
 
 
+
     try{
+
 
 
         const response =
@@ -799,6 +1190,9 @@ async function showLastFileNumber(){
 
 
 
+
+
+
         const data =
 
         await response.json();
@@ -806,9 +1200,15 @@ async function showLastFileNumber(){
 
 
 
+
+
         document
 
-        .getElementById("lastFileValue")
+        .getElementById(
+
+            "lastFileValue"
+
+        )
 
         .innerText =
 
@@ -817,18 +1217,25 @@ async function showLastFileNumber(){
 
 
 
+
+
         document
 
-        .getElementById("lastFileModal")
+        .getElementById(
+
+            "lastFileModal"
+
+        )
 
         .style.display="flex";
 
 
 
+
     }
 
-
     catch(err){
+
 
 
         alert(
@@ -838,10 +1245,14 @@ async function showLastFileNumber(){
         );
 
 
+
     }
 
 
+
 }
+
+
 
 
 
@@ -849,20 +1260,29 @@ async function showLastFileNumber(){
 function closeLastFileModal(){
 
 
+
     document
 
-    .getElementById("lastFileModal")
+    .getElementById(
+
+        "lastFileModal"
+
+    )
 
     .style.display="none";
 
 
+
 }
+
 
 // =====================================
 // فتح التعديل
 // =====================================
 
+
 function openEditModal(id){
+
 
 
     const c =
@@ -875,15 +1295,19 @@ function openEditModal(id){
 
 
 
-    if(!c){
+    if(!c)
 
         return;
 
-    }
+
 
 
 
     currentEditId = id;
+
+
+
+
 
 
 
@@ -899,11 +1323,15 @@ function openEditModal(id){
 
 
 
-    if(fileNumber === null){
+
+
+    if(fileNumber === null)
 
         return;
 
-    }
+
+
+
 
 
 
@@ -919,11 +1347,16 @@ function openEditModal(id){
 
 
 
-    if(clientName === null){
+
+
+
+    if(clientName === null)
 
         return;
 
-    }
+
+
+
 
 
 
@@ -938,7 +1371,11 @@ function openEditModal(id){
     );
 
 
+
 }
+
+
+
 
 
 
@@ -948,6 +1385,7 @@ function openEditModal(id){
 // =====================================
 // تحديث الملف
 // =====================================
+
 
 async function updateCase(
 
@@ -960,7 +1398,9 @@ async function updateCase(
 ){
 
 
+
     try{
+
 
 
         const response =
@@ -1010,6 +1450,9 @@ async function updateCase(
 
 
 
+
+
+
         const data =
 
         await response.json();
@@ -1017,7 +1460,12 @@ async function updateCase(
 
 
 
+
+
+
+
         if(data.success){
+
 
 
             showToast(
@@ -1027,7 +1475,9 @@ async function updateCase(
             );
 
 
+
             loadAllCases();
+
 
 
         }
@@ -1035,7 +1485,10 @@ async function updateCase(
         else{
 
 
+
             alert(
+
+                data.message ||
 
                 "فشل التعديل"
 
@@ -1046,12 +1499,17 @@ async function updateCase(
 
 
 
+
+
+
     }
 
     catch(err){
 
 
+
         console.log(err);
+
 
 
         alert(
@@ -1061,10 +1519,17 @@ async function updateCase(
         );
 
 
+
     }
 
 
+
 }
+
+
+
+
+
 
 
 
@@ -1075,7 +1540,9 @@ async function updateCase(
 // حذف ملف
 // =====================================
 
+
 async function deleteCase(id){
+
 
 
     if(
@@ -1094,7 +1561,12 @@ async function deleteCase(id){
 
 
 
+
+
+
+
     try{
+
 
 
         const response =
@@ -1109,11 +1581,17 @@ async function deleteCase(id){
 
             {
 
+
                 method:"DELETE"
+
 
             }
 
         );
+
+
+
+
 
 
 
@@ -1124,7 +1602,11 @@ async function deleteCase(id){
 
 
 
+
+
+
         if(data.success){
+
 
 
             showToast(
@@ -1138,12 +1620,16 @@ async function deleteCase(id){
             loadAllCases();
 
 
+
         }
 
         else{
 
 
+
             alert(
+
+                data.message ||
 
                 "فشل الحذف"
 
@@ -1154,12 +1640,17 @@ async function deleteCase(id){
 
 
 
+
+
+
     }
 
     catch(err){
 
 
+
         console.log(err);
+
 
 
         alert(
@@ -1169,10 +1660,13 @@ async function deleteCase(id){
         );
 
 
+
     }
 
 
+
 }
+
 
 
 
@@ -1185,7 +1679,9 @@ async function deleteCase(id){
 // عرض البيانات الناقصة
 // =====================================
 
+
 function showIncompleteCases(){
+
 
 
     filteredCases =
@@ -1193,26 +1689,42 @@ function showIncompleteCases(){
     allCases.filter(c=>{
 
 
-        return (
 
-            !c.file_number ||
+        return(
+
+
+            !c.file_number
+
+            ||
 
             !c.client_name
 
+
         );
+
 
 
     });
 
 
 
+
+
+
+
     currentPage = 1;
+
 
 
     renderCases();
 
 
+
 }
+
+
+
+
 
 
 
@@ -1225,43 +1737,81 @@ function showIncompleteCases(){
 // تحميل البيانات
 // =====================================
 
+
 async function loadAllCases(){
+
+
 
     try{
 
+
+
         const response =
+
         await fetch(
-            API + "/cases"
+
+            API +
+
+            "/cases"
+
         );
 
 
+
+
+
+
         const data =
+
         await response.json();
+
+
+
+
+
 
 
 
         if(Array.isArray(data)){
 
+
+
             allCases = data;
+
+
 
         }
 
         else if(Array.isArray(data.cases)){
 
+
+
             allCases = data.cases;
+
+
 
         }
 
         else{
 
+
+
             allCases = [];
 
+
+
             console.log(
+
                 "Unexpected API response:",
+
                 data
+
             );
 
+
         }
+
+
 
 
 
@@ -1269,13 +1819,286 @@ async function loadAllCases(){
 
     catch(err){
 
+
+
         console.log(err);
+
+
 
         allCases = [];
 
+
+
     }
 
+
+
 }
+
+// =====================================
+// استيراد Excel
+// =====================================
+
+
+async function importExcelCases(event){
+
+
+    const file =
+
+    event.target.files[0];
+
+
+
+    if(!file){
+
+        return;
+
+    }
+
+
+
+
+
+    const reader =
+
+    new FileReader();
+
+
+
+
+
+    reader.onload = async function(e){
+
+
+
+        try{
+
+
+
+            const data =
+
+            new Uint8Array(
+
+                e.target.result
+
+            );
+
+
+
+            const workbook =
+
+            XLSX.read(
+
+                data,
+
+                {
+
+                    type:"array"
+
+                }
+
+            );
+
+
+
+
+
+            const sheet =
+
+            workbook.Sheets[
+
+                workbook.SheetNames[0]
+
+            ];
+
+
+
+
+
+            const rows =
+
+            XLSX.utils.sheet_to_json(
+
+                sheet
+
+            );
+
+
+
+
+
+
+
+            if(rows.length === 0){
+
+
+
+                alert(
+
+                    "ملف Excel فارغ"
+
+                );
+
+
+                return;
+
+
+            }
+
+
+
+
+
+
+
+            const response =
+
+            await fetch(
+
+                API +
+
+                "/cases/import",
+
+                {
+
+
+                    method:"POST",
+
+
+
+                    headers:{
+
+
+                        "Content-Type":
+
+                        "application/json"
+
+
+                    },
+
+
+
+                    body:
+
+                    JSON.stringify({
+
+                        data:rows
+
+                    })
+
+
+                }
+
+            );
+
+
+
+
+
+
+
+
+            const result =
+
+            await response.json();
+
+
+
+
+
+
+
+
+            if(result.success){
+
+
+
+                alert(
+
+                "تم الاستيراد\n\n" +
+
+                "المضاف: " +
+
+                result.added +
+
+                "\nالمكرر: " +
+
+                result.duplicate +
+
+                "\nالأخطاء: " +
+
+                result.failed
+
+                );
+
+
+
+
+                loadAllCases();
+
+
+
+
+            }
+
+            else{
+
+
+
+                alert(
+
+                    result.message ||
+
+                    "فشل الاستيراد"
+
+                );
+
+
+
+            }
+
+
+
+
+
+
+
+        }
+
+        catch(err){
+
+
+
+            console.log(err);
+
+
+
+            alert(
+
+                "حدث خطأ أثناء قراءة الملف"
+
+            );
+
+
+
+        }
+
+
+
+    };
+
+
+
+
+
+
+
+    reader.readAsArrayBuffer(file);
+
+
+
+}
+
 
 
 
@@ -1288,6 +2111,7 @@ async function loadAllCases(){
 // Toast
 // =====================================
 
+
 function showToast(text){
 
 
@@ -1299,6 +2123,9 @@ function showToast(text){
         "toast"
 
     );
+
+
+
 
 
 
@@ -1317,7 +2144,7 @@ function showToast(text){
 
 
 
-        toast.id = "toast";
+        toast.id="toast";
 
 
 
@@ -1328,7 +2155,10 @@ function showToast(text){
         );
 
 
+
     }
+
+
 
 
 
@@ -1342,10 +2172,16 @@ function showToast(text){
 
 
 
+
+
+
+
     setTimeout(()=>{
 
 
+
         toast.style.display="none";
+
 
 
     },2000);
