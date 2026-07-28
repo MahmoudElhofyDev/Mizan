@@ -5,24 +5,36 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0">
 
-<title>ميزان | ملفات الحفظ</title>
+<title>
 
-<link rel="stylesheet" href="cases.css">
+ميزان | ملفات الحفظ
+
+</title>
+
+<link
+rel="stylesheet"
+href="cases.css">
 
 </head>
 
-
 <body>
-
 
 <header class="top">
 
-<h1>📁 ملفات الحفظ</h1>
+<h1>
+
+📁 ملفات الحفظ
+
+</h1>
 
 <p>
+
 إدارة ملفات الحفظ
+
 </p>
 
 </header>
@@ -31,224 +43,331 @@
 
 
 
+<section class="toolbar">
+
+<button
+class="gold"
+onclick="openAddModal()">
+
+➕ إضافة ملف
+
+</button>
 
 
-<section class="box">
+
+<button
+class="blue"
+id="lastFileBtn">
+
+📂 آخر رقم ملف
+
+</button>
 
 
-<h2>إضافة ملف جديد</h2>
+
+<button
+class="orange"
+onclick="showIncompleteCases()">
+
+⚠ البيانات الناقصة
+
+</button>
 
 
-<div class="form">
+
+<button
+class="red"
+onclick="showCasesWithoutPower()">
+
+📄 بدون توكيل
+
+</button>
+
+</section>
 
 
+
+
+
+<section class="searchBox">
+
+<input
+
+id="searchInput"
+
+type="text"
+
+placeholder="ابحث برقم الملف أو اسم الموكل..."
+
+onkeyup="searchCases()"
+
+>
+
+<button
+onclick="clearSearch()">
+
+إعادة تعيين
+
+</button>
+
+</section>
+
+
+
+
+
+<div
+id="emptyMessage"
+class="empty">
+
+🔍
+
+ابدأ بكتابة كلمة للبحث.
+
+لن تظهر البيانات إلا بعد البحث.
+
+</div>
+
+
+
+
+
+<table
+id="casesTable">
+
+<thead>
+
+<tr>
+
+<th>
+
+رقم الملف
+
+</th>
+
+<th>
+
+اسم الموكل
+
+</th>
+
+<th>
+
+تعديل
+
+</th>
+
+<th>
+
+حذف
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody
+id="casesBody">
+
+</tbody>
+
+</table>
+
+
+
+
+
+<div
+id="pagination"
+class="pagination">
+
+</div>
+
+<!-- نافذة إضافة ملف -->
+
+<div
+id="addModal"
+class="modal">
+
+<div class="modal-content">
+
+<h2>
+
+إضافة ملف جديد
+
+</h2>
 
 <input
 
 id="fileNumber"
 
-placeholder="رقم الملف"
+type="text"
 
-
-
->
-
-
-
+placeholder="رقم الملف">
 
 <input
 
 id="clientName"
 
-placeholder="اسم الموكل"
+type="text"
 
+placeholder="اسم الموكل">
 
-
->
-
-
-
-
+<div class="modal-buttons">
 
 <button
 
-type="button"
+class="save"
 
-onclick="showLastFileNumber()"
+onclick="saveCase()">
 
->
-
-آخر رقم ملف
+حفظ
 
 </button>
-
-
-
-
-
 
 <button
 
-type="button"
+class="cancel"
 
-onclick="addCase()"
+onclick="closeAddModal()">
 
->
-
-إضافة الملف
+إلغاء
 
 </button>
 
+</div>
 
+</div>
 
 </div>
 
 
-</section>
 
 
 
+<!-- نافذة تعديل -->
 
+<div
+id="editModal"
+class="modal">
 
+<div class="modal-content">
 
-
-
-
-
-<section class="box">
-
+<input
+type="hidden"
+id="editId">
 
 <h2>
 
-البحث
+تعديل الملف
 
 </h2>
-
-
 
 <input
 
-id="search"
+id="editFileNumber"
 
-oninput="searchCases()"
+type="text"
 
-placeholder="ابحث برقم الملف أو اسم الموكل"
+placeholder="رقم الملف">
 
->
+<input
 
+id="editClientName"
 
+type="text"
 
-</section>
+placeholder="اسم الموكل">
 
+<div class="modal-buttons">
 
+<button
 
+class="save"
 
+onclick="updateCase()">
 
-
-
-
-
-
-<section class="box">
-
-
-<h2>
-
-قائمة الملفات
-
-</h2>
-
-
-
-
-<table>
-
-
-<thead>
-
-
-<tr>
-
-
-<th>
-رقم الملف
-</th>
-
-
-<th>
-اسم الموكل
-</th>
-
-
-<th>
-تعديل
-</th>
-
-
-<th>
-حذف
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-
-
-
-<tbody id="casesTable">
-
-
-</tbody>
-
-
-</table>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<div id="pagination"></div>
-
-
-
-
-
-
-
-
-
-<a href="dashboard.html">
-
-
-<button class="back">
-
-العودة للرئيسية
+حفظ
 
 </button>
 
+<button
 
-</a>
+class="cancel"
+
+onclick="closeEditModal()">
+
+إلغاء
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 
 
 
 
 
+<!-- نافذة آخر رقم ملف -->
+
+<div
+
+id="lastFileModal"
+
+class="modal">
+
+<div class="modal-content small">
+
+<h2>
+
+آخر رقم ملف
+
+</h2>
+
+<h1
+id="lastFileValue">
+
+0
+
+</h1>
+
+<button
+
+class="save"
+
+onclick="closeLastFileModal()">
+
+إغلاق
+
+</button>
+
+</div>
+
+</div>
 
 
 
-<script src="cases.js"></script>
 
+
+<!-- Toast -->
+
+<div
+id="toast">
+
+</div>
+
+
+
+
+
+<script
+src="cases.js">
+
+</script>
 
 </body>
 

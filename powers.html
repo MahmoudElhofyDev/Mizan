@@ -5,24 +5,36 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0">
 
-<title>ميزان | ملفات التوكيلات</title>
+<title>
 
-<link rel="stylesheet" href="powers.css">
+ميزان | التوكيلات
+
+</title>
+
+<link
+rel="stylesheet"
+href="powers.css">
 
 </head>
 
-
 <body>
-
 
 <header class="top">
 
-<h1>📄 ملفات التوكيلات</h1>
+<h1>
+
+📄 التوكيلات
+
+</h1>
 
 <p>
+
 إدارة بيانات التوكيلات
+
 </p>
 
 </header>
@@ -31,262 +43,333 @@
 
 
 
+<section class="toolbar">
+
+<button
+class="gold"
+onclick="openAddModal()">
+
+➕ إضافة توكيل
+
+</button>
 
 
-<section class="box">
+
+<button
+class="blue"
+id="lastPowerBtn">
+
+📂 آخر رقم توكيل
+
+</button>
+
+</section>
 
 
-<h2>إضافة توكيل جديد</h2>
 
 
-<div class="form">
 
-
+<section class="searchBox">
 
 <input
 
-id="fileNumber"
+id="searchInput"
 
-placeholder="رقم الملف"
+type="text"
+
+placeholder="ابحث برقم التوكيل أو اسم الموكل..."
+
+onkeyup="searchPowers()"
 
 >
 
+<button
+onclick="clearSearch()">
+
+إعادة تعيين
+
+</button>
+
+</section>
 
 
+
+
+
+<div
+id="emptyMessage"
+class="empty">
+
+🔍
+
+ابدأ بكتابة كلمة للبحث.
+
+لن تظهر البيانات إلا بعد البحث.
+
+</div>
+
+
+
+
+
+<table
+id="powersTable">
+
+<thead>
+
+<tr>
+
+<th>
+
+رقم التوكيل
+
+</th>
+
+<th>
+
+اسم الموكل
+
+</th>
+
+<th>
+
+التوثيق
+
+</th>
+
+<th>
+
+تعديل
+
+</th>
+
+<th>
+
+حذف
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody
+id="powersBody">
+
+</tbody>
+
+</table>
+
+
+
+
+
+<div
+id="pagination"
+class="pagination">
+
+</div>
+
+<!-- نافذة إضافة توكيل -->
+
+<div
+id="addModal"
+class="modal">
+
+<div class="modal-content">
+
+<h2>
+
+إضافة توكيل جديد
+
+</h2>
 
 <input
 
 id="powerNumber"
 
-placeholder="رقم التوكيل"
+type="text"
 
->
-
-
-
+placeholder="رقم التوكيل">
 
 <input
 
 id="clientName"
 
-placeholder="اسم الموكل"
+type="text"
 
->
-
-
-
+placeholder="اسم الموكل">
 
 <input
 
 id="documentation"
 
-placeholder="جهة التوثيق"
+type="text"
 
->
+placeholder="التوثيق">
 
-
-
-
-
-
-
+<div class="modal-buttons">
 
 <button
 
-type="button"
+class="save"
 
-onclick="showLastFileNumber()"
+onclick="savePower()">
 
->
-
-آخر رقم ملف
+حفظ
 
 </button>
-
-
-
-
-
-
 
 <button
 
-type="button"
+class="cancel"
 
-onclick="addPower()"
+onclick="closeAddModal()">
 
->
-
-إضافة التوكيل
+إلغاء
 
 </button>
 
+</div>
 
+</div>
 
 </div>
 
 
-</section>
 
 
 
+<!-- نافذة تعديل -->
 
+<div
+id="editModal"
+class="modal">
 
+<div class="modal-content">
 
-
-
-
-<section class="box">
-
+<input
+type="hidden"
+id="editId">
 
 <h2>
 
-البحث
+تعديل التوكيل
 
 </h2>
-
-
-
 
 <input
 
-id="search"
+id="editPowerNumber"
 
-oninput="delaySearch()"
+type="text"
 
-placeholder="ابحث في التوكيلات"
+placeholder="رقم التوكيل">
 
->
+<input
 
+id="editClientName"
 
+type="text"
 
-</section>
+placeholder="اسم الموكل">
 
+<input
 
+id="editDocumentation"
 
+type="text"
 
+placeholder="التوثيق">
 
+<div class="modal-buttons">
 
+<button
 
+class="save"
 
+onclick="updatePower()">
 
-<section class="box">
-
-
-<h2>
-
-قائمة التوكيلات
-
-</h2>
-
-
-
-
-<table>
-
-
-<thead>
-
-
-<tr>
-
-
-
-<th>
-رقم الملف
-</th>
-
-
-
-<th>
-رقم التوكيل
-</th>
-
-
-
-<th>
-اسم الموكل
-</th>
-
-
-
-<th>
-جهة التوثيق
-</th>
-
-
-
-<th>
-تعديل
-</th>
-
-
-
-<th>
-حذف
-</th>
-
-
-
-</tr>
-
-
-</thead>
-
-
-
-
-
-<tbody id="powersTable">
-
-
-</tbody>
-
-
-</table>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<div id="pagination"></div>
-
-
-
-
-
-
-
-
-
-<a href="dashboard.html">
-
-
-<button class="back">
-
-العودة للرئيسية
+حفظ
 
 </button>
 
+<button
 
-</a>
+class="cancel"
+
+onclick="closeEditModal()">
+
+إلغاء
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 
 
 
 
 
+<!-- نافذة آخر رقم توكيل -->
+
+<div
+
+id="lastPowerModal"
+
+class="modal">
+
+<div class="modal-content small">
+
+<h2>
+
+آخر رقم توكيل
+
+</h2>
+
+<h1
+id="lastPowerValue">
+
+0
+
+</h1>
+
+<button
+
+class="save"
+
+onclick="closeLastPowerModal()">
+
+إغلاق
+
+</button>
+
+</div>
+
+</div>
 
 
 
-<script src="powers.js"></script>
 
+
+<!-- Toast -->
+
+<div
+id="toast">
+
+</div>
+
+
+
+
+
+<script
+src="powers.js">
+
+</script>
 
 </body>
 

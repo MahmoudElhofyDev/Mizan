@@ -1,502 +1,417 @@
+// =====================================
+// الإعدادات
+// =====================================
+
 const API =
 "https://mizan-production-32bb.up.railway.app";
 
+let allPowers = [];
 
-
-let powers = [];
+let filteredPowers = [];
 
 let currentPage = 1;
 
-let rowsPerPage = 50;
+const rowsPerPage = 50;
 
-let currentData = [];
-
-let searchTimer;
+let currentEditId = null;
 
 
 
+// =====================================
+// تحميل الصفحة
+// =====================================
+
+window.onload = async ()=>{
+
+    hideTable();
+
+    await loadAllPowers();
+
+};
 
 
 
-// =====================
+// =====================================
 // تحميل البيانات
-// =====================
+// =====================================
 
-async function loadPowers(){
-
+async function loadAllPowers(){
 
     try{
 
+        const response =
+        await fetch(
 
-        let res =
-        await fetch(`${API}/powers`);
+            API +
+            "/powers"
 
+        );
 
-
-        powers =
-        await res.json();
-
-
-
-        displayPowers();
-
+        allPowers =
+        await response.json();
 
     }
-    catch(err){
 
+    catch(err){
 
         console.log(err);
 
-        alert("تعذر تحميل البيانات");
-
-
     }
-
 
 }
 
 
 
+// =====================================
+// البحث
+// =====================================
 
+function searchPowers(){
 
+    const keyword =
 
+    document
+    .getElementById("searchInput")
+    .value
+    .trim()
+    .toLowerCase();
 
+    if(keyword===""){
 
-
-// =====================
-// إضافة توكيل
-// =====================
-
-async function addPower(){
-
-
-
-    let documentation =
-    document.getElementById("documentation")
-    .value.trim();
-
-
-
-    let clientName =
-    document.getElementById("clientName")
-    .value.trim();
-
-
-
-    let powerNumber =
-    document.getElementById("powerNumber")
-    .value.trim();
-
-
-
-    let fileNumber =
-    document.getElementById("fileNumber")
-    .value.trim();
-
-
-
-
-
-
-    if(
-        clientName === ""
-    ){
-
-        alert("أدخل اسم الموكل");
+        clearSearch();
 
         return;
 
     }
 
+    filteredPowers =
 
+    allPowers.filter(p=>{
 
+        return(
 
+            String(
 
+                p.power_number
 
-    await fetch(`${API}/powers`,{
+            )
 
+            .includes(keyword)
 
-        method:"POST",
+            ||
 
+            String(
 
-        headers:{
+                p.client_name || ""
 
+            )
 
-            "Content-Type":"application/json"
+            .toLowerCase()
 
+            .includes(keyword)
 
-        },
+            ||
 
+            String(
 
-        body:JSON.stringify({
+                p.documentation || ""
 
+            )
 
-            documentation,
+            .toLowerCase()
 
-            clientName,
+            .includes(keyword)
 
-            powerNumber,
-
-            fileNumber
-
-
-        })
-
+        );
 
     });
 
+    currentPage = 1;
 
+    showTable();
 
-
-
-
-    clearInputs();
-
-
-    loadPowers();
-
+    renderPowers();
 
 }
 
 
 
+// =====================================
+// إخفاء الجدول
+// =====================================
+
+function hideTable(){
+
+    document
+    .getElementById("powersTable")
+    .style.display =
+    "none";
+
+    document
+    .getElementById("emptyMessage")
+    .style.display =
+    "block";
+
+}
 
 
 
+// =====================================
+// إظهار الجدول
+// =====================================
 
+function showTable(){
 
+    document
+    .getElementById("powersTable")
+    .style.display =
+    "table";
 
+    document
+    .getElementById("emptyMessage")
+    .style.display =
+    "none";
 
+}
 
-// =====================
+// =====================================
 // عرض البيانات
-// =====================
+// =====================================
 
-function displayPowers(){
+function renderPowers(){
 
+    const body =
+    document.getElementById("powersBody");
 
+    body.innerHTML = "";
 
-    let table =
-    document.getElementById("powersTable");
+    if(filteredPowers.length === 0){
 
+        hideTable();
 
+        return;
 
-    if(!table)
-    return;
+    }
 
+    const start =
+    (currentPage - 1) * rowsPerPage;
 
+    const end =
+    start + rowsPerPage;
 
-    table.innerHTML="";
+    const pageData =
+    filteredPowers.slice(start, end);
 
+    pageData.forEach(power=>{
 
-
-    let data =
-    currentData.length ?
-    currentData :
-    powers;
-
-
-
-
-    let start =
-    (currentPage-1)*rowsPerPage;
-
-
-
-    let rows =
-    data.slice(
-        start,
-        start+rowsPerPage
-    );
-
-
-
-
-
-
-    rows.forEach(p=>{
-
-
-        table.innerHTML += `
-
+        body.innerHTML += `
 
 <tr>
 
+<td>${power.power_number}</td>
 
-<td>
-${p.documentation || ""}
-</td>
+<td>${power.client_name}</td>
 
-
-<td>
-${p.clientName || ""}
-</td>
-
-
-<td>
-${p.powerNumber || ""}
-</td>
-
-
-<td>
-${p.fileNumber || ""}
-</td>
-
-
+<td>${power.documentation || ""}</td>
 
 <td>
 
-
-<button onclick="editPower(${p.id})">
+<button
+class="edit"
+onclick="openEditModal(${power.id})">
 
 تعديل
 
 </button>
 
-
 </td>
-
-
-
 
 <td>
 
-
-<button onclick="deletePower(${p.id})">
+<button
+class="delete"
+onclick="deletePower(${power.id})">
 
 حذف
 
 </button>
 
-
 </td>
-
 
 </tr>
 
-
 `;
-
-
 
     });
 
-
-
-
-    createPagination();
-
+    renderPagination();
 
 }
 
 
 
+// =====================================
+// Pagination
+// =====================================
+
+function renderPagination(){
+
+    const pagination =
+    document.getElementById("pagination");
+
+    pagination.innerHTML = "";
+
+    const totalPages =
+
+    Math.ceil(
+
+        filteredPowers.length /
+
+        rowsPerPage
+
+    );
+
+    if(totalPages <= 1){
+
+        return;
+
+    }
+
+    const prev = document.createElement("button");
+
+    prev.innerHTML = "❮";
+
+    prev.disabled =
+
+    currentPage === 1;
+
+    prev.onclick = ()=>{
+
+        currentPage--;
+
+        renderPowers();
+
+    };
+
+    pagination.appendChild(prev);
 
 
 
+    for(
 
+        let i = 1;
 
+        i <= totalPages;
 
-// =====================
-// البحث
-// =====================
+        i++
 
-function delaySearch(){
+    ){
 
+        const btn =
 
+        document.createElement("button");
 
-    clearTimeout(searchTimer);
+        btn.innerText = i;
 
+        if(i===currentPage){
 
-
-    searchTimer =
-    setTimeout(()=>{
-
-
-        let value =
-        document.getElementById("search")
-        .value
-        .toLowerCase()
-        .trim();
-
-
-
-
-        if(value===""){
-
-
-            currentData=[];
-
-
-        }
-
-        else{
-
-
-            currentData =
-            powers.filter(p=>{
-
-
-                return (
-
-
-                    String(p.documentation || "")
-                    .toLowerCase()
-                    .includes(value)
-
-
-
-                    ||
-
-
-
-                    String(p.clientName || "")
-                    .toLowerCase()
-                    .includes(value)
-
-
-
-                    ||
-
-
-
-                    String(p.powerNumber || "")
-                    .toLowerCase()
-                    .includes(value)
-
-
-
-                    ||
-
-
-
-                    String(p.fileNumber || "")
-                    .toLowerCase()
-                    .includes(value)
-
-
-                );
-
-
-            });
-
+            btn.className="active";
 
         }
 
+        btn.onclick = ()=>{
 
+            currentPage = i;
 
+            renderPowers();
 
-        currentPage=1;
+        };
 
-
-        displayPowers();
-
-
-
-    },300);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-// =====================
-// حذف
-// =====================
-
-async function deletePower(id){
-
-
-
-    if(confirm("هل تريد حذف التوكيل؟")){
-
-
-        await fetch(
-
-            `${API}/powers/${id}`,
-
-            {
-
-                method:"DELETE"
-
-            }
-
-        );
-
-
-
-        loadPowers();
-
+        pagination.appendChild(btn);
 
     }
 
 
 
-}
+    const next =
 
+    document.createElement("button");
 
+    next.innerHTML = "❯";
 
+    next.disabled =
 
+    currentPage === totalPages;
 
+    next.onclick = ()=>{
 
+        currentPage++;
 
+        renderPowers();
 
+    };
 
-
-
-// =====================
-// تعديل
-// =====================
-
-function editPower(id){
-
-
-
-    localStorage.setItem(
-        "editPowerId",
-        id
-    );
-
-
-
-    window.location.href =
-    "powers-edit.html";
-
+    pagination.appendChild(next);
 
 }
 
 
 
+// =====================================
+// إعادة البحث
+// =====================================
 
+function clearSearch(){
 
+    document
+    .getElementById("searchInput")
+    .value = "";
 
+    filteredPowers = [];
 
+    currentPage = 1;
 
+    document
+    .getElementById("pagination")
+    .innerHTML = "";
 
+    hideTable();
 
+}
 
-// =====================
-// آخر رقم ملف
-// =====================
+// =====================================
+// إضافة توكيل
+// =====================================
 
-function showLastFileNumber(){
+async function savePower(){
 
+    const power_number =
+    document
+    .getElementById("powerNumber")
+    .value
+    .trim();
 
+    const client_name =
+    document
+    .getElementById("clientName")
+    .value
+    .trim();
 
-    if(powers.length===0){
+    const documentation =
+    document
+    .getElementById("documentation")
+    .value
+    .trim();
 
+    if(
 
-        alert("لا يوجد توكيلات");
+        power_number==="" ||
 
+        client_name===""
+
+    ){
+
+        alert("برجاء إدخال جميع البيانات");
 
         return;
 
@@ -504,160 +419,492 @@ function showLastFileNumber(){
 
 
 
+    const exist =
 
+    allPowers.find(
 
-    let max=0;
+        p =>
 
+        String(
 
+            p.power_number
 
-    powers.forEach(p=>{
+        ) ===
 
+        power_number
 
-        let num =
-        Number(p.fileNumber);
-
-
-
-        if(
-            !isNaN(num)
-            &&
-            num>max
-        ){
-
-
-            max=num;
-
-
-        }
-
-
-    });
-
-
-
-
-
-    alert(
-        "آخر رقم ملف هو: "+max
     );
 
 
 
-}
+    if(exist){
 
+        alert(
 
+            "رقم التوكيل موجود بالفعل"
 
+        );
 
-
-
-
-
-
-// =====================
-// تنظيف
-// =====================
-
-function clearInputs(){
-
-
-
-    document.getElementById("documentation").value="";
-
-
-    document.getElementById("clientName").value="";
-
-
-    document.getElementById("powerNumber").value="";
-
-
-    document.getElementById("fileNumber").value="";
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// الصفحات
-// =====================
-
-function createPagination(){
-
-
-    let box =
-    document.getElementById("pagination");
-
-
-
-    if(!box)
-    return;
-
-
-
-    box.innerHTML="";
-
-
-
-    let data =
-    currentData.length ?
-    currentData :
-    powers;
-
-
-
-    let pages =
-    Math.ceil(
-        data.length / rowsPerPage
-    );
-
-
-
-    for(let i=1;i<=pages;i++){
-
-
-        box.innerHTML += `
-
-<button onclick="changePage(${i})">
-
-${i}
-
-</button>
-
-`;
+        return;
 
     }
 
 
+
+    const response =
+
+    await fetch(
+
+        API +
+
+        "/powers",
+
+        {
+
+            method:"POST",
+
+            headers:{
+
+                "Content-Type":
+
+                "application/json"
+
+            },
+
+            body:JSON.stringify({
+
+                power_number,
+
+                client_name,
+
+                documentation
+
+            })
+
+        }
+
+    );
+
+
+
+    const result =
+
+    await response.json();
+
+
+
+    if(result.success){
+
+        closeAddModal();
+
+        showToast(
+
+            "تمت إضافة التوكيل"
+
+        );
+
+        await loadAllPowers();
+
+        clearSearch();
+
+    }
+
 }
 
 
 
+// =====================================
+// فتح نافذة التعديل
+// =====================================
 
-function changePage(page){
+function openEditModal(id){
 
+    currentEditId = id;
 
-    currentPage=page;
+    const p =
 
+    allPowers.find(
 
-    displayPowers();
+        x => x.id == id
 
+    );
+
+    if(!p){
+
+        return;
+
+    }
+
+    document
+    .getElementById("editPowerNumber")
+    .value =
+    p.power_number;
+
+    document
+    .getElementById("editClientName")
+    .value =
+    p.client_name;
+
+    document
+    .getElementById("editDocumentation")
+    .value =
+    p.documentation || "";
+
+    document
+    .getElementById("editModal")
+    .style.display =
+    "flex";
 
 }
 
 
 
+// =====================================
+// حفظ التعديل
+// =====================================
+
+async function updatePower(){
+
+    const power_number =
+
+    document
+    .getElementById("editPowerNumber")
+    .value
+    .trim();
+
+    const client_name =
+
+    document
+    .getElementById("editClientName")
+    .value
+    .trim();
+
+    const documentation =
+
+    document
+    .getElementById("editDocumentation")
+    .value
+    .trim();
 
 
 
+    const response =
+
+    await fetch(
+
+        API +
+
+        "/powers/" +
+
+        currentEditId,
+
+        {
+
+            method:"PUT",
+
+            headers:{
+
+                "Content-Type":
+
+                "application/json"
+
+            },
+
+            body:JSON.stringify({
+
+                power_number,
+
+                client_name,
+
+                documentation
+
+            })
+
+        }
+
+    );
 
 
 
-// تشغيل
+    const result =
 
-loadPowers();
+    await response.json();
+
+
+
+    if(result.success){
+
+        closeEditModal();
+
+        showToast(
+
+            "تم حفظ التعديل"
+
+        );
+
+        await loadAllPowers();
+
+        searchPowers();
+
+    }
+
+}
+
+
+
+// =====================================
+// حذف
+// =====================================
+
+async function deletePower(id){
+
+    if(
+
+        !confirm(
+
+            "هل تريد حذف التوكيل؟"
+
+        )
+
+    ){
+
+        return;
+
+    }
+
+
+
+    const response =
+
+    await fetch(
+
+        API +
+
+        "/powers/" +
+
+        id,
+
+        {
+
+            method:"DELETE"
+
+        }
+
+    );
+
+
+
+    const result =
+
+    await response.json();
+
+
+
+    if(result.success){
+
+        showToast(
+
+            "تم حذف التوكيل"
+
+        );
+
+        await loadAllPowers();
+
+        searchPowers();
+
+    }
+
+}
+
+
+
+// =====================================
+// آخر رقم توكيل
+// =====================================
+
+async function getLastPower(){
+
+    const response =
+
+    await fetch(
+
+        API +
+
+        "/powers/last-number"
+
+    );
+
+
+
+    const data =
+
+    await response.json();
+
+
+
+    document
+    .getElementById("lastPowerValue")
+    .innerText =
+
+    data.lastPower ||
+
+    "لا يوجد";
+
+
+
+    document
+    .getElementById("lastPowerModal")
+    .style.display =
+
+    "flex";
+
+}
+
+// =====================================
+// فتح نافذة الإضافة
+// =====================================
+
+function openAddModal(){
+
+    document
+    .getElementById("powerNumber")
+    .value = "";
+
+    document
+    .getElementById("clientName")
+    .value = "";
+
+    document
+    .getElementById("documentation")
+    .value = "";
+
+    document
+    .getElementById("addModal")
+    .style.display = "flex";
+
+}
+
+
+
+// =====================================
+// غلق نافذة الإضافة
+// =====================================
+
+function closeAddModal(){
+
+    document
+    .getElementById("addModal")
+    .style.display = "none";
+
+}
+
+
+
+// =====================================
+// غلق نافذة التعديل
+// =====================================
+
+function closeEditModal(){
+
+    document
+    .getElementById("editModal")
+    .style.display = "none";
+
+}
+
+
+
+// =====================================
+// غلق نافذة آخر رقم
+// =====================================
+
+function closeLastPowerModal(){
+
+    document
+    .getElementById("lastPowerModal")
+    .style.display = "none";
+
+}
+
+
+
+// =====================================
+// Toast
+// =====================================
+
+function showToast(message){
+
+    const toast =
+    document.getElementById("toast");
+
+    toast.innerText = message;
+
+    toast.style.display = "block";
+
+    setTimeout(()=>{
+
+        toast.style.display="none";
+
+    },2000);
+
+}
+
+
+
+// =====================================
+// غلق الـ Modal عند الضغط خارجها
+// =====================================
+
+window.onclick = function(event){
+
+    if(
+
+        event.target==
+
+        document.getElementById("addModal")
+
+    ){
+
+        closeAddModal();
+
+    }
+
+    if(
+
+        event.target==
+
+        document.getElementById("editModal")
+
+    ){
+
+        closeEditModal();
+
+    }
+
+    if(
+
+        event.target==
+
+        document.getElementById("lastPowerModal")
+
+    ){
+
+        closeLastPowerModal();
+
+    }
+
+};
+
+
+
+// =====================================
+// تحديث البيانات بعد أي عملية
+// =====================================
+
+async function refreshPowers(){
+
+    await loadAllPowers();
+
+    searchPowers();
+
+}

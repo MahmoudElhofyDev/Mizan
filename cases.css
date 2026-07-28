@@ -1,51 +1,58 @@
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:"Cairo",sans-serif;
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:"Cairo",sans-serif;
+
 }
+
 
 
 body{
 
-    min-height:100vh;
+background:#f5f7fb;
 
-    background:
-    linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+direction:rtl;
 
-    color:white;
+color:#222;
 
-    padding:30px;
+padding:25px;
 
 }
 
 
-
-/* Header */
 
 .top{
 
-    text-align:center;
+text-align:center;
 
-    margin-bottom:40px;
+margin-bottom:30px;
 
 }
+
 
 
 .top h1{
 
-    font-size:45px;
+font-size:38px;
 
-    color:#D4AF37;
+color:#0f3d66;
 
-    margin-bottom:10px;
+margin-bottom:8px;
 
 }
+
 
 
 .top p{
 
-    font-size:20px;
+color:#666;
+
+font-size:18px;
 
 }
 
@@ -53,125 +60,83 @@ body{
 
 
 
+/* ===========================
+Toolbar
+=========================== */
 
+.toolbar{
 
-/* Boxes */
+display:flex;
 
-.box{
+justify-content:center;
 
-    width:90%;
+flex-wrap:wrap;
 
-    max-width:1000px;
+gap:15px;
 
-    margin:30px auto;
-
-    padding:30px;
-
-
-    background:rgba(255,255,255,.12);
-
-    backdrop-filter:blur(15px);
-
-
-    border-radius:20px;
-
-
-    border:1px solid rgba(255,255,255,.2);
-
-
-    box-shadow:0 20px 40px #0005;
+margin-bottom:25px;
 
 }
 
 
 
-.box h2{
+.toolbar button{
 
-    text-align:center;
+border:none;
 
-    color:#D4AF37;
+padding:12px 22px;
 
-    margin-bottom:25px;
+border-radius:10px;
 
-}
+font-size:16px;
 
+cursor:pointer;
 
+font-weight:bold;
 
+transition:.3s;
 
-
-
-
-/* Form */
-
-.form{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:15px;
-
-    flex-wrap:wrap;
+color:#fff;
 
 }
 
 
 
-.form input{
+.toolbar button:hover{
 
-    width:300px;
-
-    height:55px;
-
-    padding:0 20px;
-
-    border:none;
-
-    outline:none;
-
-    border-radius:15px;
-
-    font-size:18px;
+transform:translateY(-3px);
 
 }
 
 
 
+.gold{
 
-
-.form button{
-
-    width:220px;
-
-    height:55px;
-
-    border:none;
-
-    border-radius:15px;
-
-    background:#D4AF37;
-
-    color:#000;
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.3s;
+background:#d4af37;
 
 }
 
 
 
-.form button:hover{
+.blue{
 
-    background:white;
+background:#2563eb;
 
-    transform:scale(1.05);
+}
+
+
+
+.orange{
+
+background:#ea580c;
+
+}
+
+
+
+.red{
+
+background:#dc2626;
 
 }
 
@@ -179,31 +144,111 @@ body{
 
 
 
+/* ===========================
+Search
+=========================== */
+
+.searchBox{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:12px;
+
+margin-bottom:25px;
+
+flex-wrap:wrap;
+
+}
 
 
-/* Search */
 
-#search{
+.searchBox input{
 
-    display:block;
+width:500px;
 
-    width:500px;
+max-width:95%;
 
-    max-width:90%;
+padding:14px;
 
-    height:60px;
+border:1px solid #ccc;
 
-    margin:auto;
+border-radius:10px;
 
-    padding:0 25px;
+font-size:16px;
 
-    border:none;
+outline:none;
 
-    outline:none;
+transition:.3s;
 
-    border-radius:15px;
+}
 
-    font-size:20px;
+
+
+.searchBox input:focus{
+
+border-color:#2563eb;
+
+box-shadow:0 0 8px rgba(37,99,235,.25);
+
+}
+
+
+
+.searchBox button{
+
+padding:14px 20px;
+
+border:none;
+
+border-radius:10px;
+
+background:#2563eb;
+
+color:#fff;
+
+cursor:pointer;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+
+
+.searchBox button:hover{
+
+background:#1d4ed8;
+
+}
+
+/* ===========================
+Empty Message
+=========================== */
+
+.empty{
+
+display:block;
+
+text-align:center;
+
+padding:50px 20px;
+
+background:#fff;
+
+border-radius:12px;
+
+border:2px dashed #d4af37;
+
+color:#777;
+
+font-size:20px;
+
+margin-bottom:25px;
 
 }
 
@@ -211,18 +256,35 @@ body{
 
 
 
-
-
-
-/* Table */
+/* ===========================
+Table
+=========================== */
 
 table{
 
-    width:100%;
+width:100%;
 
-    border-collapse:collapse;
+border-collapse:collapse;
 
-    margin-top:20px;
+background:#fff;
+
+border-radius:12px;
+
+overflow:hidden;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+display:none;
+
+}
+
+
+
+thead{
+
+background:#0f3d66;
+
+color:#fff;
 
 }
 
@@ -230,13 +292,9 @@ table{
 
 th{
 
-    background:#D4AF37;
+padding:15px;
 
-    color:#000;
-
-    padding:15px;
-
-    font-size:18px;
+font-size:16px;
 
 }
 
@@ -244,56 +302,55 @@ th{
 
 td{
 
-    padding:15px;
+padding:14px;
 
-    text-align:center;
+text-align:center;
 
-    border-bottom:1px solid #ffffff33;
-
-    font-size:17px;
+border-bottom:1px solid #eee;
 
 }
 
 
 
-tr:hover{
+tbody tr:hover{
 
-    background:rgba(255,255,255,.08);
-
-}
-
-
-
-
-
-
-
-/* Buttons */
-
-.edit,
-.delete{
-
-    width:85px;
-
-    height:38px;
-
-    border:none;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    font-weight:bold;
+background:#f8fafc;
 
 }
 
 
+
+
+
+/* ===========================
+Buttons
+=========================== */
 
 .edit{
 
-    background:#22c55e;
+background:#2563eb;
 
-    color:white;
+color:#fff;
+
+border:none;
+
+padding:8px 16px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+
+
+.edit:hover{
+
+background:#1d4ed8;
 
 }
 
@@ -301,18 +358,29 @@ tr:hover{
 
 .delete{
 
-    background:#dc2626;
+background:#dc2626;
 
-    color:white;
+color:#fff;
+
+border:none;
+
+padding:8px 16px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+transition:.3s;
 
 }
 
 
 
-.edit:hover,
 .delete:hover{
 
-    transform:scale(1.05);
+background:#b91c1c;
 
 }
 
@@ -320,48 +388,251 @@ tr:hover{
 
 
 
+/* ===========================
+Pagination
+=========================== */
 
+.pagination{
 
+display:flex;
 
-/* Empty Data Button */
+justify-content:center;
 
-.empty-btn{
+align-items:center;
 
-    display:block;
+gap:10px;
 
-    margin:25px auto;
+margin-top:25px;
 
-    width:230px;
-
-    height:55px;
-
-    border:none;
-
-    border-radius:15px;
-
-    background:#D4AF37;
-
-    color:#000;
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-    box-shadow:0 10px 25px #0005;
+flex-wrap:wrap;
 
 }
 
 
 
-.empty-btn:hover{
+.pagination button{
 
-    background:white;
+width:42px;
 
-    transform:translateY(-5px);
+height:42px;
+
+border:none;
+
+border-radius:8px;
+
+background:#fff;
+
+cursor:pointer;
+
+font-weight:bold;
+
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+
+transition:.3s;
+
+}
+
+
+
+.pagination button:hover{
+
+background:#2563eb;
+
+color:#fff;
+
+}
+
+
+
+.pagination button.active{
+
+background:#0f3d66;
+
+color:#fff;
+
+}
+
+/* ===========================
+Modal
+=========================== */
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:9999;
+
+}
+
+
+
+.modal-content{
+
+width:420px;
+
+max-width:95%;
+
+background:#fff;
+
+border-radius:15px;
+
+padding:25px;
+
+box-shadow:0 15px 35px rgba(0,0,0,.25);
+
+animation:popup .25s ease;
+
+}
+
+
+
+.modal-content.small{
+
+width:320px;
+
+text-align:center;
+
+}
+
+
+
+.modal-content h2{
+
+margin-bottom:20px;
+
+color:#0f3d66;
+
+text-align:center;
+
+}
+
+
+
+.modal-content h1{
+
+font-size:48px;
+
+color:#d4af37;
+
+margin:20px 0;
+
+}
+
+
+
+.modal-content input{
+
+width:100%;
+
+padding:14px;
+
+margin-bottom:15px;
+
+border:1px solid #ccc;
+
+border-radius:10px;
+
+font-size:16px;
+
+outline:none;
+
+transition:.3s;
+
+}
+
+
+
+.modal-content input:focus{
+
+border-color:#2563eb;
+
+box-shadow:0 0 8px rgba(37,99,235,.25);
+
+}
+
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:10px;
+
+margin-top:10px;
+
+}
+
+
+
+.modal-buttons button{
+
+flex:1;
+
+padding:13px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-size:16px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+
+
+.save{
+
+background:#198754;
+
+color:#fff;
+
+}
+
+
+
+.save:hover{
+
+background:#157347;
+
+}
+
+
+
+.cancel{
+
+background:#dc2626;
+
+color:#fff;
+
+}
+
+
+
+.cancel:hover{
+
+background:#b91c1c;
 
 }
 
@@ -369,64 +640,37 @@ tr:hover{
 
 
 
+/* ===========================
+Toast
+=========================== */
 
+#toast{
 
+display:none;
 
-/* Pagination */
+position:fixed;
 
-#pagination{
+left:20px;
 
-    width:90%;
+bottom:20px;
 
-    max-width:1000px;
+background:#198754;
 
-    margin:40px auto;
+color:#fff;
 
-    display:flex;
+padding:14px 20px;
 
-    justify-content:center;
+border-radius:10px;
 
-    align-items:center;
+font-size:15px;
 
-    gap:12px;
+font-weight:bold;
 
-    flex-wrap:wrap;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
 
-}
+z-index:99999;
 
-
-
-#pagination button{
-
-    width:45px;
-
-    height:45px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#D4AF37;
-
-    color:#000;
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-
-
-#pagination button:hover{
-
-    background:white;
-
-    transform:translateY(-5px);
+animation:fadeUp .3s ease;
 
 }
 
@@ -434,32 +678,33 @@ tr:hover{
 
 
 
-
-
-
-/* Back */
+/* ===========================
+Back Button
+=========================== */
 
 .back{
 
-    display:block;
+display:block;
 
-    margin:40px auto;
+margin:35px auto 0;
 
-    padding:15px 40px;
+padding:14px 30px;
 
-    background:#D4AF37;
+border:none;
 
-    color:#000;
+border-radius:10px;
 
-    border:none;
+background:#0f3d66;
 
-    border-radius:15px;
+color:#fff;
 
-    font-size:18px;
+font-size:17px;
 
-    font-weight:bold;
+font-weight:bold;
 
-    cursor:pointer;
+cursor:pointer;
+
+transition:.3s;
 
 }
 
@@ -467,7 +712,7 @@ tr:hover{
 
 .back:hover{
 
-    background:white;
+background:#2563eb;
 
 }
 
@@ -475,66 +720,138 @@ tr:hover{
 
 
 
+/* ===========================
+Animations
+=========================== */
+
+@keyframes popup{
+
+from{
+
+opacity:0;
+
+transform:scale(.85);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
 
 
 
-/* Mobile */
+@keyframes fadeUp{
 
-@media(max-width:700px){
+from{
 
+opacity:0;
+
+transform:translateY(15px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+
+
+
+
+/* ===========================
+Responsive
+=========================== */
+
+@media(max-width:768px){
 
 body{
 
-    padding:15px;
+padding:15px;
 
 }
 
+.top h1{
 
-
-.box{
-
-    width:100%;
+font-size:30px;
 
 }
 
+.toolbar{
 
-
-.form input,
-.form button{
-
-    width:90%;
+flex-direction:column;
 
 }
 
+.toolbar button{
 
-
-#search{
-
-    width:90%;
+width:100%;
 
 }
 
+.searchBox{
 
+flex-direction:column;
+
+}
+
+.searchBox input{
+
+width:100%;
+
+}
+
+.searchBox button{
+
+width:100%;
+
+}
 
 table{
 
-    display:block;
+font-size:14px;
 
-    overflow-x:auto;
+display:block;
 
-}
+overflow-x:auto;
 
-
-
-#pagination button{
-
-    width:38px;
-
-    height:38px;
-
-    font-size:15px;
+white-space:nowrap;
 
 }
 
+.modal-content{
+
+width:95%;
+
+}
+
+.modal-buttons{
+
+flex-direction:column;
+
+}
+
+.modal-buttons button{
+
+width:100%;
+
+}
+
+.back{
+
+width:100%;
+
+}
 
 }
