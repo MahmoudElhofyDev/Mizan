@@ -5,38 +5,61 @@ const jwt = require("jsonwebtoken");
 
 const db = require("./database");
 
+
 const app = express();
 
+
 app.use(cors());
+
 app.use(express.json());
 
+
 const SECRET = "MIZAN_SECRET_KEY";
+
+
 
 // ===========================
 // اختبار السيرفر
 // ===========================
 
-app.get("/", (req, res) => {
+app.get("/", (req,res)=>{
 
-    res.send("Mizan Backend Running");
+    res.send(
+        "Mizan Backend Running"
+    );
 
 });
+
+
 
 // ===========================
 // تسجيل مستخدم
 // ===========================
 
-app.post("/register", async (req, res) => {
+app.post("/register", async(req,res)=>{
 
-    try {
+
+    try{
+
 
         const {
             username,
             password
         } = req.body;
 
+
+
         const hash =
-        await bcrypt.hash(password, 10);
+
+        await bcrypt.hash(
+
+            password,
+
+            10
+
+        );
+
+
 
         await db.query(
 
@@ -60,42 +83,59 @@ app.post("/register", async (req, res) => {
 
         );
 
+
+
         res.json({
 
-            success: true,
-            message: "Account created"
+            success:true
 
         });
 
+
     }
 
-    catch (err) {
+    catch(err){
 
-        res.status(400).json({
 
-            success: false,
-            message: "User already exists"
+        console.log(err);
+
+
+        res.status(500).json({
+
+            success:false,
+
+            message:err.message
 
         });
 
+
     }
+
 
 });
+
+
+
 
 // ===========================
 // تسجيل الدخول
 // ===========================
 
-app.post("/login", async (req, res) => {
+app.post("/login", async(req,res)=>{
 
-    try {
+
+    try{
+
 
         const {
             username,
             password
         } = req.body;
 
+
+
         const result =
+
         await db.query(
 
             `
@@ -110,46 +150,62 @@ app.post("/login", async (req, res) => {
 
         );
 
-        if (result.rows.length == 0) {
+
+
+        if(result.rows.length===0){
+
 
             return res.status(401).json({
 
-                success: false,
-                message: "Wrong username or password"
+                success:false
 
             });
 
+
         }
 
-        const user =
-        result.rows[0];
+
+
+
+        const user = result.rows[0];
+
+
 
         const match =
+
         await bcrypt.compare(
 
             password,
+
             user.password
 
         );
 
-        if (!match) {
+
+
+        if(!match){
+
 
             return res.status(401).json({
 
-                success: false,
-                message: "Wrong username or password"
+                success:false
 
             });
 
+
         }
 
+
+
         const token =
+
         jwt.sign(
 
             {
 
-                id: user.id,
-                username: user.username
+                id:user.id,
+
+                username:user.username
 
             },
 
@@ -157,273 +213,203 @@ app.post("/login", async (req, res) => {
 
             {
 
-                expiresIn: "1d"
+                expiresIn:"1d"
 
             }
 
         );
 
+
+
         res.json({
 
-            success: true,
+            success:true,
+
             token
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
 
         res.status(500).json({
 
-            success: false,
-            message: "Server Error"
+            success:false,
+
+            message:err.message
 
         });
 
-    }
-
-});
-
-// ===========================
-// تغيير كلمة المرور
-// ===========================
-
-app.put("/change-password", async (req, res) => {
-
-    try {
-
-        const {
-
-            username,
-
-            oldPassword,
-
-            newPassword
-
-        } = req.body;
-
-        const result =
-        await db.query(
-
-            `
-            SELECT *
-            FROM users
-            WHERE username=$1
-            `,
-
-            [
-                username
-            ]
-
-        );
-
-        if (result.rows.length == 0) {
-
-            return res.status(404).json({
-
-                success: false,
-                message: "User not found"
-
-            });
-
-        }
-
-        const user =
-        result.rows[0];
-
-        const match =
-        await bcrypt.compare(
-
-            oldPassword,
-            user.password
-
-        );
-
-        if (!match) {
-
-            return res.status(401).json({
-
-                success: false,
-                message: "Old password incorrect"
-
-            });
-
-        }
-
-        const hash =
-        await bcrypt.hash(
-
-            newPassword,
-            10
-
-        );
-
-        await db.query(
-
-            `
-            UPDATE users
-            SET password=$1
-            WHERE username=$2
-            `,
-
-            [
-                hash,
-                username
-            ]
-
-        );
-
-        res.json({
-
-            success: true,
-            message: "Password Changed"
-
-        });
 
     }
 
-    catch (err) {
-
-        res.status(500).json({
-
-            success: false,
-            message: "Server Error"
-
-        });
-
-    }
 
 });
 
 // =====================================
-// القضايا
+// CASES
 // =====================================
 
-// عرض جميع القضايا
 
-app.get("/cases", async (req, res) => {
+// عرض جميع الملفات
 
-    try {
+app.get("/cases", async(req,res)=>{
+
+
+    try{
+
 
         const result =
+
         await db.query(
 
             `
             SELECT *
             FROM cases
-            ORDER BY CAST(file_number AS INTEGER) ASC
+            ORDER BY
+            CASE
+                WHEN file_number ~ '^[0-9]+$'
+                THEN CAST(file_number AS INTEGER)
+                ELSE 999999
+            END ASC
             `
 
         );
 
-        res.json(result.rows);
-
-    }
-
-    catch (err) {
-
-        res.status(500).json({
-
-            success: false,
-            message: "Server Error"
-
-        });
-
-    }
-
-});
 
 
-app.get("/cases", async (req, res) => {
+        res.json(
 
-    try {
-
-        const result =
-        await db.query(
-
-            `
-            SELECT *
-            FROM cases
-            ORDER BY CAST(file_number AS INTEGER) ASC
-            `
+            result.rows
 
         );
 
-        res.json(result.rows);
+
 
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
 
         res.status(500).json({
 
-            success: false,
-            message: "Server Error"
+            success:false,
+
+            message:err.message
 
         });
 
+
     }
 
+
 });
+
+
+
+
+
+
 
 
 // آخر رقم ملف
 
-app.get("/cases/last-file", async (req, res) => {
+app.get("/cases/last-file", async(req,res)=>{
 
-    try {
+
+    try{
+
 
         const result =
+
         await db.query(
 
             `
             SELECT file_number
             FROM cases
-            ORDER BY CAST(file_number AS INTEGER) DESC
+            WHERE file_number ~ '^[0-9]+$'
+            ORDER BY
+            CAST(file_number AS INTEGER)
+            DESC
             LIMIT 1
             `
 
         );
 
-        if (result.rows.length == 0) {
+
+
+        if(result.rows.length === 0){
+
 
             return res.json({
 
-                lastFile: 0
+                lastFile:0
 
             });
 
+
         }
+
+
 
         res.json({
 
             lastFile:
+
             result.rows[0].file_number
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
 
-            success: false
+            success:false,
+
+            message:err.message
 
         });
 
+
+
     }
+
 
 });
 
 
 
-// إضافة قضية
 
-app.post("/cases", async (req, res) => {
 
-    try {
+
+
+
+// إضافة ملف
+
+app.post("/cases", async(req,res)=>{
+
+
+    try{
+
 
         const {
 
@@ -433,7 +419,64 @@ app.post("/cases", async (req, res) => {
 
         } = req.body;
 
+
+
+        if(!file_number || !client_name){
+
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"Missing Data"
+
+            });
+
+
+        }
+
+
+
+
+        // منع التكرار
+
+        const check =
+
+        await db.query(
+
+            `
+            SELECT id
+            FROM cases
+            WHERE file_number=$1
+            `,
+
+            [
+                file_number
+            ]
+
+        );
+
+
+
+        if(check.rows.length > 0){
+
+
+            return res.json({
+
+                success:false,
+
+                message:"رقم الملف موجود بالفعل"
+
+            });
+
+
+        }
+
+
+
+
         const result =
+
         await db.query(
 
             `
@@ -442,11 +485,14 @@ app.post("/cases", async (req, res) => {
                 file_number,
                 client_name
             )
+
             VALUES
+
             (
                 $1,
                 $2
             )
+
             RETURNING id
             `,
 
@@ -460,38 +506,57 @@ app.post("/cases", async (req, res) => {
 
         );
 
+
+
         res.json({
 
-            success: true,
+            success:true,
 
             id:
+
             result.rows[0].id
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
 
-            success: false,
+            success:false,
 
-            message: "Insert Failed"
+            message:err.message
 
         });
 
+
     }
+
 
 });
 
 
 
-// تعديل قضية
 
-app.put("/cases/:id", async (req, res) => {
 
-    try {
+
+
+
+// تعديل ملف
+
+app.put("/cases/:id", async(req,res)=>{
+
+
+    try{
+
 
         const {
 
@@ -501,10 +566,14 @@ app.put("/cases/:id", async (req, res) => {
 
         } = req.body;
 
+
+
+
         await db.query(
 
             `
             UPDATE cases
+
             SET
 
             file_number=$1,
@@ -514,6 +583,7 @@ app.put("/cases/:id", async (req, res) => {
             WHERE id=$3
             `,
 
+
             [
 
                 file_number,
@@ -526,41 +596,57 @@ app.put("/cases/:id", async (req, res) => {
 
         );
 
+
+
         res.json({
 
-            success: true,
-
-            message: "Updated"
+            success:true
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
 
         res.status(500).json({
 
-            success: false
+            success:false,
+
+            message:err.message
 
         });
 
+
     }
+
 
 });
 
 
 
-// حذف قضية
 
-app.delete("/cases/:id", async (req, res) => {
 
-    try {
+
+
+
+// حذف ملف
+
+app.delete("/cases/:id", async(req,res)=>{
+
+
+    try{
+
 
         await db.query(
 
             `
-            DELETE
-            FROM cases
+            DELETE FROM cases
             WHERE id=$1
             `,
 
@@ -572,66 +658,124 @@ app.delete("/cases/:id", async (req, res) => {
 
         );
 
+
+
         res.json({
 
-            success: true,
-
-            message: "Deleted"
+            success:true
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
 
-            success: false
+            success:false,
+
+            message:err.message
 
         });
 
+
     }
+
 
 });
 
 // =====================================
-// التوكيلات
+// POWERS
 // =====================================
 
-// عرض جميع التوكيلات
 
-app.get("/powers", async (req, res) => {
+// عرض التوكيلات
 
-    try {
+app.get("/powers", async(req,res)=>{
 
-        const result = await db.query(
+
+    try{
+
+
+        const result =
+
+        await db.query(
+
             `
             SELECT *
+
             FROM powers
-            ORDER BY CAST(file_number AS INTEGER) ASC
+
+            ORDER BY
+
+            CASE
+
+                WHEN power_number ~ '^[0-9]+$'
+
+                THEN CAST(power_number AS INTEGER)
+
+                ELSE 999999
+
+            END ASC
+
             `
+
         );
 
-        res.json(result.rows);
+
+
+        res.json(
+
+            result.rows
+
+        );
+
+
 
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
-            success: false,
-            message: "Server Error"
+
+            success:false,
+
+            message:err.message
+
         });
+
 
     }
 
+
 });
+
+
+
+
+
+
+
 
 // إضافة توكيل
 
-app.post("/powers", async (req, res) => {
+app.post("/powers", async(req,res)=>{
 
-    try {
+
+    try{
+
 
         const {
 
@@ -641,73 +785,205 @@ app.post("/powers", async (req, res) => {
 
             client_name,
 
+            type,
+
+            birth_date,
+
             documentation
+
 
         } = req.body;
 
-        const result = await db.query(
+
+
+
+        if(
+
+            !power_number ||
+
+            !client_name
+
+        ){
+
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"بيانات ناقصة"
+
+            });
+
+
+        }
+
+
+
+
+
+        // منع تكرار رقم التوكيل
+
+        const check =
+
+        await db.query(
 
             `
-            INSERT INTO powers
-            (
-                file_number,
-                power_number,
-                client_name,
-                documentation
-            )
-            VALUES
-            (
-                $1,
-                $2,
-                $3,
-                $4
-            )
-            RETURNING id
+            SELECT id
+
+            FROM powers
+
+            WHERE power_number=$1
+
             `,
 
             [
 
-                file_number,
-
-                power_number,
-
-                client_name,
-
-                documentation
+                power_number
 
             ]
 
         );
 
+
+
+        if(check.rows.length > 0){
+
+
+            return res.json({
+
+                success:false,
+
+                message:"رقم التوكيل موجود بالفعل"
+
+            });
+
+
+        }
+
+
+
+
+
+        const result =
+
+        await db.query(
+
+            `
+            INSERT INTO powers
+
+            (
+
+                file_number,
+
+                power_number,
+
+                client_name,
+
+                type,
+
+                birth_date,
+
+                documentation
+
+            )
+
+
+            VALUES
+
+            (
+
+                $1,
+
+                $2,
+
+                $3,
+
+                $4,
+
+                $5,
+
+                $6
+
+            )
+
+
+            RETURNING id
+
+            `,
+
+            [
+
+                file_number || "",
+
+                power_number,
+
+                client_name,
+
+                type || "",
+
+                birth_date || "",
+
+                documentation || ""
+
+            ]
+
+        );
+
+
+
+
+
         res.json({
 
-            success: true,
+            success:true,
 
-            id: result.rows[0].id
+            id:
+
+            result.rows[0].id
 
         });
 
+
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
 
-            success: false,
+            success:false,
 
-            message: "Insert Failed"
+            message:err.message
 
         });
 
+
     }
+
 
 });
 
+
+
+
+
+
+
+
+
 // تعديل توكيل
 
-app.put("/powers/:id", async (req, res) => {
+app.put("/powers/:id", async(req,res)=>{
 
-    try {
+
+    try{
+
 
         const {
 
@@ -717,14 +993,22 @@ app.put("/powers/:id", async (req, res) => {
 
             client_name,
 
+            type,
+
+            birth_date,
+
             documentation
 
         } = req.body;
+
+
+
 
         await db.query(
 
             `
             UPDATE powers
+
             SET
 
             file_number=$1,
@@ -733,9 +1017,15 @@ app.put("/powers/:id", async (req, res) => {
 
             client_name=$3,
 
-            documentation=$4
+            type=$4,
 
-            WHERE id=$5
+            birth_date=$5,
+
+            documentation=$6
+
+
+            WHERE id=$7
+
             `,
 
             [
@@ -745,6 +1035,10 @@ app.put("/powers/:id", async (req, res) => {
                 power_number,
 
                 client_name,
+
+                type,
+
+                birth_date,
 
                 documentation,
 
@@ -754,40 +1048,64 @@ app.put("/powers/:id", async (req, res) => {
 
         );
 
+
+
+
         res.json({
 
-            success: true,
-
-            message: "Updated"
+            success:true
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
 
-            success: false
+            success:false,
+
+            message:err.message
 
         });
 
+
+
     }
+
 
 });
 
+
+
+
+
+
+
+
+
 // حذف توكيل
 
-app.delete("/powers/:id", async (req, res) => {
+app.delete("/powers/:id", async(req,res)=>{
 
-    try {
+
+    try{
+
 
         await db.query(
 
             `
-            DELETE
-            FROM powers
+            DELETE FROM powers
+
             WHERE id=$1
+
             `,
 
             [
@@ -798,36 +1116,65 @@ app.delete("/powers/:id", async (req, res) => {
 
         );
 
+
+
         res.json({
 
-            success: true,
-
-            message: "Deleted"
+            success:true
 
         });
 
+
+
     }
 
-    catch (err) {
+    catch(err){
+
+
+        console.log(err);
+
+
 
         res.status(500).json({
 
-            success: false
+            success:false,
+
+            message:err.message
 
         });
 
+
     }
 
+
 });
+
+
+
+
+
+
+
+
 
 // =====================================
 // تشغيل السيرفر
 // =====================================
 
-const PORT = process.env.PORT || 3000;
+const PORT =
 
-app.listen(PORT, () => {
+process.env.PORT || 3000;
 
-    console.log(`Server Running On Port ${PORT}`);
+
+
+app.listen(PORT,()=>{
+
+
+    console.log(
+
+        `Server Running On Port ${PORT}`
+
+    );
+
 
 });

@@ -1,34 +1,66 @@
-console.log("PostgreSQL Database running");
+// =====================================
+// MIZAN DATABASE
+// PostgreSQL
+// =====================================
+
+
+console.log(
+    "PostgreSQL Database running"
+);
+
 
 
 const { Pool } = require("pg");
 
 
+
 const pool = new Pool({
 
-    connectionString: process.env.DATABASE_URL,
+    connectionString:
+
+    process.env.DATABASE_URL,
+
 
     ssl:{
+
         rejectUnauthorized:false
+
     }
 
 });
 
 
 
+
+
+// =====================================
+// اختبار الاتصال
+// =====================================
+
 pool.connect()
 
 .then(client=>{
 
-    console.log("PostgreSQL Connected");
+
+    console.log(
+        "PostgreSQL Connected"
+    );
+
 
     client.release();
 
+
 })
+
 
 .catch(err=>{
 
-    console.log("Database Error:",err);
+
+    console.log(
+        "Database Connection Error:",
+        err.message
+    );
+
 
 });
 
@@ -36,20 +68,36 @@ pool.connect()
 
 
 
+
+
+
+// =====================================
+// إنشاء الجداول
+// =====================================
+
 async function setupDatabase(){
+
 
 try{
 
 
+
+// ===========================
+// Users
+// ===========================
+
+
 await pool.query(`
 
-CREATE TABLE IF NOT EXISTS users(
+CREATE TABLE IF NOT EXISTS users
+
+(
 
 id SERIAL PRIMARY KEY,
 
-username TEXT UNIQUE,
+username TEXT UNIQUE NOT NULL,
 
-password TEXT
+password TEXT NOT NULL
 
 )
 
@@ -59,25 +107,43 @@ password TEXT
 
 
 
+
+
+
+// ===========================
+// Cases
+// ===========================
+
+
 await pool.query(`
 
-CREATE TABLE IF NOT EXISTS cases(
+CREATE TABLE IF NOT EXISTS cases
+
+(
 
 id SERIAL PRIMARY KEY,
 
-file_number TEXT,
 
-client_name TEXT,
+file_number TEXT NOT NULL,
 
-opponent TEXT,
 
-court TEXT,
+client_name TEXT NOT NULL,
 
-type TEXT,
 
-birth_date TEXT,
+opponent TEXT DEFAULT '',
 
-documentation TEXT
+
+court TEXT DEFAULT '',
+
+
+type TEXT DEFAULT '',
+
+
+birth_date TEXT DEFAULT '',
+
+
+documentation TEXT DEFAULT ''
+
 
 )
 
@@ -87,23 +153,41 @@ documentation TEXT
 
 
 
+
+
+
+
+// ===========================
+// Powers
+// ===========================
+
+
 await pool.query(`
 
-CREATE TABLE IF NOT EXISTS powers(
+CREATE TABLE IF NOT EXISTS powers
+
+(
 
 id SERIAL PRIMARY KEY,
 
-file_number TEXT,
 
-power_number TEXT,
+file_number TEXT DEFAULT '',
 
-client_name TEXT,
 
-type TEXT,
+power_number TEXT UNIQUE NOT NULL,
 
-birth_date TEXT,
 
-documentation TEXT
+client_name TEXT NOT NULL,
+
+
+type TEXT DEFAULT '',
+
+
+birth_date TEXT DEFAULT '',
+
+
+documentation TEXT DEFAULT ''
+
 
 )
 
@@ -112,23 +196,48 @@ documentation TEXT
 
 
 
-console.log("Tables ready");
+
+
+
+console.log(
+
+    "Tables Ready"
+
+);
+
 
 
 }
+
 
 catch(error){
 
-console.log(error);
+
+console.log(
+
+    "Database Setup Error:",
+
+    error.message
+
+);
+
 
 }
 
 
+
 }
+
+
+
+
 
 
 
 setupDatabase();
+
+
+
 
 
 
