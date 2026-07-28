@@ -1187,10 +1187,8 @@ async function importExcelCases(event){
     event.target.files[0];
 
 
-
     if(!file)
         return;
-
 
 
 
@@ -1200,7 +1198,6 @@ async function importExcelCases(event){
 
 
     reader.onload = async function(e){
-
 
 
         try{
@@ -1230,10 +1227,14 @@ async function importExcelCases(event){
 
 
 
-            const rows =
+            let rows =
             XLSX.utils.sheet_to_json(
-                sheet
+                sheet,
+                {
+                    defval:""
+                }
             );
+
 
 
 
@@ -1248,6 +1249,46 @@ async function importExcelCases(event){
                 return;
 
             }
+
+
+
+
+            // تحويل أسماء الأعمدة العربية
+
+            rows =
+            rows.map(row=>{
+
+
+                return {
+
+
+                    file_number:
+
+                    row.file_number ||
+
+                    row["رقم الملف"] ||
+
+                    row["رقم ملف"] ||
+
+                    "",
+
+
+
+
+                    client_name:
+
+                    row.client_name ||
+
+                    row["اسم الموكل"] ||
+
+                    row["اسم العميل"] ||
+
+                    ""
+
+                };
+
+
+            });
 
 
 
@@ -1287,10 +1328,8 @@ async function importExcelCases(event){
 
 
 
-
             const result =
             await response.json();
-
 
 
 
@@ -1317,7 +1356,6 @@ async function importExcelCases(event){
 
 
                 await loadAllCases();
-
 
 
                 clearSearch();
@@ -1360,14 +1398,11 @@ async function importExcelCases(event){
 
 
 
-
     reader.readAsArrayBuffer(file);
 
 
 
 }
-
-
 
 
 
