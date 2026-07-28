@@ -1,23 +1,17 @@
 // =====================================
 // MIZAN - CASES.JS
-// Railway Version + Excel Import
+// Railway API Version
 // =====================================
 
 
-
-// =====================================
 // API
-// =====================================
 
 const API =
 "https://mizan-production-32bb.up.railway.app";
 
 
 
-
-// =====================================
 // المتغيرات
-// =====================================
 
 let allCases = [];
 
@@ -31,12 +25,11 @@ let currentEditId = null;
 
 
 
-
 // =====================================
 // تشغيل الصفحة
 // =====================================
 
-window.onload = function(){
+window.onload = async function(){
 
 
     hideTable();
@@ -45,7 +38,7 @@ window.onload = function(){
     bindEvents();
 
 
-    loadAllCases();
+    await loadAllCases();
 
 
 };
@@ -53,94 +46,60 @@ window.onload = function(){
 
 
 
-
 // =====================================
-// ربط الأحداث
+// الأحداث
 // =====================================
 
 function bindEvents(){
 
 
-
-    const lastBtn =
-
+    const search =
     document.getElementById(
-
-        "lastFileBtn"
-
+        "searchInput"
     );
 
+
+    if(search){
+
+        search.addEventListener(
+            "keyup",
+            searchCases
+        );
+
+    }
+
+
+
+    const lastBtn =
+    document.getElementById(
+        "lastFileBtn"
+    );
 
 
     if(lastBtn){
 
-
         lastBtn.onclick =
-
         showLastFileNumber;
 
-
     }
 
 
 
 
-
-
-
-    const importInput =
-
+    const excel =
     document.getElementById(
-
         "excelInput"
-
     );
 
 
+    if(excel){
 
-    if(importInput){
-
-
-        importInput.addEventListener(
-
+        excel.addEventListener(
             "change",
-
             importExcelCases
-
         );
 
-
     }
-
-
-
-
-
-
-    const searchInput =
-
-    document.getElementById(
-
-        "searchInput"
-
-    );
-
-
-
-    if(searchInput){
-
-
-        searchInput.addEventListener(
-
-            "keyup",
-
-            searchCases
-
-        );
-
-
-    }
-
 
 
 }
@@ -148,63 +107,54 @@ function bindEvents(){
 
 
 
-
-
 // =====================================
-// إخفاء الجدول
+// تحميل البيانات
 // =====================================
 
-function hideTable(){
+async function loadAllCases(){
+
+
+    try{
+
+
+        const response =
+        await fetch(
+            API + "/cases"
+        );
+
+
+        const data =
+        await response.json();
 
 
 
-    const body =
+        if(Array.isArray(data)){
 
-    document.getElementById(
+            allCases = data;
 
-        "casesBody"
+        }
 
-    );
+        else{
 
+            allCases = [];
 
+        }
 
-    if(body){
-
-
-        body.innerHTML = "";
 
 
     }
 
+    catch(err){
 
 
+        console.log(err);
 
-
-
-
-    const pagination =
-
-    document.getElementById(
-
-        "pagination"
-
-    );
-
-
-
-    if(pagination){
-
-
-        pagination.innerHTML = "";
-
+        allCases = [];
 
     }
-
 
 
 }
-
-
 
 
 
@@ -216,77 +166,48 @@ function hideTable(){
 function searchCases(){
 
 
-
     const input =
-
     document.getElementById(
-
         "searchInput"
-
     );
 
 
-
     if(!input)
-
         return;
 
 
 
-
-
     const keyword =
-
     input.value
-
     .trim()
-
     .toLowerCase();
-
-
-
-
 
 
 
     if(keyword === ""){
 
 
-        hideTable();
-
+        clearSearch();
 
         return;
-
 
     }
 
 
 
 
-
-
-
-
     filteredCases =
-
 
     allCases.filter(c=>{
 
 
-        return(
-
-
+        return (
 
             String(
-
                 c.file_number || ""
-
             )
-
             .toLowerCase()
-
             .includes(keyword)
-
 
 
 
@@ -294,22 +215,14 @@ function searchCases(){
 
 
 
-
-
             String(
-
                 c.client_name || ""
-
             )
-
             .toLowerCase()
-
             .includes(keyword)
 
 
-
         );
-
 
 
     });
@@ -321,6 +234,8 @@ function searchCases(){
     currentPage = 1;
 
 
+    showTable();
+
 
     renderCases();
 
@@ -330,6 +245,80 @@ function searchCases(){
 
 
 
+
+// =====================================
+// إخفاء الجدول
+// =====================================
+
+function hideTable(){
+
+
+    const table =
+    document.getElementById(
+        "casesTable"
+    );
+
+
+    const empty =
+    document.getElementById(
+        "emptyMessage"
+    );
+
+
+    if(table)
+
+        table.style.display =
+        "none";
+
+
+
+    if(empty)
+
+        empty.style.display =
+        "block";
+
+
+
+}
+
+
+
+
+// =====================================
+// إظهار الجدول
+// =====================================
+
+function showTable(){
+
+
+    const table =
+    document.getElementById(
+        "casesTable"
+    );
+
+
+    const empty =
+    document.getElementById(
+        "emptyMessage"
+    );
+
+
+
+    if(table)
+
+        table.style.display =
+        "table";
+
+
+
+    if(empty)
+
+        empty.style.display =
+        "none";
+
+
+
+}
 
 
 
@@ -340,22 +329,14 @@ function searchCases(){
 function renderCases(){
 
 
-
     const body =
-
     document.getElementById(
-
         "casesBody"
-
     );
 
 
-
     if(!body)
-
         return;
-
-
 
 
 
@@ -363,84 +344,33 @@ function renderCases(){
 
 
 
-
-
-
     if(filteredCases.length === 0){
 
 
-
-        body.innerHTML = `
-
-<tr>
-
-<td colspan="4">
-
-لا توجد نتائج
-
-</td>
-
-</tr>
-
-`;
-
-
-
-        document
-
-        .getElementById(
-
-            "pagination"
-
-        )
-
-        .innerHTML = "";
-
-
+        hideTable();
 
         return;
-
 
     }
 
 
 
-
-
-
-
     const start =
-
     (currentPage - 1)
-
     *
-
     rowsPerPage;
 
 
 
-
-
-
-
     const data =
-
     filteredCases.slice(
-
         start,
-
         start + rowsPerPage
-
     );
 
 
 
-
-
-
-
     data.forEach(c=>{
-
 
 
         body.innerHTML += `
@@ -448,57 +378,45 @@ function renderCases(){
 
 <tr>
 
-
 <td>
-
 ${c.file_number}
-
 </td>
-
 
 
 <td>
-
 ${c.client_name}
-
 </td>
-
 
 
 <td>
 
 <button
-
 class="edit"
-
 onclick="openEditModal(${c.id})">
 
 تعديل
 
 </button>
 
+
 </td>
-
-
 
 
 <td>
 
 <button
-
 class="delete"
-
 onclick="deleteCase(${c.id})">
 
 حذف
 
 </button>
 
+
 </td>
 
 
 </tr>
-
 
 
 `;
@@ -509,37 +427,26 @@ onclick="deleteCase(${c.id})">
 
 
 
-
     renderPagination();
-
 
 
 }
 
- 
 // =====================================
 // Pagination
 // =====================================
-
 
 function renderPagination(){
 
 
     const pagination =
-
     document.getElementById(
-
         "pagination"
-
     );
 
 
-
     if(!pagination)
-
         return;
-
-
 
 
 
@@ -547,219 +454,120 @@ function renderPagination(){
 
 
 
-
-
-
     const totalPages =
-
     Math.ceil(
-
         filteredCases.length /
-
         rowsPerPage
-
     );
 
 
 
-
-
-
     if(totalPages <= 1)
-
         return;
 
 
 
 
-
-
-
-    pagination.innerHTML += `
-
-
-<button
-
-onclick="prevPage()"
-
-${currentPage === 1 ? "disabled" : ""}>
-
-◀
-
-</button>
-
-
-`;
-
-
-
-
-
-
-
-    for(let i = 1; i <= totalPages; i++){
-
-
-
-        pagination.innerHTML += `
-
-
-<button
-
-class="${
-
-i === currentPage
-
-?
-
-"active"
-
-:
-
-""
-
-}"
-
-onclick="goPage(${i})">
-
-${i}
-
-</button>
-
-
-`;
-
-
-
-    }
-
-
-
-
-
-
-
-    pagination.innerHTML += `
-
-
-<button
-
-onclick="nextPage()"
-
-${
-
-currentPage === totalPages
-
-?
-
-"disabled"
-
-:
-
-""
-
-}>
-
-▶
-
-</button>
-
-
-`;
-
-
-
-}
-
-
-
-
-
-
-
-function goPage(page){
-
-
-    currentPage = page;
-
-
-    renderCases();
-
-
-}
-
-
-
-
-
-
-
-
-
-function nextPage(){
-
-
-
-    const totalPages =
-
-    Math.ceil(
-
-        filteredCases.length /
-
-        rowsPerPage
-
+    const prev =
+    document.createElement(
+        "button"
     );
 
 
+    prev.innerText = "❮";
 
 
+    prev.disabled =
+    currentPage === 1;
 
 
-    if(currentPage < totalPages){
-
-
-        currentPage++;
-
-
-        renderCases();
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-
-function prevPage(){
-
-
-
-    if(currentPage > 1){
+    prev.onclick = ()=>{
 
 
         currentPage--;
 
-
         renderCases();
+
+    };
+
+
+    pagination.appendChild(prev);
+
+
+
+
+    for(let i=1;i<=totalPages;i++){
+
+
+        const btn =
+        document.createElement(
+            "button"
+        );
+
+
+        btn.innerText = i;
+
+
+
+        if(i === currentPage){
+
+            btn.className =
+            "active";
+
+        }
+
+
+
+        btn.onclick = ()=>{
+
+
+            currentPage = i;
+
+            renderCases();
+
+
+        };
+
+
+        pagination.appendChild(btn);
 
 
     }
 
 
 
+
+
+    const next =
+    document.createElement(
+        "button"
+    );
+
+
+    next.innerText = "❯";
+
+
+    next.disabled =
+    currentPage === totalPages;
+
+
+
+    next.onclick = ()=>{
+
+
+        currentPage++;
+
+        renderCases();
+
+
+    };
+
+
+    pagination.appendChild(next);
+
+
+
 }
-
-
-
-
-
 
 
 
@@ -768,85 +576,63 @@ function prevPage(){
 // مسح البحث
 // =====================================
 
-
 function clearSearch(){
 
 
-
     const input =
-
     document.getElementById(
-
         "searchInput"
-
     );
 
 
-
-    if(input){
-
+    if(input)
 
         input.value = "";
 
 
-    }
-
-
-
-
-
 
     filteredCases = [];
+
+    currentPage = 1;
+
+
+
+    const pagination =
+    document.getElementById(
+        "pagination"
+    );
+
+
+    if(pagination)
+
+        pagination.innerHTML = "";
 
 
 
     hideTable();
 
 
-
 }
 
 
 
 
-
-
-
-
-
 // =====================================
-// فتح نافذة إضافة
+// فتح إضافة ملف
 // =====================================
-
 
 function openAddModal(){
 
 
-
-    const modal =
-
-    document.getElementById(
-
+    document
+    .getElementById(
         "addModal"
-
-    );
-
-
-
-    if(modal){
-
-
-        modal.style.display="flex";
-
-
-    }
-
+    )
+    .style.display =
+    "flex";
 
 
 }
-
-
-
 
 
 
@@ -854,25 +640,12 @@ function openAddModal(){
 function closeAddModal(){
 
 
-
-    const modal =
-
-    document.getElementById(
-
+    document
+    .getElementById(
         "addModal"
-
-    );
-
-
-
-    if(modal){
-
-
-        modal.style.display="none";
-
-
-    }
-
+    )
+    .style.display =
+    "none";
 
 
 }
@@ -880,56 +653,30 @@ function closeAddModal(){
 
 
 
-
-
-
-
-
 // =====================================
-// حفظ ملف جديد
+// إضافة ملف
 // =====================================
-
 
 async function saveCase(){
 
 
-
     const file_number =
-
     document
-
     .getElementById(
-
         "fileNumber"
-
     )
-
     .value
-
     .trim();
-
-
-
-
 
 
 
     const client_name =
-
     document
-
     .getElementById(
-
         "clientName"
-
     )
-
     .value
-
     .trim();
-
-
-
 
 
 
@@ -938,62 +685,39 @@ async function saveCase(){
 
 
         alert(
-
-            "يرجى إدخال البيانات"
-
+            "برجاء إدخال البيانات"
         );
 
 
         return;
-
 
     }
 
 
 
 
-
-
-
-
-
-    const exists =
-
+    const exist =
     allCases.find(c=>
 
-
         String(c.file_number)
-
         ===
-
         String(file_number)
-
 
     );
 
 
 
-
-
-
-
-    if(exists){
+    if(exist){
 
 
         alert(
-
             "رقم الملف موجود بالفعل"
-
         );
 
 
         return;
 
-
     }
-
-
-
 
 
 
@@ -1002,44 +726,30 @@ async function saveCase(){
     try{
 
 
-
         const response =
-
         await fetch(
 
             API + "/cases",
 
             {
 
+            method:"POST",
 
-                method:"POST",
+            headers:{
 
+                "Content-Type":
+                "application/json"
 
-
-                headers:{
-
-
-                    "Content-Type":
-
-                    "application/json"
+            },
 
 
-                },
+            body:JSON.stringify({
 
+                file_number,
 
+                client_name
 
-                body:
-
-                JSON.stringify({
-
-
-                    file_number,
-
-
-                    client_name
-
-
-                })
+            })
 
 
             }
@@ -1050,14 +760,8 @@ async function saveCase(){
 
 
 
-
-
         const data =
-
         await response.json();
-
-
-
 
 
 
@@ -1065,48 +769,34 @@ async function saveCase(){
         if(data.success){
 
 
-
             showToast(
-
                 "تمت إضافة الملف"
-
             );
-
-
-
-            document
-
-            .getElementById(
-
-                "fileNumber"
-
-            )
-
-            .value="";
-
-
-
-
-            document
-
-            .getElementById(
-
-                "clientName"
-
-            )
-
-            .value="";
-
-
-
 
 
             closeAddModal();
 
 
+            document
+            .getElementById(
+                "fileNumber"
+            )
+            .value = "";
 
-            loadAllCases();
 
+
+            document
+            .getElementById(
+                "clientName"
+            )
+            .value = "";
+
+
+
+            await loadAllCases();
+
+
+            clearSearch();
 
 
 
@@ -1115,15 +805,9 @@ async function saveCase(){
         else{
 
 
-
             alert(
-
-                data.message
-
-                ||
-
+                data.message ||
                 "فشل الإضافة"
-
             );
 
 
@@ -1131,24 +815,17 @@ async function saveCase(){
 
 
 
-
-
     }
 
     catch(err){
-
 
 
         console.log(err);
 
 
-
         alert(
-
-            "تعذر الاتصال بالسيرفر"
-
+            "خطأ في الاتصال بالسيرفر"
         );
-
 
 
     }
@@ -1163,143 +840,22 @@ async function saveCase(){
 
 
 
-
-
 // =====================================
-// آخر رقم ملف
+// تعديل ملف
 // =====================================
-
-
-async function showLastFileNumber(){
-
-
-
-    try{
-
-
-
-        const response =
-
-        await fetch(
-
-            API +
-
-            "/cases/last-file"
-
-        );
-
-
-
-
-
-
-        const data =
-
-        await response.json();
-
-
-
-
-
-
-        document
-
-        .getElementById(
-
-            "lastFileValue"
-
-        )
-
-        .innerText =
-
-        data.lastFile || 0;
-
-
-
-
-
-
-        document
-
-        .getElementById(
-
-            "lastFileModal"
-
-        )
-
-        .style.display="flex";
-
-
-
-
-    }
-
-    catch(err){
-
-
-
-        alert(
-
-            "تعذر جلب آخر رقم ملف"
-
-        );
-
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
-function closeLastFileModal(){
-
-
-
-    document
-
-    .getElementById(
-
-        "lastFileModal"
-
-    )
-
-    .style.display="none";
-
-
-
-}
-
-
-// =====================================
-// فتح التعديل
-// =====================================
-
 
 function openEditModal(id){
 
 
-
-    const c =
-
-    filteredCases.find(
-
-        x => x.id == id
-
+    const item =
+    allCases.find(
+        c=>c.id == id
     );
 
 
 
-    if(!c)
-
+    if(!item)
         return;
-
-
 
 
 
@@ -1307,69 +863,48 @@ function openEditModal(id){
 
 
 
+    document
+    .getElementById(
+        "editFileNumber"
+    )
+    .value =
+    item.file_number;
+
+
+
+    document
+    .getElementById(
+        "editClientName"
+    )
+    .value =
+    item.client_name;
 
 
 
 
-    const fileNumber =
-
-    prompt(
-
-        "رقم الملف",
-
-        c.file_number
-
-    );
+    document
+    .getElementById(
+        "editModal"
+    )
+    .style.display =
+    "flex";
 
 
 
-
-
-    if(fileNumber === null)
-
-        return;
+}
 
 
 
 
+function closeEditModal(){
 
 
-
-    const clientName =
-
-    prompt(
-
-        "اسم الموكل",
-
-        c.client_name
-
-    );
-
-
-
-
-
-
-    if(clientName === null)
-
-        return;
-
-
-
-
-
-
-
-    updateCase(
-
-        id,
-
-        fileNumber,
-
-        clientName
-
-    );
-
+    document
+    .getElementById(
+        "editModal"
+    )
+    .style.display =
+    "none";
 
 
 }
@@ -1379,145 +914,113 @@ function openEditModal(id){
 
 
 
+async function updateCase(){
 
 
 
-// =====================================
-// تحديث الملف
-// =====================================
+    const file_number =
+    document
+    .getElementById(
+        "editFileNumber"
+    )
+    .value
+    .trim();
 
 
-async function updateCase(
 
-    id,
+    const client_name =
+    document
+    .getElementById(
+        "editClientName"
+    )
+    .value
+    .trim();
 
-    file_number,
 
-    client_name
 
-){
 
-
-
-    try{
-
-
-
-        const response =
-
-        await fetch(
-
-            API +
-
-            "/cases/" +
-
-            id,
-
-            {
-
-
-                method:"PUT",
-
-
-
-                headers:{
-
-
-                    "Content-Type":
-
-                    "application/json"
-
-
-                },
-
-
-
-                body:
-
-                JSON.stringify({
-
-                    file_number,
-
-                    client_name
-
-                })
-
-
-            }
-
-        );
-
-
-
-
-
-
-
-        const data =
-
-        await response.json();
-
-
-
-
-
-
-
-
-        if(data.success){
-
-
-
-            showToast(
-
-                "تم تعديل الملف"
-
-            );
-
-
-
-            loadAllCases();
-
-
-
-        }
-
-        else{
-
-
-
-            alert(
-
-                data.message ||
-
-                "فشل التعديل"
-
-            );
-
-
-        }
-
-
-
-
-
-
-    }
-
-    catch(err){
-
-
-
-        console.log(err);
-
+    if(!file_number || !client_name){
 
 
         alert(
-
-            "حدث خطأ أثناء التعديل"
-
+            "برجاء إدخال البيانات"
         );
 
+
+        return;
+
+    }
+
+
+
+
+    const response =
+    await fetch(
+
+        API +
+        "/cases/" +
+        currentEditId,
+
+        {
+
+        method:"PUT",
+
+        headers:{
+
+            "Content-Type":
+            "application/json"
+
+        },
+
+
+        body:JSON.stringify({
+
+            file_number,
+
+            client_name
+
+        })
+
+
+        }
+
+    );
+
+
+
+
+    const data =
+    await response.json();
+
+
+
+    if(data.success){
+
+
+        showToast(
+            "تم تعديل الملف"
+        );
+
+
+        closeEditModal();
+
+
+        await loadAllCases();
+
+
+        searchCases();
+
+
+
+    }
+
+    else{
+
+
+        alert(
+            data.message ||
+            "فشل التعديل"
+        );
 
 
     }
@@ -1525,13 +1028,6 @@ async function updateCase(
 
 
 }
-
-
-
-
-
-
-
 
 
 
@@ -1540,129 +1036,136 @@ async function updateCase(
 // حذف ملف
 // =====================================
 
-
 async function deleteCase(id){
 
 
-
     if(
-
         !confirm(
-
-            "هل تريد حذف هذا الملف؟"
-
+            "هل تريد حذف الملف؟"
         )
+    )
+    return;
 
-    ){
 
-        return;
+
+
+    const response =
+    await fetch(
+
+        API +
+        "/cases/" +
+        id,
+
+        {
+
+        method:"DELETE"
+
+        }
+
+    );
+
+
+
+    const data =
+    await response.json();
+
+
+
+    if(data.success){
+
+
+        showToast(
+            "تم حذف الملف"
+        );
+
+
+        await loadAllCases();
+
+
+        searchCases();
+
+
 
     }
 
 
 
+}
 
 
+ 
+// =====================================
+// آخر رقم ملف
+// =====================================
+
+async function showLastFileNumber(){
 
 
     try{
 
 
-
         const response =
-
         await fetch(
 
             API +
-
-            "/cases/" +
-
-            id,
-
-            {
-
-
-                method:"DELETE"
-
-
-            }
+            "/cases/last-file"
 
         );
 
 
 
-
-
-
-
         const data =
-
         await response.json();
 
 
 
+        document
+        .getElementById(
+            "lastFileValue"
+        )
+        .innerText =
+
+        data.lastFile || 0;
 
 
 
 
-        if(data.success){
-
-
-
-            showToast(
-
-                "تم حذف الملف"
-
-            );
-
-
-
-            loadAllCases();
-
-
-
-        }
-
-        else{
-
-
-
-            alert(
-
-                data.message ||
-
-                "فشل الحذف"
-
-            );
-
-
-        }
-
-
-
+        document
+        .getElementById(
+            "lastFileModal"
+        )
+        .style.display =
+        "flex";
 
 
 
     }
 
     catch(err){
-
-
-
-        console.log(err);
-
 
 
         alert(
-
-            "تعذر الاتصال بالسيرفر"
-
+            "تعذر جلب آخر رقم ملف"
         );
-
 
 
     }
 
+
+}
+
+
+
+
+function closeLastFileModal(){
+
+
+    document
+    .getElementById(
+        "lastFileModal"
+    )
+    .style.display =
+    "none";
 
 
 }
@@ -1672,198 +1175,27 @@ async function deleteCase(id){
 
 
 
-
-
-
-// =====================================
-// عرض البيانات الناقصة
-// =====================================
-
-
-function showIncompleteCases(){
-
-
-
-    filteredCases =
-
-    allCases.filter(c=>{
-
-
-
-        return(
-
-
-            !c.file_number
-
-            ||
-
-            !c.client_name
-
-
-        );
-
-
-
-    });
-
-
-
-
-
-
-
-    currentPage = 1;
-
-
-
-    renderCases();
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-// =====================================
-// تحميل البيانات
-// =====================================
-
-
-async function loadAllCases(){
-
-
-
-    try{
-
-
-
-        const response =
-
-        await fetch(
-
-            API +
-
-            "/cases"
-
-        );
-
-
-
-
-
-
-        const data =
-
-        await response.json();
-
-
-
-
-
-
-
-
-        if(Array.isArray(data)){
-
-
-
-            allCases = data;
-
-
-
-        }
-
-        else if(Array.isArray(data.cases)){
-
-
-
-            allCases = data.cases;
-
-
-
-        }
-
-        else{
-
-
-
-            allCases = [];
-
-
-
-            console.log(
-
-                "Unexpected API response:",
-
-                data
-
-            );
-
-
-        }
-
-
-
-
-
-    }
-
-    catch(err){
-
-
-
-        console.log(err);
-
-
-
-        allCases = [];
-
-
-
-    }
-
-
-
-}
 
 // =====================================
 // استيراد Excel
 // =====================================
 
-
 async function importExcelCases(event){
 
 
     const file =
-
     event.target.files[0];
 
 
 
-    if(!file){
-
+    if(!file)
         return;
-
-    }
-
 
 
 
 
     const reader =
-
     new FileReader();
-
-
 
 
 
@@ -1874,74 +1206,46 @@ async function importExcelCases(event){
         try{
 
 
-
             const data =
-
             new Uint8Array(
-
                 e.target.result
-
             );
 
 
 
             const workbook =
-
             XLSX.read(
-
                 data,
-
                 {
-
                     type:"array"
-
                 }
-
             );
-
-
 
 
 
             const sheet =
-
             workbook.Sheets[
-
                 workbook.SheetNames[0]
-
             ];
 
 
 
-
-
             const rows =
-
             XLSX.utils.sheet_to_json(
-
                 sheet
-
             );
-
-
-
-
 
 
 
             if(rows.length === 0){
 
 
-
                 alert(
-
                     "ملف Excel فارغ"
-
                 );
 
 
                 return;
-
 
             }
 
@@ -1950,41 +1254,29 @@ async function importExcelCases(event){
 
 
 
-
             const response =
-
             await fetch(
 
                 API +
-
                 "/cases/import",
 
                 {
 
+                method:"POST",
 
-                    method:"POST",
+                headers:{
 
+                    "Content-Type":
+                    "application/json"
 
-
-                    headers:{
-
-
-                        "Content-Type":
-
-                        "application/json"
+                },
 
 
-                    },
+                body:JSON.stringify({
 
+                    data:rows
 
-
-                    body:
-
-                    JSON.stringify({
-
-                        data:rows
-
-                    })
+                })
 
 
                 }
@@ -1996,14 +1288,8 @@ async function importExcelCases(event){
 
 
 
-
-
             const result =
-
             await response.json();
-
-
-
 
 
 
@@ -2015,27 +1301,26 @@ async function importExcelCases(event){
 
                 alert(
 
-                "تم الاستيراد\n\n" +
+                "تم الاستيراد بنجاح\n\n" +
 
-                "المضاف: " +
-
+                "المضاف : " +
                 result.added +
 
-                "\nالمكرر: " +
-
+                "\nالمكرر : " +
                 result.duplicate +
 
-                "\nالأخطاء: " +
-
+                "\nالأخطاء : " +
                 result.failed
 
                 );
 
 
 
+                await loadAllCases();
 
-                loadAllCases();
 
+
+                clearSearch();
 
 
 
@@ -2044,22 +1329,13 @@ async function importExcelCases(event){
             else{
 
 
-
                 alert(
-
                     result.message ||
-
                     "فشل الاستيراد"
-
                 );
 
 
-
             }
-
-
-
-
 
 
 
@@ -2068,17 +1344,12 @@ async function importExcelCases(event){
         catch(err){
 
 
-
             console.log(err);
 
 
-
             alert(
-
                 "حدث خطأ أثناء قراءة الملف"
-
             );
-
 
 
         }
@@ -2086,9 +1357,6 @@ async function importExcelCases(event){
 
 
     };
-
-
-
 
 
 
@@ -2106,72 +1374,32 @@ async function importExcelCases(event){
 
 
 
-
 // =====================================
 // Toast
 // =====================================
 
-
-function showToast(text){
-
+function showToast(message){
 
 
-    let toast =
-
+    const toast =
     document.getElementById(
-
         "toast"
-
     );
 
 
 
+    if(!toast)
+        return;
 
 
 
-
-    if(!toast){
-
-
-
-        toast =
-
-        document.createElement(
-
-            "div"
-
-        );
+    toast.innerText =
+    message;
 
 
 
-        toast.id="toast";
-
-
-
-        document.body.appendChild(
-
-            toast
-
-        );
-
-
-
-    }
-
-
-
-
-
-
-
-    toast.innerText = text;
-
-
-
-    toast.style.display="block";
-
-
-
+    toast.style.display =
+    "block";
 
 
 
@@ -2179,9 +1407,8 @@ function showToast(text){
     setTimeout(()=>{
 
 
-
-        toast.style.display="none";
-
+        toast.style.display =
+        "none";
 
 
     },2000);
@@ -2189,3 +1416,72 @@ function showToast(text){
 
 
 }
+
+
+
+
+
+
+
+
+// =====================================
+// إغلاق Modal عند الضغط خارجها
+// =====================================
+
+window.onclick = function(event){
+
+
+
+    const add =
+    document.getElementById(
+        "addModal"
+    );
+
+
+
+    const edit =
+    document.getElementById(
+        "editModal"
+    );
+
+
+
+    const last =
+    document.getElementById(
+        "lastFileModal"
+    );
+
+
+
+
+    if(event.target === add){
+
+
+        closeAddModal();
+
+
+    }
+
+
+
+    if(event.target === edit){
+
+
+        closeEditModal();
+
+
+    }
+
+
+
+    if(event.target === last){
+
+
+        closeLastFileModal();
+
+
+    }
+
+
+
+};

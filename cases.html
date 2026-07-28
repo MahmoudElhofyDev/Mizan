@@ -34,9 +34,7 @@
 
 
 
-
 <section class="toolbar">
-
 
 
 <button
@@ -46,7 +44,6 @@ onclick="openAddModal()">
 ➕ إضافة ملف
 
 </button>
-
 
 
 
@@ -61,20 +58,6 @@ id="lastFileBtn">
 
 
 
-
-<button
-class="orange"
-onclick="showIncompleteCases()">
-
-⚠ البيانات الناقصة
-
-</button>
-
-
-
-
-
-
 <button
 class="green"
 onclick="document.getElementById('excelInput').click()">
@@ -82,8 +65,6 @@ onclick="document.getElementById('excelInput').click()">
 📥 استيراد Excel
 
 </button>
-
-
 
 
 
@@ -100,9 +81,6 @@ hidden
 >
 
 
-
-
-
 </section>
 
 
@@ -114,7 +92,6 @@ hidden
 <section class="searchBox">
 
 
-
 <input
 
 id="searchInput"
@@ -123,10 +100,7 @@ type="text"
 
 placeholder="ابحث برقم الملف أو اسم الموكل..."
 
-onkeyup="searchCases()"
-
 >
-
 
 
 <button onclick="clearSearch()">
@@ -136,10 +110,7 @@ onkeyup="searchCases()"
 </button>
 
 
-
 </section>
-
-
 
 
 
@@ -155,6 +126,8 @@ class="empty">
 
 ابدأ بكتابة كلمة للبحث.
 
+<br>
+
 لن تظهر البيانات إلا بعد البحث.
 
 
@@ -167,9 +140,7 @@ class="empty">
 
 
 
-
 <table id="casesTable">
-
 
 
 <thead>
@@ -204,17 +175,13 @@ class="empty">
 
 
 
-
-
 <tbody id="casesBody">
 
 
 </tbody>
 
 
-
 </table>
-
 
 
 
@@ -236,7 +203,7 @@ class="pagination">
 
 
 
-<!-- نافذة إضافة ملف -->
+<!-- إضافة ملف -->
 
 
 <div
@@ -244,16 +211,12 @@ id="addModal"
 class="modal">
 
 
-
 <div class="modal-content">
-
 
 
 <h2>
 إضافة ملف جديد
 </h2>
-
-
 
 
 
@@ -266,9 +229,6 @@ type="text"
 placeholder="رقم الملف"
 
 >
-
-
-
 
 
 
@@ -285,11 +245,7 @@ placeholder="اسم الموكل"
 
 
 
-
-
-
 <div class="modal-buttons">
-
 
 
 <button
@@ -304,9 +260,6 @@ onclick="saveCase()">
 
 
 
-
-
-
 <button
 
 class="cancel"
@@ -318,15 +271,10 @@ onclick="closeAddModal()">
 </button>
 
 
-
-
-
 </div>
 
 
-
 </div>
-
 
 
 </div>
@@ -339,7 +287,8 @@ onclick="closeAddModal()">
 
 
 
-<!-- نافذة تعديل -->
+
+<!-- تعديل ملف -->
 
 
 <div
@@ -347,21 +296,7 @@ id="editModal"
 class="modal">
 
 
-
 <div class="modal-content">
-
-
-
-
-
-<input
-
-type="hidden"
-
-id="editId"
-
->
-
 
 
 
@@ -370,8 +305,6 @@ id="editId"
 تعديل الملف
 
 </h2>
-
-
 
 
 
@@ -388,10 +321,6 @@ placeholder="رقم الملف"
 
 
 
-
-
-
-
 <input
 
 id="editClientName"
@@ -405,13 +334,7 @@ placeholder="اسم الموكل"
 
 
 
-
-
-
 <div class="modal-buttons">
-
-
-
 
 
 <button
@@ -426,10 +349,6 @@ onclick="updateCase()">
 
 
 
-
-
-
-
 <button
 
 class="cancel"
@@ -441,18 +360,10 @@ onclick="closeEditModal()">
 </button>
 
 
-
-
-
 </div>
 
 
-
-
-
-
 </div>
-
 
 
 </div>
@@ -465,7 +376,8 @@ onclick="closeEditModal()">
 
 
 
-<!-- نافذة آخر رقم ملف -->
+
+<!-- آخر رقم ملف -->
 
 
 <div
@@ -475,11 +387,7 @@ id="lastFileModal"
 class="modal">
 
 
-
 <div class="modal-content small">
-
-
-
 
 
 <h2>
@@ -490,17 +398,11 @@ class="modal">
 
 
 
-
-
-
 <h1 id="lastFileValue">
 
 0
 
 </h1>
-
-
-
 
 
 
@@ -516,13 +418,7 @@ onclick="closeLastFileModal()">
 </button>
 
 
-
-
-
-
-
 </div>
-
 
 
 </div>
@@ -532,18 +428,11 @@ onclick="closeLastFileModal()">
 
 
 
-
-
-
-<!-- Toast -->
 
 
 <div id="toast">
 
-
 </div>
-
-
 
 
 
@@ -556,9 +445,6 @@ onclick="closeLastFileModal()">
 <script src="cases.js"></script>
 
 
-
-
 </body>
-
 
 </html>
