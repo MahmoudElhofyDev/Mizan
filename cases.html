@@ -5,45 +5,36 @@
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>
-
 ميزان | ملفات الحفظ
-
 </title>
 
-<link
-rel="stylesheet"
-href="cases.css">
+<link rel="stylesheet" href="cases.css">
 
 </head>
 
+
 <body>
+
 
 <header class="top">
 
 <h1>
-
 📁 ملفات الحفظ
-
 </h1>
 
 <p>
-
 إدارة ملفات الحفظ
-
 </p>
 
 </header>
 
 
 
-
-
 <section class="toolbar">
+
 
 <button
 class="gold"
@@ -75,14 +66,6 @@ onclick="showIncompleteCases()">
 
 
 
-<button
-class="red"
-onclick="showCasesWithoutPower()">
-
-📄 بدون توكيل
-
-</button>
-
 </section>
 
 
@@ -90,6 +73,7 @@ onclick="showCasesWithoutPower()">
 
 
 <section class="searchBox">
+
 
 <input
 
@@ -103,12 +87,13 @@ onkeyup="searchCases()"
 
 >
 
-<button
-onclick="clearSearch()">
+
+<button onclick="clearSearch()">
 
 إعادة تعيين
 
 </button>
+
 
 </section>
 
@@ -120,11 +105,13 @@ onclick="clearSearch()">
 id="emptyMessage"
 class="empty">
 
+
 🔍
 
 ابدأ بكتابة كلمة للبحث.
 
 لن تظهر البيانات إلا بعد البحث.
+
 
 </div>
 
@@ -132,47 +119,49 @@ class="empty">
 
 
 
-<table
-id="casesTable">
+
+<table id="casesTable">
+
 
 <thead>
 
 <tr>
 
-<th>
 
+<th>
 رقم الملف
-
 </th>
 
-<th>
 
+<th>
 اسم الموكل
-
 </th>
 
-<th>
 
+<th>
 تعديل
-
 </th>
+
 
 <th>
-
 حذف
-
 </th>
+
 
 </tr>
 
 </thead>
 
-<tbody
-id="casesBody">
+
+
+<tbody id="casesBody">
+
 
 </tbody>
 
+
 </table>
+
 
 
 
@@ -184,19 +173,27 @@ class="pagination">
 
 </div>
 
+
+
+
+
+
+
 <!-- نافذة إضافة ملف -->
 
 <div
 id="addModal"
 class="modal">
 
+
 <div class="modal-content">
 
+
 <h2>
-
 إضافة ملف جديد
-
 </h2>
+
+
 
 <input
 
@@ -204,7 +201,12 @@ id="fileNumber"
 
 type="text"
 
-placeholder="رقم الملف">
+placeholder="رقم الملف"
+
+>
+
+
+
 
 <input
 
@@ -212,9 +214,15 @@ id="clientName"
 
 type="text"
 
-placeholder="اسم الموكل">
+placeholder="اسم الموكل"
+
+>
+
+
+
 
 <div class="modal-buttons">
+
 
 <button
 
@@ -226,6 +234,9 @@ onclick="saveCase()">
 
 </button>
 
+
+
+
 <button
 
 class="cancel"
@@ -236,11 +247,19 @@ onclick="closeAddModal()">
 
 </button>
 
-</div>
+
 
 </div>
 
+
 </div>
+
+
+</div>
+
+
+
+
 
 
 
@@ -252,11 +271,20 @@ onclick="closeAddModal()">
 id="editModal"
 class="modal">
 
+
 <div class="modal-content">
 
+
+
 <input
+
 type="hidden"
-id="editId">
+
+id="editId"
+
+>
+
+
 
 <h2>
 
@@ -264,13 +292,20 @@ id="editId">
 
 </h2>
 
+
+
 <input
 
 id="editFileNumber"
 
 type="text"
 
-placeholder="رقم الملف">
+placeholder="رقم الملف"
+
+>
+
+
+
 
 <input
 
@@ -278,9 +313,16 @@ id="editClientName"
 
 type="text"
 
-placeholder="اسم الموكل">
+placeholder="اسم الموكل"
+
+>
+
+
+
 
 <div class="modal-buttons">
+
+
 
 <button
 
@@ -292,6 +334,9 @@ onclick="updateCase()">
 
 </button>
 
+
+
+
 <button
 
 class="cancel"
@@ -302,11 +347,20 @@ onclick="closeEditModal()">
 
 </button>
 
-</div>
+
 
 </div>
 
+
+
 </div>
+
+
+</div>
+
+
+
+
 
 
 
@@ -320,7 +374,10 @@ id="lastFileModal"
 
 class="modal">
 
+
 <div class="modal-content small">
+
+
 
 <h2>
 
@@ -328,12 +385,16 @@ class="modal">
 
 </h2>
 
-<h1
-id="lastFileValue">
+
+
+<h1 id="lastFileValue">
 
 0
 
 </h1>
+
+
+
 
 <button
 
@@ -345,9 +406,15 @@ onclick="closeLastFileModal()">
 
 </button>
 
-</div>
+
 
 </div>
+
+
+</div>
+
+
+
 
 
 
@@ -355,8 +422,8 @@ onclick="closeLastFileModal()">
 
 <!-- Toast -->
 
-<div
-id="toast">
+<div id="toast">
+
 
 </div>
 
@@ -364,11 +431,11 @@ id="toast">
 
 
 
-<script
-src="cases.js">
 
-</script>
+<script src="cases.js"></script>
+
 
 </body>
+
 
 </html>

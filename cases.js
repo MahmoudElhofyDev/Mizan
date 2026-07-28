@@ -1,7 +1,8 @@
 // =====================================
 // MIZAN - CASES.JS
-// Railway Version
+// Railway Version - Fixed
 // =====================================
+
 
 // =====================================
 // API
@@ -11,8 +12,9 @@ const API =
 "https://mizan-production-32bb.up.railway.app";
 
 
+
 // =====================================
-// متغيرات
+// المتغيرات
 // =====================================
 
 let allCases = [];
@@ -26,15 +28,18 @@ const rowsPerPage = 50;
 let currentEditId = null;
 
 
+
 // =====================================
-// تحميل الصفحة
+// تشغيل الصفحة
 // =====================================
 
-window.onload = () => {
+window.onload = function(){
 
     hideTable();
 
     bindEvents();
+
+    loadAllCases();
 
 };
 
@@ -46,38 +51,40 @@ window.onload = () => {
 
 function bindEvents(){
 
-    const searchBtn =
-    document.getElementById("searchBtn");
 
-    if(searchBtn){
+    const lastBtn =
+    document.getElementById("lastFileBtn");
 
-        searchBtn.onclick = searchCases;
+
+    if(lastBtn){
+
+        lastBtn.onclick =
+        showLastFileNumber;
 
     }
 
 
+
     const searchInput =
-    document.getElementById("search");
+    document.getElementById("searchInput");
+
 
     if(searchInput){
 
         searchInput.addEventListener(
 
-            "keydown",
+            "keyup",
 
-            function(e){
+            function(){
 
-                if(e.key==="Enter"){
-
-                    searchCases();
-
-                }
+                searchCases();
 
             }
 
         );
 
     }
+
 
 }
 
@@ -89,26 +96,34 @@ function bindEvents(){
 
 function hideTable(){
 
-    const table =
-    document.getElementById("casesTable");
 
-    if(table){
+    const body =
+    document.getElementById("casesBody");
 
-        table.innerHTML="";
+
+    if(body){
+
+        body.innerHTML = "";
 
     }
+
 
 
     const pagination =
     document.getElementById("pagination");
 
+
     if(pagination){
 
-        pagination.innerHTML="";
+        pagination.innerHTML = "";
 
     }
 
+
 }
+
+
+
 
 
 
@@ -116,15 +131,20 @@ function hideTable(){
 // البحث
 // =====================================
 
-async function searchCases(){
+function searchCases(){
+
+
+    const input =
+    document.getElementById("searchInput");
+
+
+    if(!input) return;
+
+
 
     const keyword =
 
-    document
-
-    .getElementById("search")
-
-    .value
+    input.value
 
     .trim()
 
@@ -132,7 +152,7 @@ async function searchCases(){
 
 
 
-    if(keyword===""){
+    if(keyword === ""){
 
         hideTable();
 
@@ -142,118 +162,56 @@ async function searchCases(){
 
 
 
-    try{
+    filteredCases =
 
-        const response =
+    allCases.filter(c=>{
 
-        await fetch(
 
-            API + "/cases"
+        return (
+
+
+            String(
+                c.file_number || ""
+            )
+
+            .toLowerCase()
+
+            .includes(keyword)
+
+
+
+            ||
+
+
+
+            String(
+                c.client_name || ""
+            )
+
+            .toLowerCase()
+
+            .includes(keyword)
+
 
         );
 
 
-
-        allCases =
-
-        await response.json();
+    });
 
 
 
-        filteredCases =
-
-        allCases.filter(c=>{
+    currentPage = 1;
 
 
-            return(
+    renderCases();
 
-
-                String(
-
-                    c.file_number || ""
-
-                )
-
-                .toLowerCase()
-
-                .includes(keyword)
-
-
-
-                ||
-
-
-
-                String(
-
-                    c.client_name || ""
-
-                )
-
-                .toLowerCase()
-
-                .includes(keyword)
-
-
-
-                ||
-
-
-
-                String(
-
-                    c.documentation || ""
-
-                )
-
-                .toLowerCase()
-
-                .includes(keyword)
-
-
-
-                ||
-
-
-
-                String(
-
-                    c.power_number || ""
-
-                )
-
-                .toLowerCase()
-
-                .includes(keyword)
-
-
-
-            );
-
-
-        });
-
-
-
-        currentPage = 1;
-
-
-
-        renderCases();
-
-
-
-    }
-
-    catch(err){
-
-        console.log(err);
-
-        alert("تعذر الاتصال بالسيرفر");
-
-    }
 
 }
+
+
+
+
+
 
 // =====================================
 // عرض البيانات
@@ -261,12 +219,21 @@ async function searchCases(){
 
 function renderCases(){
 
+
     const body =
-    document.getElementById("casesTable");
+    document.getElementById("casesBody");
+
+
+    if(!body) return;
+
+
 
     body.innerHTML = "";
 
+
+
     if(filteredCases.length === 0){
+
 
         body.innerHTML = `
 
@@ -284,11 +251,13 @@ function renderCases(){
 
         document
         .getElementById("pagination")
-        .innerHTML = "";
+        .innerHTML="";
+
 
         return;
 
     }
+
 
 
     const start =
@@ -299,32 +268,26 @@ function renderCases(){
 
 
 
-    const end =
-
-    start +
-
-    rowsPerPage;
-
-
-
-    const pageData =
+    const data =
 
     filteredCases.slice(
 
         start,
 
-        end
+        start + rowsPerPage
 
     );
 
 
 
-    pageData.forEach(c=>{
+    data.forEach(c=>{
 
 
         body.innerHTML += `
 
+
 <tr>
+
 
 <td>
 
@@ -332,11 +295,15 @@ ${c.file_number}
 
 </td>
 
+
+
 <td>
 
 ${c.client_name}
 
 </td>
+
+
 
 <td>
 
@@ -352,6 +319,9 @@ onclick="openEditModal(${c.id})">
 
 </td>
 
+
+
+
 <td>
 
 <button
@@ -366,9 +336,12 @@ onclick="deleteCase(${c.id})">
 
 </td>
 
+
 </tr>
 
+
 `;
+
 
 
     });
@@ -377,9 +350,8 @@ onclick="deleteCase(${c.id})">
 
     renderPagination();
 
+
 }
-
-
 
 // =====================================
 // الصفحات
@@ -387,13 +359,12 @@ onclick="deleteCase(${c.id})">
 
 function renderPagination(){
 
+
     const pagination =
+    document.getElementById("pagination");
 
-    document.getElementById(
 
-        "pagination"
-
-    );
+    if(!pagination) return;
 
 
 
@@ -427,7 +398,7 @@ function renderPagination(){
 
 onclick="prevPage()"
 
-${currentPage==1?"disabled":""}>
+${currentPage === 1 ? "disabled" : ""}>
 
 ◀
 
@@ -437,27 +408,14 @@ ${currentPage==1?"disabled":""}>
 
 
 
-    for(
+    for(let i = 1; i <= totalPages; i++){
 
-        let i=1;
-
-        i<=totalPages;
-
-        i++
-
-    ){
 
         pagination.innerHTML += `
 
 <button
 
-class="${
-i==currentPage
-?
-'active'
-:
-''
-}"
+class="${i === currentPage ? "active" : ""}"
 
 onclick="goPage(${i})">
 
@@ -466,6 +424,7 @@ ${i}
 </button>
 
 `;
+
 
     }
 
@@ -477,7 +436,7 @@ ${i}
 
 onclick="nextPage()"
 
-${currentPage==totalPages?"disabled":""}>
+${currentPage === totalPages ? "disabled" : ""}>
 
 ▶
 
@@ -485,13 +444,12 @@ ${currentPage==totalPages?"disabled":""}>
 
 `;
 
+
 }
 
 
 
-// =====================================
-// الانتقال للصفحات
-// =====================================
+
 
 function goPage(page){
 
@@ -503,15 +461,17 @@ function goPage(page){
 
 
 
+
 function nextPage(){
+
 
     const totalPages =
 
     Math.ceil(
 
-        filteredCases.length
+        filteredCases.length /
 
-        / rowsPerPage
+        rowsPerPage
 
     );
 
@@ -525,11 +485,14 @@ function nextPage(){
 
     }
 
+
 }
 
 
 
+
 function prevPage(){
+
 
     if(currentPage > 1){
 
@@ -539,41 +502,135 @@ function prevPage(){
 
     }
 
+
 }
 
 
 
+
+
 // =====================================
-// إعادة تعيين البحث
+// إعادة البحث
 // =====================================
 
 function clearSearch(){
 
-    document
-    .getElementById("search")
-    .value = "";
+
+    const input =
+
+    document.getElementById("searchInput");
+
+
+    if(input){
+
+        input.value = "";
+
+    }
+
 
     filteredCases = [];
 
+
     hideTable();
+
 
 }
 
+
+
+
+
+
 // =====================================
-// إضافة ملف جديد
+// فتح نافذة الإضافة
 // =====================================
 
-async function addCase(){
+function openAddModal(){
+
+
+    const modal =
+
+    document.getElementById("addModal");
+
+
+
+    if(modal){
+
+        modal.style.display = "flex";
+
+    }
+
+
+}
+
+
+
+
+// =====================================
+// غلق نافذة الإضافة
+// =====================================
+
+function closeAddModal(){
+
+
+    const modal =
+
+    document.getElementById("addModal");
+
+
+
+    if(modal){
+
+        modal.style.display = "none";
+
+    }
+
+
+}
+
+
+
+
+
+// =====================================
+// حفظ ملف جديد
+// =====================================
+
+async function saveCase(){
+
 
     const file_number =
-    document.getElementById("fileNumber")
-    .value.trim();
+
+    document
+
+    .getElementById("fileNumber")
+
+    .value
+
+    .trim();
+
+
 
     const client_name =
-    document.getElementById("clientName")
-    .value.trim();
 
-    if(file_number==="" || client_name===""){
+    document
+
+    .getElementById("clientName")
+
+    .value
+
+    .trim();
+
+
+
+
+    if(
+
+        file_number === "" ||
+
+        client_name === ""
+
+    ){
 
         alert("يرجى إدخال جميع البيانات");
 
@@ -581,15 +638,22 @@ async function addCase(){
 
     }
 
-    // منع تكرار رقم الملف
+
+
 
     const exists =
+
     allCases.find(c =>
 
-        String(c.file_number) ===
+        String(c.file_number)
+
+        ===
+
         String(file_number)
 
     );
+
+
 
     if(exists){
 
@@ -599,9 +663,14 @@ async function addCase(){
 
     }
 
+
+
+
     try{
 
+
         const response =
+
         await fetch(
 
             API + "/cases",
@@ -610,14 +679,21 @@ async function addCase(){
 
                 method:"POST",
 
+
                 headers:{
 
+
                     "Content-Type":
+
                     "application/json"
+
 
                 },
 
-                body:JSON.stringify({
+
+                body:
+
+                JSON.stringify({
 
                     file_number,
 
@@ -625,46 +701,95 @@ async function addCase(){
 
                 })
 
+
             }
 
         );
 
+
+
         const data =
+
         await response.json();
+
+
+
 
         if(data.success){
 
-            showToast("تمت إضافة الملف");
+
+
+            showToast(
+
+                "تمت إضافة الملف"
+
+            );
+
+
 
             document
+
             .getElementById("fileNumber")
+
             .value="";
+
+
 
             document
+
             .getElementById("clientName")
+
             .value="";
 
-            searchCases();
+
+
+            closeAddModal();
+
+
+
+            loadAllCases();
+
 
         }
 
         else{
 
-            alert(data.message || "فشل الإضافة");
+
+            alert(
+
+                data.message ||
+
+                "فشل الإضافة"
+
+            );
+
 
         }
+
+
 
     }
 
     catch(err){
 
+
         console.log(err);
 
-        alert("تعذر الاتصال بالسيرفر");
+
+        alert(
+
+            "تعذر الاتصال بالسيرفر"
+
+        );
+
 
     }
 
+
 }
+
+
+
 
 
 
@@ -674,57 +799,112 @@ async function addCase(){
 
 async function showLastFileNumber(){
 
+
     try{
 
+
         const response =
+
         await fetch(
 
             API +
+
             "/cases/last-file"
 
         );
 
+
+
         const data =
+
         await response.json();
+
+
+
+
+        document
+
+        .getElementById("lastFileValue")
+
+        .innerText =
+
+        data.lastFile || 0;
+
+
+
+
+        document
+
+        .getElementById("lastFileModal")
+
+        .style.display="flex";
+
+
+
+    }
+
+
+    catch(err){
+
 
         alert(
 
-            "آخر رقم ملف : " +
-
-            data.lastFile
+            "تعذر جلب آخر رقم ملف"
 
         );
 
-    }
-
-    catch{
-
-        alert("تعذر جلب آخر رقم");
 
     }
+
 
 }
 
 
 
+
+function closeLastFileModal(){
+
+
+    document
+
+    .getElementById("lastFileModal")
+
+    .style.display="none";
+
+
+}
+
 // =====================================
-// فتح نافذة التعديل
+// فتح التعديل
 // =====================================
 
 function openEditModal(id){
 
-    currentEditId = id;
 
     const c =
+
     filteredCases.find(
 
         x => x.id == id
 
     );
 
-    if(!c) return;
+
+
+    if(!c){
+
+        return;
+
+    }
+
+
+
+    currentEditId = id;
+
+
 
     const fileNumber =
+
     prompt(
 
         "رقم الملف",
@@ -733,13 +913,18 @@ function openEditModal(id){
 
     );
 
-    if(fileNumber===null){
+
+
+    if(fileNumber === null){
 
         return;
 
     }
 
+
+
     const clientName =
+
     prompt(
 
         "اسم الموكل",
@@ -748,11 +933,15 @@ function openEditModal(id){
 
     );
 
-    if(clientName===null){
+
+
+    if(clientName === null){
 
         return;
 
     }
+
+
 
     updateCase(
 
@@ -764,12 +953,16 @@ function openEditModal(id){
 
     );
 
+
 }
 
 
 
+
+
+
 // =====================================
-// حفظ التعديل
+// تحديث الملف
 // =====================================
 
 async function updateCase(
@@ -782,9 +975,12 @@ async function updateCase(
 
 ){
 
+
     try{
 
+
         const response =
+
         await fetch(
 
             API +
@@ -795,16 +991,26 @@ async function updateCase(
 
             {
 
+
                 method:"PUT",
+
+
 
                 headers:{
 
+
                     "Content-Type":
+
                     "application/json"
+
 
                 },
 
-                body:JSON.stringify({
+
+
+                body:
+
+                JSON.stringify({
 
                     file_number,
 
@@ -812,36 +1018,74 @@ async function updateCase(
 
                 })
 
+
             }
 
         );
 
+
+
+
         const data =
+
         await response.json();
+
+
+
 
         if(data.success){
 
-            showToast("تم حفظ التعديل");
 
-            searchCases();
+            showToast(
+
+                "تم تعديل الملف"
+
+            );
+
+
+            loadAllCases();
+
 
         }
 
         else{
 
-            alert("فشل التعديل");
+
+            alert(
+
+                "فشل التعديل"
+
+            );
+
 
         }
+
+
 
     }
 
     catch(err){
 
+
         console.log(err);
+
+
+        alert(
+
+            "حدث خطأ أثناء التعديل"
+
+        );
+
 
     }
 
+
 }
+
+
+
+
+
 
 // =====================================
 // حذف ملف
@@ -849,18 +1093,35 @@ async function updateCase(
 
 async function deleteCase(id){
 
-    if(!confirm("هل تريد حذف هذا الملف؟")){
+
+    if(
+
+        !confirm(
+
+            "هل تريد حذف هذا الملف؟"
+
+        )
+
+    ){
 
         return;
 
     }
 
+
+
     try{
 
+
         const response =
+
         await fetch(
 
-            API + "/cases/" + id,
+            API +
+
+            "/cases/" +
+
+            id,
 
             {
 
@@ -870,34 +1131,69 @@ async function deleteCase(id){
 
         );
 
+
+
         const data =
+
         await response.json();
+
+
+
 
         if(data.success){
 
-            showToast("تم حذف الملف");
 
-            searchCases();
+            showToast(
+
+                "تم حذف الملف"
+
+            );
+
+
+
+            loadAllCases();
+
 
         }
 
         else{
 
-            alert("فشل الحذف");
+
+            alert(
+
+                "فشل الحذف"
+
+            );
+
 
         }
+
+
 
     }
 
     catch(err){
 
+
         console.log(err);
 
-        alert("تعذر الاتصال بالسيرفر");
+
+        alert(
+
+            "تعذر الاتصال بالسيرفر"
+
+        );
+
 
     }
 
+
 }
+
+
+
+
+
 
 
 
@@ -907,9 +1203,13 @@ async function deleteCase(id){
 
 function showIncompleteCases(){
 
-    filteredCases = allCases.filter(c=>{
 
-        return(
+    filteredCases =
+
+    allCases.filter(c=>{
+
+
+        return (
 
             !c.file_number ||
 
@@ -917,41 +1217,71 @@ function showIncompleteCases(){
 
         );
 
+
     });
+
+
 
     currentPage = 1;
 
+
     renderCases();
+
 
 }
 
 
 
+
+
+
+
+
 // =====================================
-// عرض الملفات بدون توكيل
+// تحميل البيانات
 // =====================================
 
-function showCasesWithoutPower(){
+async function loadAllCases(){
 
-    filteredCases = allCases.filter(c=>{
 
-        return(
+    try{
 
-            !c.power_number ||
 
-            c.power_number==="" ||
+        const response =
 
-            c.power_number===null
+        await fetch(
+
+            API +
+
+            "/cases"
 
         );
 
-    });
 
-    currentPage = 1;
 
-    renderCases();
+        allCases =
+
+        await response.json();
+
+
+
+    }
+
+    catch(err){
+
+
+        console.log(err);
+
+
+    }
+
 
 }
+
+
+
+
+
 
 
 
@@ -961,94 +1291,66 @@ function showCasesWithoutPower(){
 
 function showToast(text){
 
+
+
     let toast =
 
-    document.getElementById("toast");
+    document.getElementById(
+
+        "toast"
+
+    );
+
+
+
 
     if(!toast){
 
+
+
         toast =
 
-        document.createElement("div");
+        document.createElement(
 
-        toast.id = "toast";
-
-        toast.style.position = "fixed";
-
-        toast.style.bottom = "20px";
-
-        toast.style.left = "20px";
-
-        toast.style.background = "#198754";
-
-        toast.style.color = "#fff";
-
-        toast.style.padding = "12px 20px";
-
-        toast.style.borderRadius = "8px";
-
-        toast.style.zIndex = "99999";
-
-        toast.style.fontSize = "15px";
-
-        document.body.appendChild(toast);
-
-    }
-
-    toast.innerText = text;
-
-    toast.style.display = "block";
-
-    setTimeout(()=>{
-
-        toast.style.display = "none";
-
-    },2000);
-
-}
-
-
-
-// =====================================
-// تحميل كل البيانات
-// =====================================
-
-async function loadAllCases(){
-
-    try{
-
-        const response =
-
-        await fetch(
-
-            API + "/cases"
+            "div"
 
         );
 
-        allCases =
 
-        await response.json();
+
+        toast.id = "toast";
+
+
+
+        document.body.appendChild(
+
+            toast
+
+        );
+
 
     }
 
-    catch(err){
 
-        console.log(err);
 
-    }
+
+
+    toast.innerText = text;
+
+
+
+    toast.style.display="block";
+
+
+
+    setTimeout(()=>{
+
+
+        toast.style.display="none";
+
+
+    },2000);
+
+
 
 }
-
-
-
-// =====================================
-// تشغيل الصفحة
-// =====================================
-
-window.addEventListener(
-
-    "load",
-
-    loadAllCases
-
-);
