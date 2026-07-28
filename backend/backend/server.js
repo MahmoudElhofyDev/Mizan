@@ -9,7 +9,6 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 const db = require("./database");
 
 
@@ -33,13 +32,16 @@ const SECRET = "MIZAN_SECRET_KEY";
 // اختبار السيرفر
 // =====================================
 
-
 app.get("/", (req,res)=>{
 
 
-    res.send(
-        "Mizan Backend Running"
-    );
+    res.json({
+
+        success:true,
+
+        message:"Mizan Backend Running"
+
+    });
 
 
 });
@@ -50,7 +52,6 @@ app.get("/", (req,res)=>{
 // =====================================
 // Register
 // =====================================
-
 
 app.post("/register", async(req,res)=>{
 
@@ -86,6 +87,41 @@ app.post("/register", async(req,res)=>{
 
 
 
+        const check = await db.query(
+
+            `
+            SELECT id
+            FROM users
+            WHERE username=$1
+            `,
+
+            [
+
+                username
+
+            ]
+
+        );
+
+
+
+        if(check.rows.length > 0){
+
+
+            return res.json({
+
+                success:false,
+
+                message:"المستخدم موجود بالفعل"
+
+            });
+
+
+        }
+
+
+
+
 
         const hash = await bcrypt.hash(
 
@@ -112,7 +148,6 @@ app.post("/register", async(req,res)=>{
                 password
 
             )
-
 
             VALUES
 
@@ -157,7 +192,6 @@ app.post("/register", async(req,res)=>{
         console.log(err);
 
 
-
         res.status(500).json({
 
             success:false,
@@ -165,7 +199,6 @@ app.post("/register", async(req,res)=>{
             message:err.message
 
         });
-
 
 
     }
@@ -202,8 +235,8 @@ app.post("/login", async(req,res)=>{
 
 
 
-
         const result = await db.query(
+
 
             `
 
@@ -214,6 +247,7 @@ app.post("/login", async(req,res)=>{
             WHERE username=$1
 
             `,
+
 
             [
 
@@ -251,7 +285,6 @@ app.post("/login", async(req,res)=>{
 
 
 
-
         const match = await bcrypt.compare(
 
             password,
@@ -259,7 +292,6 @@ app.post("/login", async(req,res)=>{
             user.password
 
         );
-
 
 
 
@@ -278,7 +310,6 @@ app.post("/login", async(req,res)=>{
 
 
         }
-
 
 
 
@@ -308,7 +339,6 @@ app.post("/login", async(req,res)=>{
 
 
 
-
         res.json({
 
             success:true,
@@ -316,7 +346,6 @@ app.post("/login", async(req,res)=>{
             token
 
         });
-
 
 
 
@@ -345,11 +374,10 @@ app.post("/login", async(req,res)=>{
 
 });
 
- 
+
 // =====================================
 // CASES
 // =====================================
-
 
 
 // عرض الملفات
@@ -368,17 +396,7 @@ app.get("/cases", async(req,res)=>{
 
             FROM cases
 
-            ORDER BY
-
-            CASE
-
-                WHEN file_number ~ '^[0-9]+$'
-
-                THEN CAST(file_number AS INTEGER)
-
-                ELSE 999999
-
-            END ASC
+            ORDER BY id DESC
 
             `
 
@@ -386,11 +404,7 @@ app.get("/cases", async(req,res)=>{
 
 
 
-        res.json(
-
-            result.rows
-
-        );
+        res.json(result.rows);
 
 
 
@@ -402,7 +416,6 @@ app.get("/cases", async(req,res)=>{
         console.log(err);
 
 
-
         res.status(500).json({
 
             success:false,
@@ -412,14 +425,10 @@ app.get("/cases", async(req,res)=>{
         });
 
 
-
     }
 
 
 });
-
-
-
 
 
 
@@ -446,9 +455,7 @@ app.get("/cases/last-file", async(req,res)=>{
 
             ORDER BY
 
-            CAST(file_number AS INTEGER)
-
-            DESC
+            CAST(file_number AS INTEGER) DESC
 
             LIMIT 1
 
@@ -459,13 +466,12 @@ app.get("/cases/last-file", async(req,res)=>{
 
 
 
-
         if(result.rows.length === 0){
 
 
             return res.json({
 
-                lastPower:0
+                lastFile:0
 
             });
 
@@ -486,13 +492,13 @@ app.get("/cases/last-file", async(req,res)=>{
 
 
 
+
     }
 
     catch(err){
 
 
         console.log(err);
-
 
 
         res.status(500).json({
@@ -504,13 +510,10 @@ app.get("/cases/last-file", async(req,res)=>{
         });
 
 
-
     }
 
 
 });
-
-
 
 
 
@@ -544,6 +547,7 @@ app.post("/cases", async(req,res)=>{
 
             documentation
 
+
         } = req.body;
 
 
@@ -563,7 +567,6 @@ app.post("/cases", async(req,res)=>{
 
 
         }
-
 
 
 
@@ -594,9 +597,7 @@ app.post("/cases", async(req,res)=>{
 
 
 
-
-
-        if(check.rows.length > 0){
+        if(check.rows.length){
 
 
             return res.json({
@@ -609,8 +610,6 @@ app.post("/cases", async(req,res)=>{
 
 
         }
-
-
 
 
 
@@ -647,19 +646,7 @@ app.post("/cases", async(req,res)=>{
 
             (
 
-                $1,
-
-                $2,
-
-                $3,
-
-                $4,
-
-                $5,
-
-                $6,
-
-                $7
+                $1,$2,$3,$4,$5,$6,$7
 
             )
 
@@ -667,6 +654,7 @@ app.post("/cases", async(req,res)=>{
             RETURNING id
 
             `,
+
 
             [
 
@@ -692,18 +680,13 @@ app.post("/cases", async(req,res)=>{
 
 
 
-
-
         res.json({
 
             success:true,
 
-            id:
-
-            result.rows[0].id
+            id:result.rows[0].id
 
         });
-
 
 
 
@@ -716,7 +699,6 @@ app.post("/cases", async(req,res)=>{
         console.log(err);
 
 
-
         res.status(500).json({
 
             success:false,
@@ -726,13 +708,10 @@ app.post("/cases", async(req,res)=>{
         });
 
 
-
     }
 
 
 });
-
-
 
 
 
@@ -766,61 +745,8 @@ app.put("/cases/:id", async(req,res)=>{
 
             documentation
 
+
         } = req.body;
-
-
-
-
-
-
-
-
-        const check = await db.query(
-
-            `
-
-            SELECT id
-
-            FROM cases
-
-            WHERE file_number=$1
-
-            AND id<>$2
-
-            `,
-
-            [
-
-                file_number,
-
-                req.params.id
-
-            ]
-
-        );
-
-
-
-
-
-
-
-        if(check.rows.length > 0){
-
-
-            return res.json({
-
-                success:false,
-
-                message:"رقم الملف مستخدم بالفعل"
-
-            });
-
-
-        }
-
-
-
 
 
 
@@ -853,6 +779,7 @@ app.put("/cases/:id", async(req,res)=>{
 
             `,
 
+
             [
 
                 file_number,
@@ -879,13 +806,11 @@ app.put("/cases/:id", async(req,res)=>{
 
 
 
-
         res.json({
 
             success:true
 
         });
-
 
 
 
@@ -898,7 +823,6 @@ app.put("/cases/:id", async(req,res)=>{
         console.log(err);
 
 
-
         res.status(500).json({
 
             success:false,
@@ -908,13 +832,10 @@ app.put("/cases/:id", async(req,res)=>{
         });
 
 
-
     }
 
 
 });
-
-
 
 
 
@@ -953,11 +874,221 @@ app.delete("/cases/:id", async(req,res)=>{
 
 
 
+        res.json({
+
+            success:true
+
+        });
+
+
+
+    }
+
+    catch(err){
+
+
+        console.log(err);
+
+
+        res.status(500).json({
+
+            success:false,
+
+            message:err.message
+
+        });
+
+
+    }
+
+
+});
+
+
+// =====================================
+// IMPORT CASES EXCEL
+// =====================================
+
+
+app.post("/cases/import", async(req,res)=>{
+
+
+    try{
+
+
+        const data = req.body.data;
+
+
+
+        if(!Array.isArray(data)){
+
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"بيانات الاستيراد غير صحيحة"
+
+            });
+
+
+        }
+
+
+
+
+        let added = 0;
+
+        let duplicate = 0;
+
+        let failed = 0;
+
+
+
+
+
+        for(const item of data){
+
+
+            try{
+
+
+                if(
+
+                    !item.file_number ||
+
+                    !item.client_name
+
+                ){
+
+                    failed++;
+
+                    continue;
+
+                }
+
+
+
+
+
+
+                const check = await db.query(
+
+                    `
+
+                    SELECT id
+
+                    FROM cases
+
+                    WHERE file_number=$1
+
+                    `,
+
+                    [
+
+                        String(item.file_number)
+
+                    ]
+
+                );
+
+
+
+
+
+                if(check.rows.length){
+
+
+                    duplicate++;
+
+                    continue;
+
+
+                }
+
+
+
+
+
+
+
+                await db.query(
+
+                    `
+
+                    INSERT INTO cases
+
+                    (
+
+                    file_number,
+
+                    client_name
+
+                    )
+
+                    VALUES
+
+                    (
+
+                    $1,
+
+                    $2
+
+                    )
+
+                    `,
+
+
+                    [
+
+                        String(item.file_number),
+
+                        String(item.client_name)
+
+                    ]
+
+                );
+
+
+
+
+
+                added++;
+
+
+
+
+
+            }
+
+            catch(error){
+
+
+                console.log(error);
+
+                failed++;
+
+
+            }
+
+
+
+        }
+
+
+
+
 
 
         res.json({
 
-            success:true
+            success:true,
+
+            added,
+
+            duplicate,
+
+            failed
 
         });
 
@@ -973,7 +1104,6 @@ app.delete("/cases/:id", async(req,res)=>{
         console.log(err);
 
 
-
         res.status(500).json({
 
             success:false,
@@ -983,13 +1113,16 @@ app.delete("/cases/:id", async(req,res)=>{
         });
 
 
-
     }
 
 
 });
 
- 
+
+
+
+
+
 // =====================================
 // POWERS
 // =====================================
@@ -997,6 +1130,7 @@ app.delete("/cases/:id", async(req,res)=>{
 
 
 // عرض التوكيلات
+
 
 app.get("/powers", async(req,res)=>{
 
@@ -1012,17 +1146,7 @@ app.get("/powers", async(req,res)=>{
 
             FROM powers
 
-            ORDER BY
-
-            CASE
-
-                WHEN power_number ~ '^[0-9]+$'
-
-                THEN CAST(power_number AS INTEGER)
-
-                ELSE 999999
-
-            END ASC
+            ORDER BY id DESC
 
             `
 
@@ -1030,11 +1154,7 @@ app.get("/powers", async(req,res)=>{
 
 
 
-        res.json(
-
-            result.rows
-
-        );
+        res.json(result.rows);
 
 
 
@@ -1067,12 +1187,8 @@ app.get("/powers", async(req,res)=>{
 
 
 
-
-
-
-
-
 // آخر رقم توكيل
+
 
 app.get("/powers/last-number", async(req,res)=>{
 
@@ -1092,9 +1208,7 @@ app.get("/powers/last-number", async(req,res)=>{
 
             ORDER BY
 
-            CAST(power_number AS INTEGER)
-
-            DESC
+            CAST(power_number AS INTEGER) DESC
 
             LIMIT 1
 
@@ -1111,7 +1225,7 @@ app.get("/powers/last-number", async(req,res)=>{
 
             return res.json({
 
-                lastNumber:0
+                lastPower:0
 
             });
 
@@ -1122,12 +1236,11 @@ app.get("/powers/last-number", async(req,res)=>{
 
 
 
-
         res.json({
 
-              lastPower:
+            lastPower:
 
-    result.rows[0].power_number
+            result.rows[0].power_number
 
         });
 
@@ -1141,7 +1254,6 @@ app.get("/powers/last-number", async(req,res)=>{
 
 
         console.log(err);
-
 
 
         res.status(500).json({
@@ -1160,16 +1272,10 @@ app.get("/powers/last-number", async(req,res)=>{
 });
 
 
-
-
-
-
-
-
-
-
-
+// =====================================
 // إضافة توكيل
+// =====================================
+
 
 app.post("/powers", async(req,res)=>{
 
@@ -1178,7 +1284,6 @@ app.post("/powers", async(req,res)=>{
 
 
         const {
-
 
             file_number,
 
@@ -1193,23 +1298,13 @@ app.post("/powers", async(req,res)=>{
             documentation
 
 
-
         } = req.body;
 
 
 
 
 
-
-
-
-        if(
-
-            !power_number ||
-
-            !client_name
-
-        ){
+        if(!power_number || !client_name){
 
 
             return res.status(400).json({
@@ -1227,9 +1322,6 @@ app.post("/powers", async(req,res)=>{
 
 
 
-
-
-
         const check = await db.query(
 
             `
@@ -1241,6 +1333,7 @@ app.post("/powers", async(req,res)=>{
             WHERE power_number=$1
 
             `,
+
 
             [
 
@@ -1255,8 +1348,7 @@ app.post("/powers", async(req,res)=>{
 
 
 
-
-        if(check.rows.length > 0){
+        if(check.rows.length){
 
 
             return res.json({
@@ -1269,8 +1361,6 @@ app.post("/powers", async(req,res)=>{
 
 
         }
-
-
 
 
 
@@ -1305,17 +1395,7 @@ app.post("/powers", async(req,res)=>{
 
             (
 
-                $1,
-
-                $2,
-
-                $3,
-
-                $4,
-
-                $5,
-
-                $6
+                $1,$2,$3,$4,$5,$6
 
             )
 
@@ -1323,6 +1403,7 @@ app.post("/powers", async(req,res)=>{
             RETURNING id
 
             `,
+
 
             [
 
@@ -1352,9 +1433,7 @@ app.post("/powers", async(req,res)=>{
 
             success:true,
 
-            id:
-
-            result.rows[0].id
+            id:result.rows[0].id
 
         });
 
@@ -1370,7 +1449,6 @@ app.post("/powers", async(req,res)=>{
         console.log(err);
 
 
-
         res.status(500).json({
 
             success:false,
@@ -1378,7 +1456,6 @@ app.post("/powers", async(req,res)=>{
             message:err.message
 
         });
-
 
 
     }
@@ -1394,10 +1471,10 @@ app.post("/powers", async(req,res)=>{
 
 
 
-
-
-
+// =====================================
 // تعديل توكيل
+// =====================================
+
 
 app.put("/powers/:id", async(req,res)=>{
 
@@ -1406,7 +1483,6 @@ app.put("/powers/:id", async(req,res)=>{
 
 
         const {
-
 
             file_number,
 
@@ -1421,63 +1497,7 @@ app.put("/powers/:id", async(req,res)=>{
             documentation
 
 
-
         } = req.body;
-
-
-
-
-
-
-
-
-
-        const check = await db.query(
-
-            `
-
-            SELECT id
-
-            FROM powers
-
-            WHERE power_number=$1
-
-            AND id<>$2
-
-            `,
-
-            [
-
-                power_number,
-
-                req.params.id
-
-            ]
-
-        );
-
-
-
-
-
-
-
-
-        if(check.rows.length > 0){
-
-
-            return res.json({
-
-                success:false,
-
-                message:"رقم التوكيل مستخدم بالفعل"
-
-            });
-
-
-        }
-
-
 
 
 
@@ -1510,6 +1530,7 @@ app.put("/powers/:id", async(req,res)=>{
 
             `,
 
+
             [
 
                 file_number || "",
@@ -1535,13 +1556,12 @@ app.put("/powers/:id", async(req,res)=>{
 
 
 
-
-
         res.json({
 
             success:true
 
         });
+
 
 
 
@@ -1579,9 +1599,10 @@ app.put("/powers/:id", async(req,res)=>{
 
 
 
-
-
+// =====================================
 // حذف توكيل
+// =====================================
+
 
 app.delete("/powers/:id", async(req,res)=>{
 
@@ -1611,8 +1632,6 @@ app.delete("/powers/:id", async(req,res)=>{
 
 
 
-
-
         res.json({
 
             success:true
@@ -1647,253 +1666,17 @@ app.delete("/powers/:id", async(req,res)=>{
 
 });
 
+
+
+
+
+
+
+
+
 // =====================================
-// IMPORT EXCEL
+// IMPORT POWERS EXCEL
 // =====================================
-
-
-// ===============================
-// استيراد القضايا
-// ===============================
-
-app.post("/cases/import", async(req,res)=>{
-
-
-    try{
-
-
-        const {
-
-            data
-
-        } = req.body;
-
-
-
-
-        if(!Array.isArray(data)){
-
-
-            return res.status(400).json({
-
-                success:false,
-
-                message:"بيانات غير صحيحة"
-
-            });
-
-
-        }
-
-
-
-
-
-        let added = 0;
-
-        let duplicate = 0;
-
-        let failed = 0;
-
-
-
-
-
-        for(const item of data){
-
-
-            try{
-
-
-
-                if(
-
-                    !item.file_number ||
-
-                    !item.client_name
-
-                ){
-
-                    failed++;
-
-                    continue;
-
-                }
-
-
-
-
-
-                const check = await db.query(
-
-                    `
-
-                    SELECT id
-
-                    FROM cases
-
-                    WHERE file_number=$1
-
-                    `,
-
-                    [
-
-                        String(item.file_number)
-
-                    ]
-
-                );
-
-
-
-
-
-                if(check.rows.length > 0){
-
-
-                    duplicate++;
-
-                    continue;
-
-
-                }
-
-
-
-
-
-
-                await db.query(
-
-                    `
-
-                    INSERT INTO cases
-
-                    (
-
-                    file_number,
-
-                    client_name,
-
-                    opponent,
-
-                    court,
-
-                    type,
-
-                    birth_date,
-
-                    documentation
-
-                    )
-
-
-                    VALUES
-
-                    (
-
-                    $1,$2,$3,$4,$5,$6,$7
-
-                    )
-
-                    `,
-
-                    [
-
-                    String(item.file_number),
-
-                    item.client_name,
-
-                    item.opponent || "",
-
-                    item.court || "",
-
-                    item.type || "",
-
-                    item.birth_date || "",
-
-                    item.documentation || ""
-
-                    ]
-
-                );
-
-
-
-
-                added++;
-
-
-
-            }
-
-            catch(error){
-
-
-                failed++;
-
-
-            }
-
-
-
-        }
-
-
-
-
-
-        res.json({
-
-            success:true,
-
-            added,
-
-            duplicate,
-
-            failed
-
-        });
-
-
-
-
-
-    }
-
-    catch(err){
-
-
-        console.log(err);
-
-
-
-        res.status(500).json({
-
-            success:false,
-
-            message:err.message
-
-        });
-
-
-
-    }
-
-
-});
-
-
-
-
-
-
-
-
-
-// ===============================
-// استيراد التوكيلات
-// ===============================
 
 
 app.post("/powers/import", async(req,res)=>{
@@ -1902,13 +1685,7 @@ app.post("/powers/import", async(req,res)=>{
     try{
 
 
-        const {
-
-            data
-
-        } = req.body;
-
-
+        const data = req.body.data;
 
 
 
@@ -1919,13 +1696,12 @@ app.post("/powers/import", async(req,res)=>{
 
                 success:false,
 
-                message:"بيانات غير صحيحة"
+                message:"بيانات الاستيراد غير صحيحة"
 
             });
 
 
         }
-
 
 
 
@@ -1942,12 +1718,12 @@ app.post("/powers/import", async(req,res)=>{
 
 
 
+
         for(const item of data){
 
 
 
             try{
-
 
 
                 if(
@@ -1968,8 +1744,6 @@ app.post("/powers/import", async(req,res)=>{
 
 
 
-
-
                 const check = await db.query(
 
                     `
@@ -1981,6 +1755,7 @@ app.post("/powers/import", async(req,res)=>{
                     WHERE power_number=$1
 
                     `,
+
 
                     [
 
@@ -1994,9 +1769,7 @@ app.post("/powers/import", async(req,res)=>{
 
 
 
-
-
-                if(check.rows.length > 0){
+                if(check.rows.length){
 
 
                     duplicate++;
@@ -2012,7 +1785,6 @@ app.post("/powers/import", async(req,res)=>{
 
 
 
-
                 await db.query(
 
                     `
@@ -2021,17 +1793,13 @@ app.post("/powers/import", async(req,res)=>{
 
                     (
 
-                    file_number,
+                        file_number,
 
-                    power_number,
+                        power_number,
 
-                    client_name,
+                        client_name,
 
-                    type,
-
-                    birth_date,
-
-                    documentation
+                        documentation
 
                     )
 
@@ -2040,25 +1808,22 @@ app.post("/powers/import", async(req,res)=>{
 
                     (
 
-                    $1,$2,$3,$4,$5,$6
+                        $1,$2,$3,$4
 
                     )
 
                     `,
 
+
                     [
 
-                    item.file_number || "",
+                        item.file_number || "",
 
-                    String(item.power_number),
+                        String(item.power_number),
 
-                    item.client_name,
+                        String(item.client_name),
 
-                    item.type || "",
-
-                    item.birth_date || "",
-
-                    item.documentation || ""
+                        item.documentation || ""
 
                     ]
 
@@ -2073,11 +1838,12 @@ app.post("/powers/import", async(req,res)=>{
 
 
 
-
             }
 
             catch(error){
 
+
+                console.log(error);
 
                 failed++;
 
@@ -2087,6 +1853,8 @@ app.post("/powers/import", async(req,res)=>{
 
 
         }
+
+
 
 
 
@@ -2103,6 +1871,7 @@ app.post("/powers/import", async(req,res)=>{
             failed
 
         });
+
 
 
 
@@ -2144,22 +1913,16 @@ app.post("/powers/import", async(req,res)=>{
 // تشغيل السيرفر
 // =====================================
 
-console.log("=== BEFORE LISTEN ===");
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
-    console.log(`Server Running On Port ${PORT}`);
-});
-
-console.log("=== AFTER LISTEN ===");
 
 app.listen(PORT,()=>{
 
 
     console.log(
 
-        `Server Running On Port ${PORT}`
+        `Mizan Server Running On Port ${PORT}`
 
     );
 
