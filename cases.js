@@ -600,37 +600,22 @@ async function saveCase(){
 
 
     const file_number =
-
     document
-
     .getElementById("fileNumber")
-
     .value
-
     .trim();
 
 
 
     const client_name =
-
     document
-
     .getElementById("clientName")
-
     .value
-
     .trim();
 
 
 
-
-    if(
-
-        file_number === "" ||
-
-        client_name === ""
-
-    ){
+    if(file_number === "" || client_name === ""){
 
         alert("يرجى إدخال جميع البيانات");
 
@@ -638,6 +623,15 @@ async function saveCase(){
 
     }
 
+
+
+    // التأكد أن allCases مصفوفة
+
+    if(!Array.isArray(allCases)){
+
+        allCases = [];
+
+    }
 
 
 
@@ -665,7 +659,6 @@ async function saveCase(){
 
 
 
-
     try{
 
 
@@ -679,28 +672,21 @@ async function saveCase(){
 
                 method:"POST",
 
-
                 headers:{
 
-
                     "Content-Type":
-
                     "application/json"
-
 
                 },
 
 
-                body:
-
-                JSON.stringify({
+                body:JSON.stringify({
 
                     file_number,
 
                     client_name
 
                 })
-
 
             }
 
@@ -714,40 +700,40 @@ async function saveCase(){
 
 
 
+        console.log(data);
 
-        if(data.success){
 
+
+        if(
+
+            data.success ||
+
+            data.id ||
+
+            response.ok
+
+        ){
 
 
             showToast(
-
                 "تمت إضافة الملف"
-
             );
 
 
-
             document
-
             .getElementById("fileNumber")
-
             .value="";
-
 
 
             document
-
             .getElementById("clientName")
-
             .value="";
-
 
 
             closeAddModal();
 
 
-
-            loadAllCases();
+            await loadAllCases();
 
 
         }
@@ -759,7 +745,7 @@ async function saveCase(){
 
                 data.message ||
 
-                "فشل الإضافة"
+                "فشل إضافة الملف"
 
             );
 
@@ -777,9 +763,7 @@ async function saveCase(){
 
 
         alert(
-
             "تعذر الاتصال بالسيرفر"
-
         );
 
 
