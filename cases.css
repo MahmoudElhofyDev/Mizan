@@ -846,3 +846,335 @@ th,td{
 
 
 }
+
+/* =====================
+   CASES TOP ACTIONS FIX
+===================== */
+
+
+.actions,
+.top-actions,
+.buttons-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    margin-top:25px;
+
+}
+
+
+
+.actions button,
+.top-actions button,
+.buttons-container button{
+
+    min-width:160px;
+
+}
+
+
+
+
+
+.search-box{
+
+    width:80%;
+
+    margin:25px auto;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+}
+
+
+
+.search-box input{
+
+    height:50px;
+
+}
+
+
+
+
+
+/* صندوق البحث والازرار */
+
+.container{
+
+    max-width:1400px;
+
+    margin:40px auto;
+
+}
+
+
+
+
+/* رسالة عدم وجود بيانات */
+
+
+.no-data,
+.empty-message{
+
+    text-align:center;
+
+    margin-top:80px;
+
+    font-size:22px;
+
+    color:#D4AF37;
+
+}
+
+
+
+
+
+/* منع نزول زر لوحده */
+
+button{
+
+    white-space:nowrap;
+
+}
+
+/* =====================
+   MATCH HTML CLASSES
+===================== */
+
+
+/* شريط الأزرار */
+
+.toolbar{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    margin-top:30px;
+
+    animation:show .8s ease;
+
+}
+
+
+
+.toolbar button{
+
+    min-width:160px;
+
+    height:50px;
+
+}
+
+
+
+/* ألوان الأزرار */
+
+
+.gold{
+
+    background:#D4AF37;
+
+    color:#000;
+
+}
+
+
+.blue{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+
+.orange{
+
+    background:#f59e0b;
+
+    color:#000;
+
+}
+
+
+.red{
+
+    background:#b91c1c;
+
+    color:white;
+
+}
+
+
+
+
+
+/* البحث */
+
+.searchBox{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin:30px auto;
+
+    width:80%;
+
+}
+
+
+
+.searchBox input{
+
+    flex:1;
+
+    height:50px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    border:none;
+
+    outline:none;
+
+    font-size:16px;
+
+}
+
+
+
+
+
+/* رسالة البداية */
+
+.empty{
+
+    text-align:center;
+
+    margin-top:60px;
+
+    font-size:22px;
+
+    color:#D4AF37;
+
+}
+
+
+
+
+
+/* الجدول */
+
+#casesTable{
+
+    width:90%;
+
+    margin:30px auto;
+
+    display:none;
+
+}
+
+
+
+
+/* المودال الصغير */
+
+.modal-content.small{
+
+    text-align:center;
+
+}
+
+
+.modal-content.small h1{
+
+    color:#D4AF37;
+
+    font-size:60px;
+
+    margin:20px;
+
+}
+
+
+
+
+
+/* أزرار الحفظ والإلغاء */
+
+.save{
+
+    background:#D4AF37;
+
+    color:#000;
+
+}
+
+
+.cancel{
+
+    background:#555;
+
+    color:white;
+
+}
+
+
+
+
+
+@media(max-width:700px){
+
+
+    .toolbar{
+
+        flex-direction:column;
+
+    }
+
+
+    .toolbar button{
+
+        width:90%;
+
+    }
+
+
+    .searchBox{
+
+        width:100%;
+
+        flex-direction:column;
+
+    }
+
+
+}
