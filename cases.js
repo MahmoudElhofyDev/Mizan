@@ -1036,148 +1036,8 @@ async function updateCase(){
 // حذف ملف
 // =====================================
 
-async function deleteCase(id){
-
-
-    if(
-        !confirm(
-            "هل تريد حذف الملف؟"
-        )
-    )
-    return;
-
-
-
-
-    const response =
-    await fetch(
-
-        API +
-        "/cases/" +
-        id,
-
-        {
-
-        method:"DELETE"
-
-        }
-
-    );
-
-
-
-    const data =
-    await response.json();
-
-
-
-    if(data.success){
-
-
-        showToast(
-            "تم حذف الملف"
-        );
-
-
-        await loadAllCases();
-
-
-        searchCases();
-
-
-
-    }
-
-
-
-}
-
-
- 
 // =====================================
-// آخر رقم ملف
-// =====================================
-
-async function showLastFileNumber(){
-
-
-    try{
-
-
-        const response =
-        await fetch(
-
-            API +
-            "/cases/last-file"
-
-        );
-
-
-
-        const data =
-        await response.json();
-
-
-
-        document
-        .getElementById(
-            "lastFileValue"
-        )
-        .innerText =
-
-        data.lastFile || 0;
-
-
-
-
-        document
-        .getElementById(
-            "lastFileModal"
-        )
-        .style.display =
-        "flex";
-
-
-
-    }
-
-    catch(err){
-
-
-        alert(
-            "تعذر جلب آخر رقم ملف"
-        );
-
-
-    }
-
-
-}
-
-
-
-
-function closeLastFileModal(){
-
-
-    document
-    .getElementById(
-        "lastFileModal"
-    )
-    .style.display =
-    "none";
-
-
-}
-
-
-
-
-
-
-
-// =====================================
-// استيراد Excel
+// استيراد Excel - قراءة تلقائية
 // =====================================
 
 async function importExcelCases(event){
@@ -1231,14 +1091,21 @@ async function importExcelCases(event){
             XLSX.utils.sheet_to_json(
                 sheet,
                 {
+                    header:1,
                     defval:""
                 }
             );
 
 
 
+            console.log(
+                "Excel Rows:",
+                rows
+            );
 
-            if(rows.length === 0){
+
+
+            if(!rows || rows.length < 2){
 
 
                 alert(
@@ -1253,32 +1120,62 @@ async function importExcelCases(event){
 
 
 
-            // تحويل أسماء الأعمدة العربية
+            // حذف عنوان الأعمدة
 
-    rows = rows.map(row => {
-
-    return {
-
-        file_number:
-        String(
-            row["رقم الملف"] ||
-            row["رقم ملف"] ||
-            row.file_number ||
-            ""
-        ),
+            rows.shift();
 
 
-        client_name:
-        String(
-            row["اسم الموكل"] ||
-            row["اسم العميل"] ||
-            row.client_name ||
-            ""
-        )
 
-    };
 
-});
+
+            rows =
+            rows
+
+            .filter(row=>{
+
+
+                return row.length > 0;
+
+
+            })
+
+            .map(row=>{
+
+
+                return {
+
+
+                    file_number:
+
+                    String(
+                        row[0] || ""
+                    ),
+
+
+
+                    client_name:
+
+                    String(
+                        row[1] || ""
+                    )
+
+
+                };
+
+
+            });
+
+
+
+
+
+
+            console.log(
+                "Sending Data:",
+                rows
+            );
+
+
 
 
 
@@ -1294,15 +1191,20 @@ async function importExcelCases(event){
 
                 method:"POST",
 
+
                 headers:{
+
 
                     "Content-Type":
                     "application/json"
 
+
                 },
 
 
-                body:JSON.stringify({
+                body:
+
+                JSON.stringify({
 
                     data:rows
 
@@ -1317,8 +1219,13 @@ async function importExcelCases(event){
 
 
 
+
+
             const result =
             await response.json();
+
+
+
 
 
 
@@ -1332,13 +1239,13 @@ async function importExcelCases(event){
                 "تم الاستيراد بنجاح\n\n" +
 
                 "المضاف : " +
-                result.added +
+                (result.added || 0) +
 
                 "\nالمكرر : " +
-                result.duplicate +
+                (result.duplicate || 0) +
 
                 "\nالأخطاء : " +
-                result.failed
+                (result.failed || 0)
 
                 );
 
@@ -1350,19 +1257,22 @@ async function importExcelCases(event){
                 clearSearch();
 
 
-
             }
 
             else{
 
 
                 alert(
+
                     result.message ||
+
                     "فشل الاستيراد"
+
                 );
 
 
             }
+
 
 
 
@@ -1371,7 +1281,10 @@ async function importExcelCases(event){
         catch(err){
 
 
-            console.log(err);
+            console.log(
+                "IMPORT ERROR:",
+                err
+            );
 
 
             alert(
@@ -1392,8 +1305,6 @@ async function importExcelCases(event){
 
 
 }
-
-
 
 
 

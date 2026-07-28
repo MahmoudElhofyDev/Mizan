@@ -1861,6 +1861,10 @@ function closeLastPowerModal(){
 // استيراد Excel
 // =====================================
 
+// =====================================
+// استيراد Excel - قراءة تلقائية
+// =====================================
+
 async function importExcelPowers(event){
 
 
@@ -1912,15 +1916,21 @@ async function importExcelPowers(event){
             XLSX.utils.sheet_to_json(
                 sheet,
                 {
+                    header:1,
                     defval:""
                 }
             );
 
 
 
+            console.log(
+                "Excel Rows:",
+                rows
+            );
 
 
-            if(rows.length === 0){
+
+            if(!rows || rows.length < 2){
 
 
                 alert(
@@ -1934,13 +1944,24 @@ async function importExcelPowers(event){
 
 
 
+            // حذف صف العناوين
+
+            rows.shift();
 
 
 
-            // تحويل أعمدة Excel العربية
 
             rows =
-            rows.map(row=>{
+            rows
+            .filter(row=>{
+
+
+                return row.length > 0;
+
+
+            })
+
+            .map(row=>{
 
 
                 return {
@@ -1949,34 +1970,16 @@ async function importExcelPowers(event){
                     documentation:
 
                     String(
-
-                        row["جهة الإصدار"] ||
-
-                        row["جهة الاصدار"] ||
-
-                        row.documentation ||
-
-                        ""
-
+                        row[0] || ""
                     ),
-
 
 
 
                     power_number:
 
                     String(
-
-                        row["رقم التوكيل"] ||
-
-                        row["رقم التوكيل "] ||
-
-                        row.power_number ||
-
-                        ""
-
+                        row[1] || ""
                     ),
-
 
 
 
@@ -1984,17 +1987,8 @@ async function importExcelPowers(event){
                     client_name:
 
                     String(
-
-                        row["اسم الموكل"] ||
-
-                        row["اسم العميل"] ||
-
-                        row.client_name ||
-
-                        ""
-
+                        row[2] || ""
                     ),
-
 
 
 
@@ -2002,17 +1996,8 @@ async function importExcelPowers(event){
                     file_number:
 
                     String(
-
-                        row["رقم الملف"] ||
-
-                        row["رقم ملف"] ||
-
-                        row.file_number ||
-
-                        ""
-
+                        row[3] || ""
                     )
-
 
 
                 };
@@ -2021,6 +2006,14 @@ async function importExcelPowers(event){
             });
 
 
+
+
+
+
+            console.log(
+                "Sending Data:",
+                rows
+            );
 
 
 
@@ -2037,15 +2030,20 @@ async function importExcelPowers(event){
 
                 method:"POST",
 
+
                 headers:{
+
 
                     "Content-Type":
                     "application/json"
 
+
                 },
 
 
-                body:JSON.stringify({
+                body:
+
+                JSON.stringify({
 
                     data:rows
 
@@ -2061,9 +2059,9 @@ async function importExcelPowers(event){
 
 
 
-
             const result =
             await response.json();
+
 
 
 
@@ -2079,13 +2077,13 @@ async function importExcelPowers(event){
                 "تم استيراد التوكيلات بنجاح\n\n" +
 
                 "المضاف : " +
-                result.added +
+                (result.added || 0) +
 
                 "\nالمكرر : " +
-                result.duplicate +
+                (result.duplicate || 0) +
 
                 "\nالأخطاء : " +
-                result.failed
+                (result.failed || 0)
 
                 );
 
@@ -2095,7 +2093,6 @@ async function importExcelPowers(event){
 
 
                 clearSearch();
-
 
 
             }
@@ -2116,18 +2113,20 @@ async function importExcelPowers(event){
 
 
 
+
         }
 
         catch(err){
 
 
-            console.log(err);
+            console.log(
+                "IMPORT ERROR:",
+                err
+            );
 
 
             alert(
-
                 "حدث خطأ أثناء قراءة الملف"
-
             );
 
 
@@ -2144,7 +2143,6 @@ async function importExcelPowers(event){
 
 
 }
-
 
 
 
