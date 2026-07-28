@@ -1243,25 +1243,41 @@ function showIncompleteCases(){
 
 async function loadAllCases(){
 
-
     try{
 
-
         const response =
-
         await fetch(
-
-            API +
-
-            "/cases"
-
+            API + "/cases"
         );
 
 
-
-        allCases =
-
+        const data =
         await response.json();
+
+
+
+        if(Array.isArray(data)){
+
+            allCases = data;
+
+        }
+
+        else if(Array.isArray(data.cases)){
+
+            allCases = data.cases;
+
+        }
+
+        else{
+
+            allCases = [];
+
+            console.log(
+                "Unexpected API response:",
+                data
+            );
+
+        }
 
 
 
@@ -1269,12 +1285,11 @@ async function loadAllCases(){
 
     catch(err){
 
-
         console.log(err);
 
+        allCases = [];
 
     }
-
 
 }
 
