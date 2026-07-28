@@ -156,96 +156,68 @@ function bindEvents(){
 
 async function loadAllPowers(){
 
-
-
     try{
 
-
-
         const response =
-
         await fetch(
-
-            API +
-
-            "/powers"
-
+            API + "/powers"
         );
 
 
+        if(!response.ok){
 
+            throw new Error(
+                "API ERROR " + response.status
+            );
+
+        }
 
 
         const data =
-
         await response.json();
-
-
-
-
-
-
-        console.log(
-
-            "POWERS API:",
-
-            data
-
-        );
-
-
-
-
 
 
 
         if(Array.isArray(data)){
 
-
-
             allPowers = data;
 
+
+            console.log(
+                "Powers Loaded:",
+                allPowers.length
+            );
 
 
         }
 
         else{
 
+            console.log(
+                "Invalid API Response:",
+                data
+            );
 
 
             allPowers = [];
-
-
 
         }
 
 
 
-
-
-
     }
 
-    catch(error){
-
-
+    catch(err){
 
         console.log(
-
             "LOAD POWERS ERROR:",
-
-            error
-
+            err
         );
 
 
-
-        allPowers=[];
-
-
+        allPowers = [];
 
     }
-
 
 
 }
