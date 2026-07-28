@@ -465,7 +465,7 @@ app.get("/cases/last-file", async(req,res)=>{
 
             return res.json({
 
-                lastFile:0
+                lastPower:0
 
             });
 
@@ -1125,9 +1125,9 @@ app.get("/powers/last-number", async(req,res)=>{
 
         res.json({
 
-            lastNumber:
+              lastPower:
 
-            result.rows[0].power_number
+    result.rows[0].power_number
 
         });
 
@@ -1643,6 +1643,525 @@ app.delete("/powers/:id", async(req,res)=>{
 
 
     }
+
+
+});
+
+// =====================================
+// IMPORT EXCEL
+// =====================================
+
+
+// ===============================
+// استيراد القضايا
+// ===============================
+
+app.post("/cases/import", async(req,res)=>{
+
+
+    try{
+
+
+        const {
+
+            data
+
+        } = req.body;
+
+
+
+
+        if(!Array.isArray(data)){
+
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"بيانات غير صحيحة"
+
+            });
+
+
+        }
+
+
+
+
+
+        let added = 0;
+
+        let duplicate = 0;
+
+        let failed = 0;
+
+
+
+
+
+        for(const item of data){
+
+
+            try{
+
+
+
+                if(
+
+                    !item.file_number ||
+
+                    !item.client_name
+
+                ){
+
+                    failed++;
+
+                    continue;
+
+                }
+
+
+
+
+
+                const check = await db.query(
+
+                    `
+
+                    SELECT id
+
+                    FROM cases
+
+                    WHERE file_number=$1
+
+                    `,
+
+                    [
+
+                        String(item.file_number)
+
+                    ]
+
+                );
+
+
+
+
+
+                if(check.rows.length > 0){
+
+
+                    duplicate++;
+
+                    continue;
+
+
+                }
+
+
+
+
+
+
+                await db.query(
+
+                    `
+
+                    INSERT INTO cases
+
+                    (
+
+                    file_number,
+
+                    client_name,
+
+                    opponent,
+
+                    court,
+
+                    type,
+
+                    birth_date,
+
+                    documentation
+
+                    )
+
+
+                    VALUES
+
+                    (
+
+                    $1,$2,$3,$4,$5,$6,$7
+
+                    )
+
+                    `,
+
+                    [
+
+                    String(item.file_number),
+
+                    item.client_name,
+
+                    item.opponent || "",
+
+                    item.court || "",
+
+                    item.type || "",
+
+                    item.birth_date || "",
+
+                    item.documentation || ""
+
+                    ]
+
+                );
+
+
+
+
+                added++;
+
+
+
+            }
+
+            catch(error){
+
+
+                failed++;
+
+
+            }
+
+
+
+        }
+
+
+
+
+
+        res.json({
+
+            success:true,
+
+            added,
+
+            duplicate,
+
+            failed
+
+        });
+
+
+
+
+
+    }
+
+    catch(err){
+
+
+        console.log(err);
+
+
+
+        res.status(500).json({
+
+            success:false,
+
+            message:err.message
+
+        });
+
+
+
+    }
+
+
+});
+
+
+
+
+
+
+
+
+
+// ===============================
+// استيراد التوكيلات
+// ===============================
+
+
+app.post("/powers/import", async(req,res)=>{
+
+
+    try{
+
+
+        const {
+
+            data
+
+        } = req.body;
+
+
+
+
+
+        if(!Array.isArray(data)){
+
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"بيانات غير صحيحة"
+
+            });
+
+
+        }
+
+
+
+
+
+
+        let added = 0;
+
+        let duplicate = 0;
+
+        let failed = 0;
+
+
+
+
+
+
+        for(const item of data){
+
+
+
+            try{
+
+
+
+                if(
+
+                    !item.power_number ||
+
+                    !item.client_name
+
+                ){
+
+                    failed++;
+
+                    continue;
+
+                }
+
+
+
+
+
+
+
+                const check = await db.query(
+
+                    `
+
+                    SELECT id
+
+                    FROM powers
+
+                    WHERE power_number=$1
+
+                    `,
+
+                    [
+
+                        String(item.power_number)
+
+                    ]
+
+                );
+
+
+
+
+
+
+
+                if(check.rows.length > 0){
+
+
+                    duplicate++;
+
+                    continue;
+
+
+                }
+
+
+
+
+
+
+
+
+                await db.query(
+
+                    `
+
+                    INSERT INTO powers
+
+                    (
+
+                    file_number,
+
+                    power_number,
+
+                    client_name,
+
+                    type,
+
+                    birth_date,
+
+                    documentation
+
+                    )
+
+
+                    VALUES
+
+                    (
+
+                    $1,$2,$3,$4,$5,$6
+
+                    )
+
+                    `,
+
+                    [
+
+                    item.file_number || "",
+
+                    String(item.power_number),
+
+                    item.client_name,
+
+                    item.type || "",
+
+                    item.birth_date || "",
+
+                    item.documentation || ""
+
+                    ]
+
+                );
+
+
+
+
+
+                added++;
+
+
+
+
+
+            }
+
+            catch(error){
+
+
+                failed++;
+
+
+            }
+
+
+
+        }
+
+
+
+
+
+        res.json({
+
+            success:true,
+
+            added,
+
+            duplicate,
+
+            failed
+
+        });
+
+
+
+
+
+    }
+
+    catch(err){
+
+
+        console.log(err);
+
+
+
+        res.status(500).json({
+
+            success:false,
+
+            message:err.message
+
+        });
+
+
+
+    }
+
+
+});
+
+
+
+
+
+
+
+
+
+// =====================================
+// تشغيل السيرفر
+// =====================================
+
+console.log("=== BEFORE LISTEN ===");
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    console.log(`Server Running On Port ${PORT}`);
+});
+
+console.log("=== AFTER LISTEN ===");
+
+app.listen(PORT,()=>{
+
+
+    console.log(
+
+        `Server Running On Port ${PORT}`
+
+    );
 
 
 });
